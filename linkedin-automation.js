@@ -165,6 +165,10 @@ function buildLinkedInText(post) {
       "Small JavaScript bugs keep escaping to production and breaking critical user flows.",
       "Debugging inconsistent runtime behavior steals time from feature delivery."
     ],
+    typescript: [
+      "Type errors slip through because strict mode is off and any is everywhere.",
+      "Refactoring without types turns every change into a guessing game."
+    ],
     both: [
       "Quality gaps between test and release pipelines cause last-minute firefighting.",
       "Teams lose trust when automation and delivery signals conflict before go-live."
@@ -179,6 +183,11 @@ function buildLinkedInText(post) {
     ]
   };
   const painPointLines = painPointByTopic[topic] || painPointByTopic.javascript;
+
+  // Level badge for LinkedIn
+  const level = String(post.level || "beginner").toLowerCase();
+  const levelEmoji = { beginner: "\uD83C\uDF31", intermediate: "\u2B50", advanced: "\uD83D\uDE80" };
+  const levelBadge = `${levelEmoji[level] || "\uD83C\uDF31"} Level: ${level.charAt(0).toUpperCase() + level.slice(1)}`;
 
   // Strip markdown syntax
   let content = String(post.content || "")
@@ -209,6 +218,8 @@ function buildLinkedInText(post) {
 
   const parts = [
     coreConcept || "",
+    "",
+    levelBadge,
     "",
     "\u2500".repeat(30),
     "",

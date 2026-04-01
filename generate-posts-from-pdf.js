@@ -21,6 +21,8 @@ const TOPIC_LIBRARY = [
       "Keep one user intent per test for faster triage.",
       "Use retries for flaky infrastructure, not bad selectors."
     ],
+    workflow: "1. Install Playwright and configure browsers.\n2. Write a test spec targeting a user flow.\n3. Use locators to find elements by role or test-id.\n4. Add assertions to verify expected outcomes.\n5. Run tests locally and review trace on failure.\n6. Integrate into CI pipeline for every PR.",
+    architecture: "Playwright launches a browser process via CDP or WebSocket. The Node.js test runner sends commands through a protocol bridge. Each test gets an isolated BrowserContext with its own cookies and storage. The auto-wait engine polls element state before executing actions. Traces, screenshots, and videos are captured at the context level and saved as artifacts.",
     tryThis: "await page.getByRole('button', { name: 'Save' }).click();\nawait expect(page.getByText('Saved')).toBeVisible();",
     quizQ: "Why is getByRole usually more robust than nth-child selectors?",
     quizA: "It targets user-facing semantics and survives many layout changes.",
@@ -28,7 +30,7 @@ const TOPIC_LIBRARY = [
   },
   {
     topic: "TypeScript",
-    category: "JavaScript",
+    category: "TypeScript",
     titleSeed: "TypeScript Safer Refactors",
     tags: ["typescript", "types", "javascript"],
     core: [
@@ -41,6 +43,8 @@ const TOPIC_LIBRARY = [
       "Model API responses with exact interfaces.",
       "Use unknown at boundaries, then narrow deliberately."
     ],
+    workflow: "1. Define interfaces for your data shapes.\n2. Enable strict mode in tsconfig.json.\n3. Type function parameters and return values.\n4. Use union types for variables with multiple states.\n5. Add type guards at system boundaries.\n6. Refactor confidently — the compiler catches mismatches.",
+    architecture: "TypeScript source is parsed into an AST by the compiler. The type checker walks the AST, resolving symbols and verifying constraints. Type inference flows forward through expressions and narrows via control flow analysis. The emitter produces plain JavaScript with types erased. Declaration files (.d.ts) preserve type information for consumers.",
     tryThis: "type Status = 'open' | 'closed';\nfunction isOpen(s: Status) { return s === 'open'; }\nconsole.log(isOpen('open'));",
     quizQ: "When should unknown be preferred over any?",
     quizA: "At external boundaries where validation and narrowing are required.",
@@ -61,6 +65,8 @@ const TOPIC_LIBRARY = [
       "Fail fast on validation errors to save compute time.",
       "Version artifacts and promote across environments."
     ],
+    workflow: "1. Create a YAML pipeline with trigger rules.\n2. Define build stages: install, lint, test, package.\n3. Configure branch policies requiring successful builds.\n4. Publish build artifacts to Azure Artifacts.\n5. Set up release environments with approval gates.\n6. Monitor deployments with dashboards and alerts.",
+    architecture: "A commit triggers the pipeline agent pool. The orchestrator schedules jobs across available agents. Each job runs in an isolated workspace with cached dependencies. Tasks execute sequentially within a job, sharing the workspace. Artifacts are published to a feed and promoted through release stages with environment-specific approvals.",
     tryThis: "trigger:\n- main\n\npool:\n  vmImage: ubuntu-latest\n\nsteps:\n- script: npm ci && npm test",
     quizQ: "Why should artifacts be immutable between test and production stages?",
     quizA: "Immutability guarantees the exact tested build is what gets deployed.",
@@ -81,6 +87,8 @@ const TOPIC_LIBRARY = [
       "Avoid mutating shared objects inside utility functions.",
       "Write small focused functions with clear input-output behavior."
     ],
+    workflow: "1. Identify the data structures your feature needs.\n2. Define pure functions for each transformation step.\n3. Compose functions using array methods or pipes.\n4. Handle errors at the boundary, not inside helpers.\n5. Write unit tests for each function.\n6. Refactor for readability once tests pass.",
+    architecture: "JavaScript code is parsed into an AST by the engine (V8/SpiderMonkey). The interpreter generates bytecode for immediate execution. Hot paths are detected by the profiler and compiled to optimized machine code by the JIT compiler. The event loop processes the call stack, microtask queue, and macrotask queue in order. Garbage collection reclaims memory from unreachable objects using generational marking.",
     tryThis: "const nums = [1, 2, 3, 4];\nconst evens = nums.filter((n) => n % 2 === 0);\nconsole.log(evens);",
     quizQ: "What is the practical difference between let and const?",
     quizA: "Both are block-scoped; const prevents reassignment of the binding.",
@@ -93,109 +101,109 @@ const TOPIC_LIBRARY = [
 // 34 Playwright · 33 JavaScript · 33 TypeScript
 // ─────────────────────────────────────────────────────────────────────────────
 const TOPIC_SEEDS = [
-  // ── Playwright (34) ──────────────────────────────────────────────────────
-  { topic: "Playwright", subtopic: "Page Navigation and URL Control",              category: "Playwright",  tags: ["playwright","testing","e2e","navigation"] },
-  { topic: "Playwright", subtopic: "Locators: getByRole Best Practices",           category: "Playwright",  tags: ["playwright","locators","accessibility","testing"] },
-  { topic: "Playwright", subtopic: "Locators: getByText and getByLabel",           category: "Playwright",  tags: ["playwright","locators","ui","testing"] },
-  { topic: "Playwright", subtopic: "Locators: getByTestId Custom Attributes",      category: "Playwright",  tags: ["playwright","locators","testid","best-practices"] },
-  { topic: "Playwright", subtopic: "Auto-Waiting: Eliminating Flaky Sleeps",       category: "Playwright",  tags: ["playwright","auto-wait","flakiness","reliability"] },
-  { topic: "Playwright", subtopic: "Assertions: toBeVisible and toBeHidden",       category: "Playwright",  tags: ["playwright","assertions","visibility","testing"] },
-  { topic: "Playwright", subtopic: "Assertions: toHaveText and toContainText",     category: "Playwright",  tags: ["playwright","assertions","text","testing"] },
-  { topic: "Playwright", subtopic: "Assertions: toHaveValue and toBeChecked",      category: "Playwright",  tags: ["playwright","assertions","forms","testing"] },
-  { topic: "Playwright", subtopic: "Soft Assertions for Non-blocking Checks",      category: "Playwright",  tags: ["playwright","soft-assertions","debugging","testing"] },
-  { topic: "Playwright", subtopic: "Screenshots and Visual Regression Testing",    category: "Playwright",  tags: ["playwright","screenshots","visual","regression"] },
-  { topic: "Playwright", subtopic: "Video Recording in E2E Tests",                 category: "Playwright",  tags: ["playwright","video","debugging","ci"] },
-  { topic: "Playwright", subtopic: "Trace Viewer and Debugging Failures",          category: "Playwright",  tags: ["playwright","trace","debugging","ci"] },
-  { topic: "Playwright", subtopic: "Test Fixtures: Setup and Teardown",            category: "Playwright",  tags: ["playwright","fixtures","setup","testing"] },
-  { topic: "Playwright", subtopic: "beforeEach afterEach beforeAll afterAll Hooks",category: "Playwright",  tags: ["playwright","hooks","lifecycle","testing"] },
-  { topic: "Playwright", subtopic: "Page Object Model Pattern",                    category: "Playwright",  tags: ["playwright","pom","patterns","architecture"] },
-  { topic: "Playwright", subtopic: "API Testing with Playwright request",          category: "Playwright",  tags: ["playwright","api","testing","automation"] },
-  { topic: "Playwright", subtopic: "Network Interception and Request Mocking",     category: "Playwright",  tags: ["playwright","network","mocking","testing"] },
-  { topic: "Playwright", subtopic: "Authentication State with storageState",       category: "Playwright",  tags: ["playwright","auth","session","storagestate"] },
-  { topic: "Playwright", subtopic: "Multi-Browser Testing Chrome Firefox WebKit",  category: "Playwright",  tags: ["playwright","browsers","cross-browser","testing"] },
-  { topic: "Playwright", subtopic: "Mobile Emulation and Responsive Testing",      category: "Playwright",  tags: ["playwright","mobile","emulation","responsive"] },
-  { topic: "Playwright", subtopic: "Geolocation and Browser Permissions",          category: "Playwright",  tags: ["playwright","geolocation","permissions","testing"] },
-  { topic: "Playwright", subtopic: "Dialog Handling: alert confirm prompt",        category: "Playwright",  tags: ["playwright","dialogs","alerts","testing"] },
-  { topic: "Playwright", subtopic: "File Upload Testing Strategies",               category: "Playwright",  tags: ["playwright","file-upload","forms","testing"] },
-  { topic: "Playwright", subtopic: "iFrame Testing Strategies",                    category: "Playwright",  tags: ["playwright","iframe","web","testing"] },
-  { topic: "Playwright", subtopic: "Multiple Tabs and New Page Handling",          category: "Playwright",  tags: ["playwright","tabs","multi-page","testing"] },
-  { topic: "Playwright", subtopic: "Parallel Test Execution and Sharding",         category: "Playwright",  tags: ["playwright","parallel","sharding","performance"] },
-  { topic: "Playwright", subtopic: "Retry Strategies and Flakiness Control",       category: "Playwright",  tags: ["playwright","retries","flakiness","reliability"] },
-  { topic: "Playwright", subtopic: "Environment Variables in playwright.config",   category: "Playwright",  tags: ["playwright","config","environment","setup"] },
-  { topic: "Playwright", subtopic: "playwright.config.ts Full Overview",           category: "Playwright",  tags: ["playwright","config","typescript","setup"] },
-  { topic: "Playwright", subtopic: "CI/CD Integration with GitHub Actions",        category: "Playwright",  tags: ["playwright","ci","github-actions","devops"] },
-  { topic: "Playwright", subtopic: "Custom Reporters and Test Results",            category: "Playwright",  tags: ["playwright","reporters","results","testing"] },
-  { topic: "Playwright", subtopic: "Accessibility Testing with Playwright",        category: "Playwright",  tags: ["playwright","accessibility","axe","a11y"] },
-  { topic: "Playwright", subtopic: "Web Components and Shadow DOM Testing",        category: "Playwright",  tags: ["playwright","shadow-dom","components","testing"] },
-  { topic: "Playwright", subtopic: "Component Testing with Playwright CT",         category: "Playwright",  tags: ["playwright","component-testing","ct","react"] },
-  // ── JavaScript (33) ──────────────────────────────────────────────────────
-  { topic: "JavaScript", subtopic: "var vs let vs const Scoping Rules",            category: "JavaScript",  tags: ["javascript","variables","scope","es6"] },
-  { topic: "JavaScript", subtopic: "Arrow Functions vs Regular Functions",         category: "JavaScript",  tags: ["javascript","arrow-functions","es6","functions"] },
-  { topic: "JavaScript", subtopic: "Template Literals and Tagged Templates",       category: "JavaScript",  tags: ["javascript","template-literals","strings","es6"] },
-  { topic: "JavaScript", subtopic: "Array and Object Destructuring",               category: "JavaScript",  tags: ["javascript","destructuring","arrays","objects"] },
-  { topic: "JavaScript", subtopic: "Spread and Rest Operators",                    category: "JavaScript",  tags: ["javascript","spread","rest","es6"] },
-  { topic: "JavaScript", subtopic: "Default Function Parameters",                  category: "JavaScript",  tags: ["javascript","functions","parameters","defaults"] },
-  { topic: "JavaScript", subtopic: "Promises: then catch finally",                 category: "JavaScript",  tags: ["javascript","promises","async","es6"] },
-  { topic: "JavaScript", subtopic: "async/await Clean Async Code",                 category: "JavaScript",  tags: ["javascript","async","await","asynchronous"] },
-  { topic: "JavaScript", subtopic: "Promise.all race allSettled any",              category: "JavaScript",  tags: ["javascript","promise","concurrency","async"] },
-  { topic: "JavaScript", subtopic: "Array.map() for Data Transformation",          category: "JavaScript",  tags: ["javascript","map","arrays","functional"] },
-  { topic: "JavaScript", subtopic: "Array.filter() for Conditional Selection",     category: "JavaScript",  tags: ["javascript","filter","arrays","functional"] },
-  { topic: "JavaScript", subtopic: "Array.reduce() for Accumulation",              category: "JavaScript",  tags: ["javascript","reduce","arrays","functional"] },
-  { topic: "JavaScript", subtopic: "Array.find() and findIndex()",                 category: "JavaScript",  tags: ["javascript","find","arrays","search"] },
-  { topic: "JavaScript", subtopic: "Array.flat() and flatMap()",                   category: "JavaScript",  tags: ["javascript","flat","arrays","es2019"] },
-  { topic: "JavaScript", subtopic: "Object.keys() values() and entries()",         category: "JavaScript",  tags: ["javascript","objects","iteration","es6"] },
-  { topic: "JavaScript", subtopic: "Object.assign() and Object Spread",            category: "JavaScript",  tags: ["javascript","objects","merging","spread"] },
-  { topic: "JavaScript", subtopic: "Closures and Lexical Scope",                   category: "JavaScript",  tags: ["javascript","closures","scope","functions"] },
-  { topic: "JavaScript", subtopic: "Prototypal Inheritance and Prototype Chain",   category: "JavaScript",  tags: ["javascript","prototype","inheritance","oop"] },
-  { topic: "JavaScript", subtopic: "ES6 Classes and Inheritance",                  category: "JavaScript",  tags: ["javascript","classes","es6","oop"] },
-  { topic: "JavaScript", subtopic: "ES Modules import and export",                 category: "JavaScript",  tags: ["javascript","modules","import","export"] },
-  { topic: "JavaScript", subtopic: "Nullish Coalescing and Optional Chaining",     category: "JavaScript",  tags: ["javascript","nullish","optional-chaining","es2020"] },
-  { topic: "JavaScript", subtopic: "Error Handling try catch finally",             category: "JavaScript",  tags: ["javascript","errors","try-catch","debugging"] },
-  { topic: "JavaScript", subtopic: "Event Loop Call Stack and Microtasks",         category: "JavaScript",  tags: ["javascript","event-loop","async","microtasks"] },
-  { topic: "JavaScript", subtopic: "setTimeout and setInterval Patterns",          category: "JavaScript",  tags: ["javascript","timers","async","patterns"] },
-  { topic: "JavaScript", subtopic: "Fetch API and HTTP Requests",                  category: "JavaScript",  tags: ["javascript","fetch","http","api"] },
-  { topic: "JavaScript", subtopic: "JSON.parse and JSON.stringify",                category: "JavaScript",  tags: ["javascript","json","serialization","data"] },
-  { topic: "JavaScript", subtopic: "Local Storage and Session Storage",            category: "JavaScript",  tags: ["javascript","storage","browser","web"] },
-  { topic: "JavaScript", subtopic: "Regular Expressions in JavaScript",            category: "JavaScript",  tags: ["javascript","regex","patterns","strings"] },
-  { topic: "JavaScript", subtopic: "Map and Set Data Structures",                  category: "JavaScript",  tags: ["javascript","map","set","data-structures"] },
-  { topic: "JavaScript", subtopic: "WeakMap WeakRef and Memory Management",        category: "JavaScript",  tags: ["javascript","weakmap","memory","advanced"] },
-  { topic: "JavaScript", subtopic: "Generators and Iterators",                     category: "JavaScript",  tags: ["javascript","generators","iterators","advanced"] },
-  { topic: "JavaScript", subtopic: "Proxy and Reflect API",                        category: "JavaScript",  tags: ["javascript","proxy","reflect","metaprogramming"] },
-  { topic: "JavaScript", subtopic: "Short-Circuit Evaluation and Logical Assignment",category: "JavaScript",tags: ["javascript","logical","operators","es2021"] },
-  // ── TypeScript (33) ──────────────────────────────────────────────────────
-  { topic: "TypeScript", subtopic: "Basic Types string number boolean any",        category: "JavaScript",  tags: ["typescript","types","basics","javascript"] },
-  { topic: "TypeScript", subtopic: "Interfaces vs Type Aliases",                   category: "JavaScript",  tags: ["typescript","interfaces","types","design"] },
-  { topic: "TypeScript", subtopic: "Union Types and Intersection Types",           category: "JavaScript",  tags: ["typescript","union","intersection","types"] },
-  { topic: "TypeScript", subtopic: "Type Narrowing and Type Guards",               category: "JavaScript",  tags: ["typescript","narrowing","guards","safety"] },
-  { topic: "TypeScript", subtopic: "Generics Type Parameters and Constraints",     category: "JavaScript",  tags: ["typescript","generics","constraints","reusable"] },
-  { topic: "TypeScript", subtopic: "Generic Functions and Interfaces",             category: "JavaScript",  tags: ["typescript","generics","functions","patterns"] },
-  { topic: "TypeScript", subtopic: "Enums Numeric String and Const",               category: "JavaScript",  tags: ["typescript","enums","constants","types"] },
-  { topic: "TypeScript", subtopic: "Tuple Types and Labeled Tuples",               category: "JavaScript",  tags: ["typescript","tuples","arrays","types"] },
-  { topic: "TypeScript", subtopic: "Partial and Required Utility Types",           category: "JavaScript",  tags: ["typescript","partial","required","utility"] },
-  { topic: "TypeScript", subtopic: "Pick and Omit Utility Types",                  category: "JavaScript",  tags: ["typescript","pick","omit","utility"] },
-  { topic: "TypeScript", subtopic: "Readonly and ReadonlyArray",                   category: "JavaScript",  tags: ["typescript","readonly","immutable","safety"] },
-  { topic: "TypeScript", subtopic: "Record Type for Object Maps",                  category: "JavaScript",  tags: ["typescript","record","maps","objects"] },
-  { topic: "TypeScript", subtopic: "Exclude Extract and NonNullable",              category: "JavaScript",  tags: ["typescript","exclude","extract","utility"] },
-  { topic: "TypeScript", subtopic: "ReturnType and Parameters Utilities",          category: "JavaScript",  tags: ["typescript","returntype","parameters","inference"] },
-  { topic: "TypeScript", subtopic: "Conditional Types with extends",               category: "JavaScript",  tags: ["typescript","conditional","types","advanced"] },
-  { topic: "TypeScript", subtopic: "Mapped Types and Index Signatures",            category: "JavaScript",  tags: ["typescript","mapped","index-signature","types"] },
-  { topic: "TypeScript", subtopic: "Template Literal Types",                       category: "JavaScript",  tags: ["typescript","template-literal","string","types"] },
-  { topic: "TypeScript", subtopic: "Infer Keyword in Conditional Types",           category: "JavaScript",  tags: ["typescript","infer","conditional","advanced"] },
-  { topic: "TypeScript", subtopic: "Discriminated Unions Pattern",                 category: "JavaScript",  tags: ["typescript","discriminated","unions","patterns"] },
-  { topic: "TypeScript", subtopic: "Declaration Merging",                          category: "JavaScript",  tags: ["typescript","declaration","merging","modules"] },
-  { topic: "TypeScript", subtopic: "abstract Classes and Methods",                 category: "JavaScript",  tags: ["typescript","abstract","classes","oop"] },
-  { topic: "TypeScript", subtopic: "Access Modifiers public private protected",    category: "JavaScript",  tags: ["typescript","access","modifiers","encapsulation"] },
-  { topic: "TypeScript", subtopic: "Function Overloads",                           category: "JavaScript",  tags: ["typescript","overloads","functions","signatures"] },
-  { topic: "TypeScript", subtopic: "Type Assertions as and satisfies",             category: "JavaScript",  tags: ["typescript","assertions","satisfies","safety"] },
-  { topic: "TypeScript", subtopic: "Non-null Assertion Operator",                  category: "JavaScript",  tags: ["typescript","non-null","assertion","safety"] },
-  { topic: "TypeScript", subtopic: "keyof and typeof Operators",                   category: "JavaScript",  tags: ["typescript","keyof","typeof","type-level"] },
-  { topic: "TypeScript", subtopic: "Decorators Class and Method",                  category: "JavaScript",  tags: ["typescript","decorators","metadata","advanced"] },
-  { topic: "TypeScript", subtopic: "Strict Mode Configuration",                    category: "JavaScript",  tags: ["typescript","strict","config","best-practices"] },
-  { topic: "TypeScript", subtopic: "tsconfig.json Key Compiler Options",           category: "JavaScript",  tags: ["typescript","tsconfig","compiler","setup"] },
-  { topic: "TypeScript", subtopic: "Path Aliases and Module Resolution",           category: "JavaScript",  tags: ["typescript","paths","modules","config"] },
-  { topic: "TypeScript", subtopic: "Type Declaration Files .d.ts",                 category: "JavaScript",  tags: ["typescript","declaration","dts","types"] },
-  { topic: "TypeScript", subtopic: "DefinitelyTyped and @types Packages",          category: "JavaScript",  tags: ["typescript","definitelytyped","types","npm"] },
-  { topic: "TypeScript", subtopic: "Migrating JavaScript to TypeScript",           category: "JavaScript",  tags: ["typescript","migration","javascript","gradual"] }
+  // ── Playwright (34) ── Beginner → Intermediate → Advanced ────────────────
+  { topic: "Playwright", subtopic: "Page Navigation and URL Control",              category: "Playwright",  tags: ["playwright","testing","e2e","navigation"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Locators: getByRole Best Practices",           category: "Playwright",  tags: ["playwright","locators","accessibility","testing"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Locators: getByText and getByLabel",           category: "Playwright",  tags: ["playwright","locators","ui","testing"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Locators: getByTestId Custom Attributes",      category: "Playwright",  tags: ["playwright","locators","testid","best-practices"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Auto-Waiting: Eliminating Flaky Sleeps",       category: "Playwright",  tags: ["playwright","auto-wait","flakiness","reliability"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Assertions: toBeVisible and toBeHidden",       category: "Playwright",  tags: ["playwright","assertions","visibility","testing"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Assertions: toHaveText and toContainText",     category: "Playwright",  tags: ["playwright","assertions","text","testing"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Assertions: toHaveValue and toBeChecked",      category: "Playwright",  tags: ["playwright","assertions","forms","testing"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Screenshots and Visual Regression Testing",    category: "Playwright",  tags: ["playwright","screenshots","visual","regression"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Video Recording in E2E Tests",                 category: "Playwright",  tags: ["playwright","video","debugging","ci"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Dialog Handling: alert confirm prompt",        category: "Playwright",  tags: ["playwright","dialogs","alerts","testing"], level: "beginner" },
+  { topic: "Playwright", subtopic: "Soft Assertions for Non-blocking Checks",      category: "Playwright",  tags: ["playwright","soft-assertions","debugging","testing"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "Trace Viewer and Debugging Failures",          category: "Playwright",  tags: ["playwright","trace","debugging","ci"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "Test Fixtures: Setup and Teardown",            category: "Playwright",  tags: ["playwright","fixtures","setup","testing"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "beforeEach afterEach beforeAll afterAll Hooks",category: "Playwright",  tags: ["playwright","hooks","lifecycle","testing"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "Page Object Model Pattern",                    category: "Playwright",  tags: ["playwright","pom","patterns","architecture"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "API Testing with Playwright request",          category: "Playwright",  tags: ["playwright","api","testing","automation"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "Network Interception and Request Mocking",     category: "Playwright",  tags: ["playwright","network","mocking","testing"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "Authentication State with storageState",       category: "Playwright",  tags: ["playwright","auth","session","storagestate"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "File Upload Testing Strategies",               category: "Playwright",  tags: ["playwright","file-upload","forms","testing"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "iFrame Testing Strategies",                    category: "Playwright",  tags: ["playwright","iframe","web","testing"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "Multiple Tabs and New Page Handling",          category: "Playwright",  tags: ["playwright","tabs","multi-page","testing"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "Environment Variables in playwright.config",   category: "Playwright",  tags: ["playwright","config","environment","setup"], level: "intermediate" },
+  { topic: "Playwright", subtopic: "Multi-Browser Testing Chrome Firefox WebKit",  category: "Playwright",  tags: ["playwright","browsers","cross-browser","testing"], level: "advanced" },
+  { topic: "Playwright", subtopic: "Mobile Emulation and Responsive Testing",      category: "Playwright",  tags: ["playwright","mobile","emulation","responsive"], level: "advanced" },
+  { topic: "Playwright", subtopic: "Geolocation and Browser Permissions",          category: "Playwright",  tags: ["playwright","geolocation","permissions","testing"], level: "advanced" },
+  { topic: "Playwright", subtopic: "Parallel Test Execution and Sharding",         category: "Playwright",  tags: ["playwright","parallel","sharding","performance"], level: "advanced" },
+  { topic: "Playwright", subtopic: "Retry Strategies and Flakiness Control",       category: "Playwright",  tags: ["playwright","retries","flakiness","reliability"], level: "advanced" },
+  { topic: "Playwright", subtopic: "playwright.config.ts Full Overview",           category: "Playwright",  tags: ["playwright","config","typescript","setup"], level: "advanced" },
+  { topic: "Playwright", subtopic: "CI/CD Integration with GitHub Actions",        category: "Playwright",  tags: ["playwright","ci","github-actions","devops"], level: "advanced" },
+  { topic: "Playwright", subtopic: "Custom Reporters and Test Results",            category: "Playwright",  tags: ["playwright","reporters","results","testing"], level: "advanced" },
+  { topic: "Playwright", subtopic: "Accessibility Testing with Playwright",        category: "Playwright",  tags: ["playwright","accessibility","axe","a11y"], level: "advanced" },
+  { topic: "Playwright", subtopic: "Web Components and Shadow DOM Testing",        category: "Playwright",  tags: ["playwright","shadow-dom","components","testing"], level: "advanced" },
+  { topic: "Playwright", subtopic: "Component Testing with Playwright CT",         category: "Playwright",  tags: ["playwright","component-testing","ct","react"], level: "advanced" },
+  // ── JavaScript (33) ── Beginner → Intermediate → Advanced ────────────────
+  { topic: "JavaScript", subtopic: "var vs let vs const Scoping Rules",            category: "JavaScript",  tags: ["javascript","variables","scope","es6"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Arrow Functions vs Regular Functions",         category: "JavaScript",  tags: ["javascript","arrow-functions","es6","functions"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Template Literals and Tagged Templates",       category: "JavaScript",  tags: ["javascript","template-literals","strings","es6"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Array and Object Destructuring",               category: "JavaScript",  tags: ["javascript","destructuring","arrays","objects"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Spread and Rest Operators",                    category: "JavaScript",  tags: ["javascript","spread","rest","es6"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Default Function Parameters",                  category: "JavaScript",  tags: ["javascript","functions","parameters","defaults"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Array.map() for Data Transformation",          category: "JavaScript",  tags: ["javascript","map","arrays","functional"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Array.filter() for Conditional Selection",     category: "JavaScript",  tags: ["javascript","filter","arrays","functional"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Array.find() and findIndex()",                 category: "JavaScript",  tags: ["javascript","find","arrays","search"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "JSON.parse and JSON.stringify",                category: "JavaScript",  tags: ["javascript","json","serialization","data"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Local Storage and Session Storage",            category: "JavaScript",  tags: ["javascript","storage","browser","web"], level: "beginner" },
+  { topic: "JavaScript", subtopic: "Promises: then catch finally",                 category: "JavaScript",  tags: ["javascript","promises","async","es6"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "async/await Clean Async Code",                 category: "JavaScript",  tags: ["javascript","async","await","asynchronous"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Promise.all race allSettled any",              category: "JavaScript",  tags: ["javascript","promise","concurrency","async"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Array.reduce() for Accumulation",              category: "JavaScript",  tags: ["javascript","reduce","arrays","functional"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Array.flat() and flatMap()",                   category: "JavaScript",  tags: ["javascript","flat","arrays","es2019"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Object.keys() values() and entries()",         category: "JavaScript",  tags: ["javascript","objects","iteration","es6"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Object.assign() and Object Spread",            category: "JavaScript",  tags: ["javascript","objects","merging","spread"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Closures and Lexical Scope",                   category: "JavaScript",  tags: ["javascript","closures","scope","functions"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "ES6 Classes and Inheritance",                  category: "JavaScript",  tags: ["javascript","classes","es6","oop"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "ES Modules import and export",                 category: "JavaScript",  tags: ["javascript","modules","import","export"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Error Handling try catch finally",             category: "JavaScript",  tags: ["javascript","errors","try-catch","debugging"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Fetch API and HTTP Requests",                  category: "JavaScript",  tags: ["javascript","fetch","http","api"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Regular Expressions in JavaScript",            category: "JavaScript",  tags: ["javascript","regex","patterns","strings"], level: "intermediate" },
+  { topic: "JavaScript", subtopic: "Prototypal Inheritance and Prototype Chain",   category: "JavaScript",  tags: ["javascript","prototype","inheritance","oop"], level: "advanced" },
+  { topic: "JavaScript", subtopic: "Nullish Coalescing and Optional Chaining",     category: "JavaScript",  tags: ["javascript","nullish","optional-chaining","es2020"], level: "advanced" },
+  { topic: "JavaScript", subtopic: "Event Loop Call Stack and Microtasks",         category: "JavaScript",  tags: ["javascript","event-loop","async","microtasks"], level: "advanced" },
+  { topic: "JavaScript", subtopic: "setTimeout and setInterval Patterns",          category: "JavaScript",  tags: ["javascript","timers","async","patterns"], level: "advanced" },
+  { topic: "JavaScript", subtopic: "Map and Set Data Structures",                  category: "JavaScript",  tags: ["javascript","map","set","data-structures"], level: "advanced" },
+  { topic: "JavaScript", subtopic: "WeakMap WeakRef and Memory Management",        category: "JavaScript",  tags: ["javascript","weakmap","memory","advanced"], level: "advanced" },
+  { topic: "JavaScript", subtopic: "Generators and Iterators",                     category: "JavaScript",  tags: ["javascript","generators","iterators","advanced"], level: "advanced" },
+  { topic: "JavaScript", subtopic: "Proxy and Reflect API",                        category: "JavaScript",  tags: ["javascript","proxy","reflect","metaprogramming"], level: "advanced" },
+  { topic: "JavaScript", subtopic: "Short-Circuit Evaluation and Logical Assignment",category: "JavaScript",tags: ["javascript","logical","operators","es2021"], level: "advanced" },
+  // ── TypeScript (33) ── Beginner → Intermediate → Advanced ────────────────
+  { topic: "TypeScript", subtopic: "Basic Types string number boolean any",        category: "TypeScript",  tags: ["typescript","types","basics","javascript"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "Interfaces vs Type Aliases",                   category: "TypeScript",  tags: ["typescript","interfaces","types","design"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "Union Types and Intersection Types",           category: "TypeScript",  tags: ["typescript","union","intersection","types"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "Enums Numeric String and Const",               category: "TypeScript",  tags: ["typescript","enums","constants","types"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "Tuple Types and Labeled Tuples",               category: "TypeScript",  tags: ["typescript","tuples","arrays","types"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "Strict Mode Configuration",                    category: "TypeScript",  tags: ["typescript","strict","config","best-practices"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "tsconfig.json Key Compiler Options",           category: "TypeScript",  tags: ["typescript","tsconfig","compiler","setup"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "Type Assertions as and satisfies",             category: "TypeScript",  tags: ["typescript","assertions","satisfies","safety"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "Non-null Assertion Operator",                  category: "TypeScript",  tags: ["typescript","non-null","assertion","safety"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "keyof and typeof Operators",                   category: "TypeScript",  tags: ["typescript","keyof","typeof","type-level"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "DefinitelyTyped and @types Packages",          category: "TypeScript",  tags: ["typescript","definitelytyped","types","npm"], level: "beginner" },
+  { topic: "TypeScript", subtopic: "Type Narrowing and Type Guards",               category: "TypeScript",  tags: ["typescript","narrowing","guards","safety"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "Generics Type Parameters and Constraints",     category: "TypeScript",  tags: ["typescript","generics","constraints","reusable"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "Generic Functions and Interfaces",             category: "TypeScript",  tags: ["typescript","generics","functions","patterns"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "Partial and Required Utility Types",           category: "TypeScript",  tags: ["typescript","partial","required","utility"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "Pick and Omit Utility Types",                  category: "TypeScript",  tags: ["typescript","pick","omit","utility"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "Readonly and ReadonlyArray",                   category: "TypeScript",  tags: ["typescript","readonly","immutable","safety"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "Record Type for Object Maps",                  category: "TypeScript",  tags: ["typescript","record","maps","objects"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "Exclude Extract and NonNullable",              category: "TypeScript",  tags: ["typescript","exclude","extract","utility"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "ReturnType and Parameters Utilities",          category: "TypeScript",  tags: ["typescript","returntype","parameters","inference"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "abstract Classes and Methods",                 category: "TypeScript",  tags: ["typescript","abstract","classes","oop"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "Access Modifiers public private protected",    category: "TypeScript",  tags: ["typescript","access","modifiers","encapsulation"], level: "intermediate" },
+  { topic: "TypeScript", subtopic: "Conditional Types with extends",               category: "TypeScript",  tags: ["typescript","conditional","types","advanced"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Mapped Types and Index Signatures",            category: "TypeScript",  tags: ["typescript","mapped","index-signature","types"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Template Literal Types",                       category: "TypeScript",  tags: ["typescript","template-literal","string","types"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Infer Keyword in Conditional Types",           category: "TypeScript",  tags: ["typescript","infer","conditional","advanced"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Discriminated Unions Pattern",                 category: "TypeScript",  tags: ["typescript","discriminated","unions","patterns"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Declaration Merging",                          category: "TypeScript",  tags: ["typescript","declaration","merging","modules"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Function Overloads",                           category: "TypeScript",  tags: ["typescript","overloads","functions","signatures"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Decorators Class and Method",                  category: "TypeScript",  tags: ["typescript","decorators","metadata","advanced"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Path Aliases and Module Resolution",           category: "TypeScript",  tags: ["typescript","paths","modules","config"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Type Declaration Files .d.ts",                 category: "TypeScript",  tags: ["typescript","declaration","dts","types"], level: "advanced" },
+  { topic: "TypeScript", subtopic: "Migrating JavaScript to TypeScript",           category: "TypeScript",  tags: ["typescript","migration","javascript","gradual"], level: "advanced" }
 ];
 
 function ask(question) {
@@ -311,7 +319,7 @@ function extractCodeBlocks(rawText) {
   return blocks;
 }
 
-function buildDetailedContent({ core, rules, tryThis, quizQ, quizA, takeaway }) {
+function buildDetailedContent({ core, rules, workflow, architecture, tryThis, quizQ, quizA, takeaway }) {
   return [
     "## Core Concept",
     "",
@@ -324,6 +332,14 @@ function buildDetailedContent({ core, rules, tryThis, quizQ, quizA, takeaway }) 
     `- ${rules[1]}`,
     "",
     `- ${rules[2]}`,
+    "",
+    "## 🔄 Workflow",
+    "",
+    workflow || "1. Identify the problem scope.\n2. Choose the right tool or pattern.\n3. Implement a minimal solution.\n4. Validate with tests.\n5. Refactor and optimize.",
+    "",
+    "## 🏗️ Architecture Flow",
+    "",
+    architecture || "The input enters the system, passes through parsing and validation layers, gets processed by the core engine, and the result is returned to the caller. Each layer is decoupled for testability.",
     "",
     "## 💡 Try This",
     "",
@@ -370,6 +386,7 @@ function createTopicPosts(cfg) {
     const excerpt = core.length > 140 ? `${core.slice(0, 137)}...` : core;
     const tags = Array.from(new Set([...(cfg.tags || []), ...tpl.tags])).slice(0, 6);
 
+    const levels = ["beginner", "intermediate", "advanced"];
     posts.push({
       id: i + 1,
       category: tpl.category || cfg.defaultCategory || "JavaScript",
@@ -378,9 +395,12 @@ function createTopicPosts(cfg) {
       excerpt,
       sourceUrl: "",
       createdAt: generatedTimestamp(baseTime, i),
+      level: levels[i % 3],
       content: buildDetailedContent({
         core,
         rules,
+        workflow: tpl.workflow,
+        architecture: tpl.architecture,
         tryThis: tpl.tryThis,
         quizQ: tpl.quizQ,
         quizA: tpl.quizA,
@@ -466,6 +486,7 @@ function toPostsDataJs(posts) {
     lines.push(`    excerpt: ${JSON.stringify(post.excerpt)},`);
     lines.push(`    sourceUrl: ${JSON.stringify(post.sourceUrl || "")},`);
     lines.push(`    createdAt: ${JSON.stringify(post.createdAt || generatedTimestamp(Date.now(), index))},`);
+    lines.push(`    level: ${JSON.stringify(post.level || "beginner")},`);
     lines.push(`    content: ${JSON.stringify(post.content)}`);
     lines.push(index === posts.length - 1 ? "  }" : "  },");
   });
@@ -516,6 +537,7 @@ function normalizeAiPost(post, index, cfg) {
     excerpt: excerpt || content.slice(0, 140),
     sourceUrl: normalizeSentence(post.sourceUrl || ""),
     createdAt: normalizeSentence(post.createdAt || generatedTimestamp(Date.now(), index)),
+    level: normalizeSentence(post.level || "beginner"),
     content
   };
 }
@@ -585,21 +607,32 @@ async function createAiPosts(cfg, aiCfg) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function buildPostPrompt(seed) {
+  const level = seed.level || "beginner";
+  const levelGuide = {
+    beginner: "Explain like teaching a first-year student. Use simple language, analogies, and everyday examples. No jargon without explaining it.",
+    intermediate: "Assume the reader knows basics. Focus on patterns, best practices, and real-world gotchas. Include production-ready examples.",
+    advanced: "Write for a senior/architect audience. Cover system design, scalability, trade-offs, and enterprise patterns. Include architecture decisions."
+  };
   return (
-    "You are a senior " + seed.topic + " expert writing a LinkedIn post.\n" +
-    "Topic: \"" + seed.subtopic + "\"\n\n" +
+    "You are a senior " + seed.topic + " expert writing educational content.\n" +
+    "Topic: \"" + seed.subtopic + "\"\n" +
+    "Level: " + level.toUpperCase() + "\n" +
+    "Audience: " + levelGuide[level] + "\n\n" +
     "STYLE RULES (mandatory):\n" +
     "- Conversational tone: ask questions, invite opinions, share personal experience.\n" +
     "- Short paragraphs (2-3 lines max) for mobile readability.\n" +
     "- Use bullet points and numbered lists for scannability.\n" +
     "- Authentic voice — no marketing speak.\n" +
-    "- Educational: provide actionable insights and frameworks.\n\n" +
+    "- Educational: provide actionable insights and frameworks.\n" +
+    "- Structure content as a learning path from concept → workflow → architecture → practice.\n\n" +
     "Return ONLY a valid JSON object (no markdown fences, no extra text).\n" +
-    "Schema: { \"title\": string, \"tags\": string[], \"excerpt\": string, \"content\": string }\n\n" +
+    "Schema: { \"title\": string, \"tags\": string[], \"excerpt\": string, \"content\": string, \"level\": \"" + level + "\" }\n\n" +
     "The content field must use \\n for line breaks. Add a BLANK LINE (\\n\\n) between every section.\n" +
     "Follow this EXACT layout:\n\n" +
     "## Core Concept\\n\\n<2-3 conversational sentences explaining the idea — ask a question to hook the reader>\\n\\n" +
     "## Key Rules\\n\\n- <rule 1>\\n\\n- <rule 2>\\n\\n- <rule 3>\\n\\n" +
+    "## \uD83D\uDD04 Workflow\\n\\n<Step-by-step workflow explaining HOW to apply this in practice. 4-6 numbered steps. Each step: one sentence.>\\n\\n" +
+    "## \uD83C\uDFD7\uFE0F Architecture Flow\\n\\n<Explain the architecture/internal flow behind this topic. How does it work under the hood? What components interact? 3-5 sentences with a clear data/control flow.>\\n\\n" +
     "## \uD83D\uDCA1 Try This\\n\\n```js\\n<3-6 line code snippet>\\n```\\n\\n" +
     "## \u2753 Quick Quiz\\n\\nQ: <short question>\\n\\nA: <short answer>\\n\\n" +
     "## \uD83D\uDD11 Key Takeaway\\n\\n<one punchy actionable sentence>"
@@ -705,6 +738,7 @@ function parseFreeAiResponse(rawText, seed, index, cfg) {
     {
       ...obj,
       category: seed.category,
+      level: obj.level || seed.level || "beginner",
       tags: Array.isArray(obj.tags) && obj.tags.length > 0 ? obj.tags : seed.tags
     },
     index,
@@ -729,7 +763,8 @@ function createFallbackPost(seed, index, cfg) {
     excerpt: core.length > 140 ? core.slice(0, 137) + "..." : core,
     sourceUrl: "",
     createdAt: generatedTimestamp(Date.now(), index),
-    content: buildDetailedContent({ core, rules, tryThis: tpl.tryThis, quizQ: tpl.quizQ, quizA: tpl.quizA, takeaway: tpl.takeaway })
+    level: seed.level || "beginner",
+    content: buildDetailedContent({ core, rules, workflow: tpl.workflow, architecture: tpl.architecture, tryThis: tpl.tryThis, quizQ: tpl.quizQ, quizA: tpl.quizA, takeaway: tpl.takeaway })
   };
 }
 

@@ -232,6 +232,7 @@ button {
 }
 .cat-javascript { background: #fff8e1; border-color: #f9d648; color: #7a6100; }
 .cat-playwright { background: #e8f5e9; border-color: #66bb6a; color: #1b5e20; }
+.cat-typescript { background: #e3f2fd; border-color: #2196f3; color: #0d47a1; }
 .cat-mcp { background: #ede7f6; border-color: #9575cd; color: #4527a0; }
 .cat-tosca { background: #e3f2fd; border-color: #42a5f5; color: #0d47a1; }
 .cat-both { background: #fce4ec; border-color: #ef5350; color: #b71c1c; }
@@ -615,4 +616,102 @@ button {
     flex-direction: column;
     align-items: center;
   }
+}
+
+/* ── Learning Path Navigation ──────────────────────────── */
+.learning-path-nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.2rem;
+  flex-wrap: wrap;
+}
+.path-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: var(--panel);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.path-btn:hover {
+  border-color: var(--accent);
+  background: #e8f5ff;
+}
+.path-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.path-beginner.active { background: #2e7d32; border-color: #2e7d32; }
+.path-intermediate.active { background: #e65100; border-color: #e65100; }
+.path-advanced.active { background: #4a148c; border-color: #4a148c; }
+
+/* ── Level Badges ──────────────────────────────────────── */
+.level-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.level-beginner { background: #e8f5e9; border: 1px solid #66bb6a; color: #1b5e20; }
+.level-intermediate { background: #fff3e0; border: 1px solid #ff9800; color: #e65100; }
+.level-advanced { background: #f3e5f5; border: 1px solid #ab47bc; color: #4a148c; }
+
+/* ── Workflow & Architecture in Viewer ─────────────────── */
+.post-body .workflow-steps,
+.post-body .architecture-flow {
+  background: #f8fafb;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin: 0.75rem 0;
+}
+.post-body .workflow-steps {
+  border-left: 4px solid var(--accent);
+}
+.post-body .architecture-flow {
+  border-left: 4px solid var(--accent-2);
+}
+
+/* ── Progress Indicator ────────────────────────────────── */
+.topic-progress {
+  max-width: 1100px;
+  margin: 0 auto 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+.progress-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+}
+.progress-card h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+.progress-bar {
+  height: 6px;
+  background: #e0e5d8;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s;
+}
+.progress-fill-js { background: #f9d648; }
+.progress-fill-ts { background: #2196f3; }
+.progress-fill-pw { background: #66bb6a; }
+.progress-label {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 0.3rem;
 }
