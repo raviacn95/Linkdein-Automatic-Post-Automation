@@ -15,7 +15,7 @@
     "prePostDelayMaxSec": 5
   },
   "safetyLimits": {
-    "maxPostsPerDay": 10,
+    "maxPostsPerDay": 20,
     "similarityThreshold": 0.6,
     "maxHistory": 50
   },

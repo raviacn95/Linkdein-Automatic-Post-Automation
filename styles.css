@@ -603,6 +603,274 @@ button {
     flex-direction: column;
     align-items: center;
   }
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+  .consulting-inner {
+    grid-template-columns: 1fr;
+  }
+  .consulting-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Lead Magnet / Email Signup ────────────────────────── */
+.lead-magnet-section {
+  max-width: 700px;
+  margin: 2.5rem auto;
+  padding: 2.5rem 2rem;
+  background: linear-gradient(135deg, #0a1628 0%, #1a1a3e 50%, #0d1f3c 100%);
+  border-radius: 20px;
+  border: 1px solid rgba(91,164,245,0.2);
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+.lead-magnet-inner {
+  max-width: 500px;
+  margin: 0 auto;
+}
+.lead-magnet-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+.lead-magnet-section h2 {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-bottom: 0.6rem;
+}
+.lead-magnet-section p {
+  color: #b0b8c9;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+.lead-magnet-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.lead-magnet-email {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+  font-size: 0.95rem;
+}
+.lead-magnet-email::placeholder {
+  color: #778;
+}
+.lead-magnet-email:focus {
+  outline: 2px solid #5ba4f5;
+  border-color: #5ba4f5;
+}
+.lead-magnet-btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #5ba4f5, #3d8be8);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+.lead-magnet-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(91,164,245,0.35);
+}
+.lead-magnet-note {
+  font-size: 0.78rem !important;
+  color: #667 !important;
+  margin-top: 0.6rem !important;
+}
+
+/* ── Digital Products Section ──────────────────────────── */
+.products-section {
+  max-width: 960px;
+  margin: 2.5rem auto;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+.products-section h2 {
+  color: var(--ink);
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+.products-subtitle {
+  color: var(--ink-soft);
+  margin-bottom: 1.5rem;
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.2rem;
+}
+.product-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.8rem 1.3rem;
+  text-align: center;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+}
+.product-badge {
+  position: absolute;
+  top: -0.5rem;
+  right: 1rem;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: #fff;
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.product-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.7rem;
+}
+.product-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+  color: var(--ink);
+}
+.product-card p {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin-bottom: 0.8rem;
+}
+.product-price {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.8rem;
+}
+.product-price-old {
+  font-size: 0.9rem;
+  color: #999;
+  text-decoration: line-through;
+  margin-left: 0.4rem;
+  font-weight: 400;
+}
+.product-btn {
+  display: inline-block;
+  padding: 0.55rem 1.4rem;
+  border-radius: 10px;
+  background: linear-gradient(120deg, var(--accent), #0284b3);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.product-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(5,102,141,0.3);
+}
+
+/* ── Consulting Section ────────────────────────────────── */
+.consulting-section {
+  max-width: 960px;
+  margin: 2.5rem auto;
+  padding: 2.5rem 2rem;
+  background: linear-gradient(135deg, #f8fafb 0%, #eef6fb 100%);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+.consulting-inner {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+.consulting-text h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+.consulting-text p {
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+.consulting-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.2rem;
+}
+.consulting-features li {
+  font-size: 0.92rem;
+  color: var(--ink);
+  padding: 0.25rem 0;
+}
+.consulting-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.consulting-btn-primary {
+  padding: 0.65rem 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(120deg, var(--accent), #0284b3);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.consulting-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(5,102,141,0.3);
+}
+.consulting-btn-secondary {
+  padding: 0.65rem 1.5rem;
+  border-radius: 10px;
+  background: #fff;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.consulting-btn-secondary:hover {
+  transform: translateY(-2px);
+  background: #e8f5ff;
+}
+.consulting-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 0.15rem;
 }
 
 /* ── Learning Path Navigation ──────────────────────────── */
