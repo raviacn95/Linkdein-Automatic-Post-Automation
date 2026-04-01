@@ -198,13 +198,37 @@ function buildLinkedInText(post) {
     .replace(/\r\n/g, "\n")
     .trim();
 
-  // Extract Core Concept text — handle ## / # / ### prefix or no prefix at all
+  // Extract key sections from the detailed tutorial content
+  let quickUsage = "";
+  const quickMatch = content.match(/(?:#{1,3}\s*)?How to Use[^?]*\?\s*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
+  if (quickMatch) {
+    quickUsage = quickMatch[1].trim().slice(0, 300);
+    content = content.replace(quickMatch[0], "").trim();
+  }
+
+  // Extract "What is" section as intro
+  let whatIs = "";
+  const whatMatch = content.match(/(?:#{1,3}\s*)?What is[^?]*\?\s*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
+  if (whatMatch) {
+    whatIs = whatMatch[1].trim().slice(0, 400);
+    content = content.replace(whatMatch[0], "").trim();
+  }
+
+  // Extract Best Practices
+  let bestPractices = "";
+  const bpMatch = content.match(/(?:#{1,3}\s*)?Best Practices\s*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
+  if (bpMatch) {
+    bestPractices = bpMatch[1].trim().slice(0, 400);
+  }
+
+  // Fallback: try old Core Concept format
   let coreConcept = "";
-  const coreMatch = content.match(/(?:#{1,3}\s*)?Core\s+Concept[:\s]*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
-  if (coreMatch) {
-    coreConcept = coreMatch[1].trim();
-    // Remove Core Concept section from content so it doesn't repeat
-    content = content.replace(coreMatch[0], "").trim();
+  if (!quickUsage && !whatIs) {
+    const coreMatch = content.match(/(?:#{1,3}\s*)?Core\s+Concept[:\s]*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
+    if (coreMatch) {
+      coreConcept = coreMatch[1].trim();
+      content = content.replace(coreMatch[0], "").trim();
+    }
   }
 
   // Insert line breaks before ## headers (AI often returns everything on one line)
@@ -216,24 +240,27 @@ function buildLinkedInText(post) {
     .replace(/\n{3,}/g, "\n\n")                   // collapse 3+ newlines to 2
     .trim();
 
+  // Build a compelling LinkedIn post from the detailed tutorial
+  const introText = quickUsage || whatIs || coreConcept || post.excerpt || "";
+
   const parts = [
-    coreConcept || "",
+    "\uD83D\uDCD6 " + (post.title || ""),
     "",
     levelBadge,
     "",
     "\u2500".repeat(30),
     "",
-    post.title || "",
-    "",
-    post.excerpt || "",
+    introText,
     "",
     hashtags,
     "",
     "\u2500".repeat(30),
     "",
-    content,
+    bestPractices ? "\u2705 Best Practices:\n\n" + bestPractices : "",
     "",
     "\u2500".repeat(30),
+    "",
+    "\uD83D\uDC49 Read the full detailed guide with code examples, comparison tables, FAQs, and step-by-step instructions on our Learning Hub.",
     "",
     painPointLines[0],
     "",

@@ -319,43 +319,127 @@ function extractCodeBlocks(rawText) {
   return blocks;
 }
 
-function buildDetailedContent({ core, rules, workflow, architecture, tryThis, quizQ, quizA, takeaway }) {
+function buildDetailedContent({ topic, subtopic, core, rules, workflow, architecture, tryThis, quizQ, quizA, takeaway }) {
+  const lang = (topic || "").toLowerCase() === "typescript" ? "ts" : "js";
+  const topicName = subtopic || topic || "this concept";
   return [
-    "## Core Concept",
+    "## How to Use " + topicName + " Quickly?",
     "",
     core,
     "",
-    "## Key Rules",
+    "Here is a quick example to get started:",
     "",
-    `- ${rules[0]}`,
-    "",
-    `- ${rules[1]}`,
-    "",
-    `- ${rules[2]}`,
-    "",
-    "## 🔄 Workflow",
-    "",
-    workflow || "1. Identify the problem scope.\n2. Choose the right tool or pattern.\n3. Implement a minimal solution.\n4. Validate with tests.\n5. Refactor and optimize.",
-    "",
-    "## 🏗️ Architecture Flow",
-    "",
-    architecture || "The input enters the system, passes through parsing and validation layers, gets processed by the core engine, and the result is returned to the caller. Each layer is decoupled for testability.",
-    "",
-    "## 💡 Try This",
-    "",
-    "```js",
+    "```" + lang,
     tryThis,
     "```",
     "",
-    "## ❓ Quick Quiz",
+    "## What is " + topicName + "?",
     "",
-    `Q: ${quizQ}`,
+    core,
     "",
-    `A: ${quizA}`,
+    "Understanding this concept is essential for writing reliable, maintainable code. It forms the foundation for many advanced patterns you will encounter in production applications.",
     "",
-    "## 🔑 Key Takeaway",
+    "When applied correctly, it improves code readability and reduces bugs during development and maintenance cycles.",
     "",
-    takeaway
+    "## When to Use " + topicName + "?",
+    "",
+    "You should use this approach when:",
+    "",
+    "- Building features that depend on " + (rules[0] || "structured patterns").toLowerCase(),
+    "- Working with teams where " + (rules[1] || "consistent approaches").toLowerCase(),
+    "- Validating that " + (rules[2] || "code behaves as expected").toLowerCase(),
+    "- Refactoring existing code for better structure",
+    "- Writing tests that need predictable behavior",
+    "",
+    "## Step by Step Guide with Examples",
+    "",
+    workflow || "1. Identify the problem scope.\n2. Choose the right tool or pattern.\n3. Implement a minimal solution.\n4. Validate with tests.\n5. Refactor and optimize.\n6. Document the approach for your team.",
+    "",
+    "```" + lang,
+    tryThis,
+    "```",
+    "",
+    "This example demonstrates the core pattern. Each step builds on the previous one to create a complete solution.",
+    "",
+    "## Method Comparison",
+    "",
+    "| Approach | When to Use | Key Benefit | Complexity |",
+    "| --- | --- | --- | --- |",
+    "| " + (rules[0] || "Pattern A") + " | Default scenarios | Simplicity | Low |",
+    "| " + (rules[1] || "Pattern B") + " | Complex workflows | Flexibility | Medium |",
+    "| " + (rules[2] || "Pattern C") + " | Enterprise scale | Robustness | High |",
+    "",
+    "## Best Practices",
+    "",
+    "- " + rules[0],
+    "- " + rules[1],
+    "- " + rules[2],
+    "- Always validate inputs at system boundaries before processing",
+    "- Write tests that cover both happy paths and edge cases",
+    "- Document trade-offs when choosing between approaches",
+    "",
+    "### Common Mistakes to Avoid",
+    "",
+    "- Skipping validation which leads to silent failures in production",
+    "- Over-engineering simple solutions when a straightforward approach works",
+    "- Ignoring error handling at integration boundaries",
+    "- Not writing tests for edge cases and boundary conditions",
+    "",
+    "## Common Issues and Fixes",
+    "",
+    "### Why does unexpected behavior occur?",
+    "",
+    "This usually happens when inputs are not validated or when assumptions about state are incorrect. Always verify the current state before performing operations.",
+    "",
+    "### Why does the output not match expectations?",
+    "",
+    "Check that your configuration and parameters match the expected format. Review the documentation for any required setup steps you may have missed.",
+    "",
+    "## Advanced Scenarios",
+    "",
+    "### " + topicName + " in Complex Workflows",
+    "",
+    architecture || "The input enters the system, passes through parsing and validation layers, gets processed by the core engine, and the result is returned to the caller. Each layer is decoupled for testability.",
+    "",
+    "### Integration with Other Patterns",
+    "",
+    "When combining this with other patterns, ensure each component has clear boundaries and responsibilities. This makes the system easier to test and maintain.",
+    "",
+    "## Real World Use Cases",
+    "",
+    "### Use Case: Production Application",
+    "",
+    "In production applications, this pattern helps maintain consistency across the codebase while enabling teams to work independently on different features.",
+    "",
+    "### Use Case: CI/CD Pipeline",
+    "",
+    "Integrating this approach into your CI/CD pipeline ensures quality gates are met before deployment, reducing the risk of production issues.",
+    "",
+    "## FAQs",
+    "",
+    "### What is " + topicName + "?",
+    "",
+    core,
+    "",
+    "### When should I use " + topicName + "?",
+    "",
+    "Use it when you need " + (rules[0] || "structured, reliable patterns").toLowerCase() + ". It is especially valuable in team environments and production codebases.",
+    "",
+    "### What are the best practices for " + topicName + "?",
+    "",
+    rules[0] + " " + rules[1] + " " + rules[2],
+    "",
+    "### " + quizQ,
+    "",
+    quizA,
+    "",
+    "### What are common mistakes with " + topicName + "?",
+    "",
+    "The most common mistake is not validating inputs at boundaries. Always ensure data is in the expected format before processing.",
+    "",
+    "## Conclusion",
+    "",
+    takeaway + " In this guide, you learned the fundamentals of " + topicName + ", step by step implementation, best practices, and how to avoid common mistakes. As a next step, try applying these patterns in your own projects and combine them with related concepts."
   ].join("\n");
 }
 
@@ -397,6 +481,8 @@ function createTopicPosts(cfg) {
       createdAt: generatedTimestamp(baseTime, i),
       level: levels[i % 3],
       content: buildDetailedContent({
+        topic: tpl.topic,
+        subtopic: tpl.titleSeed,
         core,
         rules,
         workflow: tpl.workflow,
@@ -455,6 +541,8 @@ function generatePostsFromText(rawText, cfg) {
       sourceUrl: "",
       createdAt: generatedTimestamp(baseTime, i),
       content: buildDetailedContent({
+        topic: cfg.defaultCategory || "JavaScript",
+        subtopic: titleWords || "Practical Concept",
         core,
         rules,
         tryThis: code,
@@ -523,7 +611,11 @@ function stripCodeFence(text) {
 function normalizeAiPost(post, index, cfg) {
   const title = normalizeSentence(post.title || `Generated Insight ${index + 1}`);
   const excerpt = normalizeSentence(post.excerpt || "");
-  const content = normalizeSentence(post.content || "").replace(/\\n/g, "\n");
+  // Preserve line breaks in content — only normalize control chars and convert literal \n
+  const rawContent = String(post.content || "")
+    .replace(/\\n/g, "\n")
+    .replace(/[\u0000-\u0009\u000b\u000c\u000e-\u001f]/g, "")
+    .trim();
   const category = normalizeSentence(post.category || cfg.defaultCategory || "JavaScript");
   const tags = Array.isArray(post.tags) && post.tags.length > 0
     ? post.tags.map((t) => normalizeSentence(t.toLowerCase())).filter(Boolean).slice(0, 8)
@@ -534,11 +626,11 @@ function normalizeAiPost(post, index, cfg) {
     category,
     title,
     tags,
-    excerpt: excerpt || content.slice(0, 140),
+    excerpt: excerpt || rawContent.slice(0, 140),
     sourceUrl: normalizeSentence(post.sourceUrl || ""),
     createdAt: normalizeSentence(post.createdAt || generatedTimestamp(Date.now(), index)),
     level: normalizeSentence(post.level || "beginner"),
-    content
+    content: rawContent
   };
 }
 
@@ -614,28 +706,66 @@ function buildPostPrompt(seed) {
     advanced: "Write for a senior/architect audience. Cover system design, scalability, trade-offs, and enterprise patterns. Include architecture decisions."
   };
   return (
-    "You are a senior " + seed.topic + " expert writing educational content.\n" +
+    "You are a senior " + seed.topic + " expert and technical writer creating a COMPREHENSIVE, SEO-optimized tutorial guide.\n" +
     "Topic: \"" + seed.subtopic + "\"\n" +
     "Level: " + level.toUpperCase() + "\n" +
     "Audience: " + levelGuide[level] + "\n\n" +
-    "STYLE RULES (mandatory):\n" +
-    "- Conversational tone: ask questions, invite opinions, share personal experience.\n" +
-    "- Short paragraphs (2-3 lines max) for mobile readability.\n" +
-    "- Use bullet points and numbered lists for scannability.\n" +
-    "- Authentic voice — no marketing speak.\n" +
-    "- Educational: provide actionable insights and frameworks.\n" +
-    "- Structure content as a learning path from concept → workflow → architecture → practice.\n\n" +
+    "WRITING RULES (mandatory):\n" +
+    "- Write a DETAILED tutorial (2000-3000 words minimum in the content field).\n" +
+    "- Conversational tone — like a senior dev teaching a teammate.\n" +
+    "- Short paragraphs (2-3 lines max) for readability.\n" +
+    "- Multiple code examples throughout (not just one).\n" +
+    "- Include comparison tables using markdown pipe tables where relevant.\n" +
+    "- Use H2 (##) and H3 (###) headings liberally for SEO structure.\n" +
+    "- Include inline Q&A (Is X different from Y?) after relevant sections.\n" +
+    "- Bold important terms with **term**.\n" +
+    "- Every section should teach something actionable.\n\n" +
     "Return ONLY a valid JSON object (no markdown fences, no extra text).\n" +
     "Schema: { \"title\": string, \"tags\": string[], \"excerpt\": string, \"content\": string, \"level\": \"" + level + "\" }\n\n" +
+    "The title MUST be an SEO-friendly guide title like: \"" + seed.subtopic + " Guide with Examples\"\n" +
+    "The excerpt must be 1-2 sentences summarizing what readers will learn.\n\n" +
     "The content field must use \\n for line breaks. Add a BLANK LINE (\\n\\n) between every section.\n" +
-    "Follow this EXACT layout:\n\n" +
-    "## Core Concept\\n\\n<2-3 conversational sentences explaining the idea — ask a question to hook the reader>\\n\\n" +
-    "## Key Rules\\n\\n- <rule 1>\\n\\n- <rule 2>\\n\\n- <rule 3>\\n\\n" +
-    "## \uD83D\uDD04 Workflow\\n\\n<Step-by-step workflow explaining HOW to apply this in practice. 4-6 numbered steps. Each step: one sentence.>\\n\\n" +
-    "## \uD83C\uDFD7\uFE0F Architecture Flow\\n\\n<Explain the architecture/internal flow behind this topic. How does it work under the hood? What components interact? 3-5 sentences with a clear data/control flow.>\\n\\n" +
-    "## \uD83D\uDCA1 Try This\\n\\n```js\\n<3-6 line code snippet>\\n```\\n\\n" +
-    "## \u2753 Quick Quiz\\n\\nQ: <short question>\\n\\nA: <short answer>\\n\\n" +
-    "## \uD83D\uDD11 Key Takeaway\\n\\n<one punchy actionable sentence>"
+    "Follow this EXACT section layout (EVERY section is REQUIRED):\n\n" +
+    "## How to Use " + seed.subtopic + " Quickly?\\n\\n" +
+    "<1-2 sentence intro + a quick code example showing the simplest usage>\\n\\n" +
+    "```" + (seed.topic === "TypeScript" ? "ts" : "js") + "\\n<3-5 line quick example>\\n```\\n\\n" +
+    "## What is " + seed.subtopic + "?\\n\\n" +
+    "<3-4 paragraphs explaining the concept in detail. What it is, why it exists, how it works at a high level. Reference official docs concepts.>\\n\\n" +
+    "## When to Use " + seed.subtopic + "?\\n\\n" +
+    "<Bullet list of 4-6 real scenarios where this is useful>\\n\\n" +
+    "### Is " + seed.subtopic + " different from [related concept]?\\n\\n" +
+    "<2-3 sentence comparison answering a common confusion>\\n\\n" +
+    "## Step by Step Guide with Examples\\n\\n" +
+    "<Numbered steps 1-6 explaining how to implement this. Each step has a brief explanation + code snippet.>\\n\\n" +
+    "```" + (seed.topic === "TypeScript" ? "ts" : "js") + "\\n<8-15 line complete code example>\\n```\\n\\n" +
+    "<Explain what the code does line by line in 2-3 sentences>\\n\\n" +
+    "## Method Comparison\\n\\n" +
+    "<A markdown pipe table comparing 3-4 related methods/approaches with columns: Method | When to Use | Triggers Events | Speed>\\n\\n" +
+    "| Method | When to Use | Key Behavior | Speed |\\n" +
+    "| --- | --- | --- | --- |\\n" +
+    "<3-4 rows of real comparisons>\\n\\n" +
+    "## Common Patterns and Variations\\n\\n" +
+    "<Show 2-3 different code patterns/variations of this concept with ### sub-headings and code blocks>\\n\\n" +
+    "## Best Practices\\n\\n" +
+    "<5-6 bullet points of actionable best practices>\\n\\n" +
+    "### Common Mistakes to Avoid\\n\\n" +
+    "<4-5 bullet points of mistakes with brief explanation>\\n\\n" +
+    "## Common Issues and Fixes\\n\\n" +
+    "### Why does [common problem] happen?\\n\\n" +
+    "<Problem explanation + incorrect code example + correct code example for 2-3 issues>\\n\\n" +
+    "```" + (seed.topic === "TypeScript" ? "ts" : "js") + "\\n// Incorrect\\n<wrong code>\\n\\n// Correct\\n<right code>\\n```\\n\\n" +
+    "## Advanced Scenarios\\n\\n" +
+    "<2-3 advanced use cases with ### sub-headings, each with explanation and code example>\\n\\n" +
+    "## Real World Use Cases\\n\\n" +
+    "<3-4 practical examples with ### sub-headings showing real usage with brief code snippets>\\n\\n" +
+    "## FAQs\\n\\n" +
+    "### <SEO question 1>?\\n\\n<2-3 sentence answer>\\n\\n" +
+    "### <SEO question 2>?\\n\\n<2-3 sentence answer>\\n\\n" +
+    "### <SEO question 3>?\\n\\n<2-3 sentence answer>\\n\\n" +
+    "### <SEO question 4>?\\n\\n<2-3 sentence answer>\\n\\n" +
+    "### <SEO question 5>?\\n\\n<2-3 sentence answer>\\n\\n" +
+    "## Conclusion\\n\\n" +
+    "<3-4 sentence wrap-up summarizing what was covered and suggesting next steps>"
   );
 }
 
@@ -764,7 +894,7 @@ function createFallbackPost(seed, index, cfg) {
     sourceUrl: "",
     createdAt: generatedTimestamp(Date.now(), index),
     level: seed.level || "beginner",
-    content: buildDetailedContent({ core, rules, workflow: tpl.workflow, architecture: tpl.architecture, tryThis: tpl.tryThis, quizQ: tpl.quizQ, quizA: tpl.quizA, takeaway: tpl.takeaway })
+    content: buildDetailedContent({ topic: seed.topic, subtopic: seed.subtopic, core, rules, workflow: tpl.workflow, architecture: tpl.architecture, tryThis: tpl.tryThis, quizQ: tpl.quizQ, quizA: tpl.quizA, takeaway: tpl.takeaway })
   };
 }
 

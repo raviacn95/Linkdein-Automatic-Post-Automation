@@ -4,7 +4,7 @@
    ================================================================ */
 
 const STORAGE_KEY = "jsPlaywrightMcpBlogPosts";
-const CONTENT_VERSION = 8;
+const CONTENT_VERSION = 9;
 
 const form = document.getElementById("post-form");
 const postIdInput = document.getElementById("post-id");
@@ -147,10 +147,16 @@ function markdownToHtml(markdown) {
     return `<pre><code${cls}>${code.trim()}</code></pre>`;
   });
 
-  // Headings
+  // Headings with auto-generated IDs for TOC linking
   const headings = fenced
-    .replace(/^###\s+(.*)$/gm, "<h3>$1</h3>")
-    .replace(/^##\s+(.*)$/gm, "<h2>$1</h2>")
+    .replace(/^###\s+(.*)$/gm, (_m, text) => {
+      const id = text.replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "-").toLowerCase();
+      return `<h3 id="${id}">${text}</h3>`;
+    })
+    .replace(/^##\s+(.*)$/gm, (_m, text) => {
+      const id = text.replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "-").toLowerCase();
+      return `<h2 id="${id}">${text}</h2>`;
+    })
     .replace(/^#\s+(.*)$/gm, "<h1>$1</h1>");
 
   // Inline formatting
@@ -205,13 +211,42 @@ function markdownToHtml(markdown) {
 
 /* ── Post Viewer ───────────────────────────────────────── */
 
+function generateToc(markdown) {
+  const headings = [];
+  const lines = (markdown || "").split("\n");
+  for (const line of lines) {
+    const h2Match = line.match(/^##\s+(.+)$/);
+    const h3Match = line.match(/^###\s+(.+)$/);
+    if (h3Match) {
+      const text = h3Match[1].trim();
+      const id = text.replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "-").toLowerCase();
+      headings.push({ level: 3, text, id });
+    } else if (h2Match) {
+      const text = h2Match[1].trim();
+      const id = text.replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "-").toLowerCase();
+      headings.push({ level: 2, text, id });
+    }
+  }
+  if (headings.length < 3) return "";
+  const items = headings.map((h) => {
+    const indent = h.level === 3 ? " toc-indent" : "";
+    return `<li class="toc-item${indent}"><a href="#${h.id}" class="toc-link">${escapeHtml(h.text)}</a></li>`;
+  }).join("");
+  return `<nav class="table-of-contents"><h3 class="toc-title">📋 Table of Contents</h3><ul class="toc-list">${items}</ul></nav>`;
+}
+
 function viewPost(post) {
   const level = (post.level || "beginner").toLowerCase();
   const levelLabel = { beginner: "🌱 Beginner", intermediate: "⭐ Intermediate", advanced: "🚀 Advanced / Architect" };
+  const toc = generateToc(post.content);
+  const contentHtml = markdownToHtml(post.content);
+  const readTime = Math.max(1, Math.ceil((post.content || "").split(/\s+/).length / 200));
+
   viewerContent.innerHTML = `
     <div class="viewer-header">
       <span class="category cat-${post.category.toLowerCase()}">${escapeHtml(post.category)}</span>
       <span class="level-badge level-${level}">${levelLabel[level] || level}</span>
+      <span class="read-time">📖 ${readTime} min read</span>
       <time>${escapeHtml(formatDate(post.createdAt))}</time>
     </div>
     <h2>${escapeHtml(post.title)}</h2>
@@ -221,12 +256,24 @@ function viewPost(post) {
     <div class="ad-slot ad-article">
       <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-client="ca-pub-2441085120272132" data-ad-slot="ARTICLE_SLOT_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
     </div>
-    <div class="post-body">${markdownToHtml(post.content)}</div>
+    ${toc}
+    <div class="post-body">${contentHtml}</div>
     <!-- Bottom of article ad -->
     <div class="ad-slot ad-article-bottom">
       <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="ARTICLE_BOTTOM_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
     </div>
   `;
+
+  // Smooth scroll for TOC links
+  viewerContent.querySelectorAll(".toc-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute("href").slice(1);
+      const target = viewerContent.querySelector("#" + CSS.escape(targetId));
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
   try { (window.adsbygoogle = window.adsbygoogle || []).push({}); (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
   viewer.showModal();
 }

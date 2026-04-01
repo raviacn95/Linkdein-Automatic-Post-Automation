@@ -301,13 +301,6 @@ button {
   color: #4f5864;
 }
 
-.viewer {
-  width: min(760px, 92vw);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 1rem;
-}
-
 .viewer::backdrop {
   background: rgba(0, 10, 20, 0.45);
 }
@@ -378,10 +371,8 @@ button {
   font-style: italic;
 }
 
-.post-body h2 {
-  margin-top: 1.2rem;
-  padding-bottom: 0.3rem;
-  border-bottom: 2px solid #e0e5d8;
+.post-body a {
+  color: #035c80;
 }
 
 .post-body ul {
@@ -391,10 +382,6 @@ button {
 .post-body li {
   margin-bottom: 0.3rem;
   line-height: 1.55;
-}
-
-.post-body a {
-  color: #035c80;
 }
 
 .hidden {
@@ -676,6 +663,92 @@ button {
 }
 .post-body .architecture-flow {
   border-left: 4px solid var(--accent-2);
+}
+
+/* ── Table of Contents ─────────────────────────────────── */
+.table-of-contents {
+  background: #f8fafb;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.toc-title {
+  font-size: 1rem;
+  margin: 0 0 0.6rem;
+  color: var(--ink);
+}
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.toc-item {
+  margin-bottom: 0.3rem;
+}
+.toc-item.toc-indent {
+  padding-left: 1.2rem;
+}
+.toc-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  display: block;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.toc-link:hover {
+  background: #e8f5ff;
+  text-decoration: underline;
+}
+
+/* ── Read Time Badge ───────────────────────────────────── */
+.read-time {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  background: #f0f4e8;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid #d6decd;
+}
+
+/* ── Enhanced Post Body ────────────────────────────────── */
+.post-body h2 {
+  margin-top: 1.8rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid #e0e5d8;
+  font-size: 1.25rem;
+  scroll-margin-top: 1rem;
+}
+
+.post-body h3 {
+  margin-top: 1.3rem;
+  margin-bottom: 0.4rem;
+  font-size: 1.08rem;
+  color: var(--ink);
+  scroll-margin-top: 1rem;
+}
+
+/* FAQ section styling */
+.post-body h2#faqs ~ h3,
+.post-body h2#faqs ~ p {
+  border-left: 3px solid var(--accent-2);
+  padding-left: 0.8rem;
+}
+
+/* Wider viewer for detailed content */
+.viewer {
+  width: min(900px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.5rem;
 }
 
 /* ── Progress Indicator ────────────────────────────────── */
