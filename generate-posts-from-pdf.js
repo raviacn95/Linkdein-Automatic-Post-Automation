@@ -756,72 +756,117 @@ async function createAiPosts(cfg, aiCfg) {
 
 function buildPostPrompt(seed) {
   const level = seed.level || "beginner";
+  const lang = seed.topic === "TypeScript" ? "ts" : "js";
   const levelGuide = {
     beginner: "Explain like teaching a first-year student. Use simple language, analogies, and everyday examples. No jargon without explaining it.",
     intermediate: "Assume the reader knows basics. Focus on patterns, best practices, and real-world gotchas. Include production-ready examples.",
     advanced: "Write for a senior/architect audience. Cover system design, scalability, trade-offs, and enterprise patterns. Include architecture decisions."
   };
   return (
-    "You are a senior " + seed.topic + " expert and technical writer creating a COMPREHENSIVE, SEO-optimized tutorial guide.\n" +
+    "You are a senior " + seed.topic + " expert and technical writer creating a COMPREHENSIVE, SEO-optimized tutorial guide for a professional learning website.\n" +
     "Topic: \"" + seed.subtopic + "\"\n" +
     "Level: " + level.toUpperCase() + "\n" +
     "Audience: " + levelGuide[level] + "\n\n" +
     "WRITING RULES (mandatory):\n" +
-    "- Write a DETAILED tutorial (2000-3000 words minimum in the content field).\n" +
-    "- Conversational tone — like a senior dev teaching a teammate.\n" +
+    "- Write a VERY DETAILED tutorial (3000-5000 words minimum in the content field).\n" +
+    "- Professional tutorial tone — like a senior dev writing a definitive guide.\n" +
     "- Short paragraphs (2-3 lines max) for readability.\n" +
-    "- Multiple code examples throughout (not just one).\n" +
+    "- MANY code examples throughout (at least 8-10 separate code blocks).\n" +
     "- Include comparison tables using markdown pipe tables where relevant.\n" +
-    "- Use H2 (##) and H3 (###) headings liberally for SEO structure.\n" +
-    "- Include inline Q&A (Is X different from Y?) after relevant sections.\n" +
+    "- Use H2 (##) and H3 (###) headings liberally — at least 15-20 headings total.\n" +
+    "- Include inline Q&A as ### sub-sections (e.g. ### Is X different from Y?) after relevant sections.\n" +
     "- Bold important terms with **term**.\n" +
-    "- Every section should teach something actionable.\n\n" +
+    "- Every section should teach something actionable.\n" +
+    "- Numbered steps for procedural sections (1. Step one\\n2. Step two).\n" +
+    "- Bullet points for lists of features, tips, use cases.\n\n" +
     "Return ONLY a valid JSON object (no markdown fences, no extra text).\n" +
     "Schema: { \"title\": string, \"tags\": string[], \"excerpt\": string, \"content\": string, \"level\": \"" + level + "\" }\n\n" +
     "The title MUST be an SEO-friendly guide title like: \"" + seed.subtopic + " Guide with Examples\"\n" +
-    "The excerpt must be 1-2 sentences summarizing what readers will learn.\n\n" +
+    "The excerpt must be 2-3 sentences summarizing what readers will learn.\n\n" +
     "The content field must use \\n for line breaks. Add a BLANK LINE (\\n\\n) between every section.\n" +
-    "Follow this EXACT section layout (EVERY section is REQUIRED):\n\n" +
+    "Follow this EXACT section layout (EVERY section is REQUIRED, write substantial content for each):\n\n" +
+
     "## How to Use " + seed.subtopic + " Quickly?\\n\\n" +
-    "<1-2 sentence intro + a quick code example showing the simplest usage>\\n\\n" +
-    "```" + (seed.topic === "TypeScript" ? "ts" : "js") + "\\n<3-5 line quick example>\\n```\\n\\n" +
+    "<2-3 sentence intro explaining the fastest way to use this>\\n\\n" +
+    "<Show the simplest possible working example>\\n\\n" +
+    "```" + lang + "\\n<5-8 line quick example with comments>\\n```\\n\\n" +
+
+    "## How to " + seed.subtopic + " in Detail?\\n\\n" +
+    "<3-4 paragraphs explaining how this works with a complete example. Explain the flow step by step.>\\n\\n" +
+    "```" + lang + "\\n<10-20 line complete working example>\\n```\\n\\n" +
+    "<Explain what the code does in 3-4 sentences>\\n\\n" +
+
     "## What is " + seed.subtopic + "?\\n\\n" +
-    "<3-4 paragraphs explaining the concept in detail. What it is, why it exists, how it works at a high level. Reference official docs concepts.>\\n\\n" +
+    "<4-5 paragraphs explaining the concept in depth. What it is, why it exists, how it works internally, when it was introduced, and how it fits in the ecosystem.>\\n\\n" +
+
     "## When to Use " + seed.subtopic + "?\\n\\n" +
-    "<Bullet list of 4-6 real scenarios where this is useful>\\n\\n" +
+    "<Bullet list of 5-7 real scenarios where this is useful, each with 1-2 sentence explanation>\\n\\n" +
+
     "### Is " + seed.subtopic + " different from [related concept]?\\n\\n" +
-    "<2-3 sentence comparison answering a common confusion>\\n\\n" +
-    "## Step by Step Guide with Examples\\n\\n" +
-    "<Numbered steps 1-6 explaining how to implement this. Each step has a brief explanation + code snippet.>\\n\\n" +
-    "```" + (seed.topic === "TypeScript" ? "ts" : "js") + "\\n<8-15 line complete code example>\\n```\\n\\n" +
-    "<Explain what the code does line by line in 2-3 sentences>\\n\\n" +
-    "## Method Comparison\\n\\n" +
-    "<A markdown pipe table comparing 3-4 related methods/approaches with columns: Method | When to Use | Triggers Events | Speed>\\n\\n" +
+    "<3-4 sentence comparison answering a common confusion>\\n\\n" +
+
+    "### Does " + seed.subtopic + " trigger events?\\n\\n" +
+    "<2-3 sentence technical answer>\\n\\n" +
+
+    "## What is the Difference Between [Method A] and [Method B]?\\n\\n" +
+    "<Explanation paragraph>\\n\\n" +
     "| Method | When to Use | Key Behavior | Speed |\\n" +
     "| --- | --- | --- | --- |\\n" +
-    "<3-4 rows of real comparisons>\\n\\n" +
+    "<4-5 rows comparing related approaches>\\n\\n" +
+
+    "## Step by Step Guide with Examples\\n\\n" +
+    "<Numbered steps 1-6, each step has a ### sub-heading, brief explanation, and a code snippet>\\n\\n" +
+    "### Step 1: <action>\\n\\n<explanation>\\n\\n```" + lang + "\\n<code>\\n```\\n\\n" +
+    "### Step 2: <action>\\n\\n<explanation>\\n\\n```" + lang + "\\n<code>\\n```\\n\\n" +
+    "### Step 3: <action>\\n\\n<explanation>\\n\\n```" + lang + "\\n<code>\\n```\\n\\n" +
+    "<Continue for 4-6 steps total>\\n\\n" +
+
     "## Common Patterns and Variations\\n\\n" +
-    "<Show 2-3 different code patterns/variations of this concept with ### sub-headings and code blocks>\\n\\n" +
+    "<Show 3-4 different code patterns with ### sub-headings and code blocks for each>\\n\\n" +
+
     "## Best Practices\\n\\n" +
-    "<5-6 bullet points of actionable best practices>\\n\\n" +
+    "<6-8 bullet points of actionable best practices, each with 1-2 sentence explanation>\\n\\n" +
+
+    "### Advanced Tips for Stable " + seed.subtopic + "\\n\\n" +
+    "<4-5 advanced tips for production use>\\n\\n" +
+
     "### Common Mistakes to Avoid\\n\\n" +
-    "<4-5 bullet points of mistakes with brief explanation>\\n\\n" +
+    "<5-6 bullet points of mistakes with brief explanation and how to fix>\\n\\n" +
+
     "## Common Issues and Fixes\\n\\n" +
-    "### Why does [common problem] happen?\\n\\n" +
-    "<Problem explanation + incorrect code example + correct code example for 2-3 issues>\\n\\n" +
-    "```" + (seed.topic === "TypeScript" ? "ts" : "js") + "\\n// Incorrect\\n<wrong code>\\n\\n// Correct\\n<right code>\\n```\\n\\n" +
+    "### Why does [common problem 1] happen?\\n\\n" +
+    "<Problem explanation>\\n\\n" +
+    "```" + lang + "\\n// Incorrect\\n<wrong code>\\n\\n// Correct\\n<right code>\\n```\\n\\n" +
+    "### Why does [common problem 2] happen?\\n\\n" +
+    "<Problem explanation>\\n\\n" +
+    "```" + lang + "\\n// Incorrect\\n<wrong code>\\n\\n// Correct\\n<right code>\\n```\\n\\n" +
+    "### Why does [common problem 3] happen?\\n\\n" +
+    "<Problem explanation + fix>\\n\\n" +
+
     "## Advanced Scenarios\\n\\n" +
-    "<2-3 advanced use cases with ### sub-headings, each with explanation and code example>\\n\\n" +
+    "<3-4 advanced use cases with ### sub-headings, each with detailed explanation and code example>\\n\\n" +
+
     "## Real World Use Cases\\n\\n" +
-    "<3-4 practical examples with ### sub-headings showing real usage with brief code snippets>\\n\\n" +
-    "## FAQs\\n\\n" +
-    "### <SEO question 1>?\\n\\n<2-3 sentence answer>\\n\\n" +
-    "### <SEO question 2>?\\n\\n<2-3 sentence answer>\\n\\n" +
-    "### <SEO question 3>?\\n\\n<2-3 sentence answer>\\n\\n" +
-    "### <SEO question 4>?\\n\\n<2-3 sentence answer>\\n\\n" +
-    "### <SEO question 5>?\\n\\n<2-3 sentence answer>\\n\\n" +
+    "<4-5 practical examples with ### sub-headings showing real usage>\\n\\n" +
+    "### Example: <use case 1>\\n\\n<code + explanation>\\n\\n" +
+    "### Example: <use case 2>\\n\\n<code + explanation>\\n\\n" +
+    "### Example: <use case 3>\\n\\n<code + explanation>\\n\\n" +
+
+    "## Related Tutorials\\n\\n" +
+    "<Bullet list of 4-5 related topics the reader should explore next, phrased as tutorial titles>\\n\\n" +
+
     "## Conclusion\\n\\n" +
-    "<3-4 sentence wrap-up summarizing what was covered and suggesting next steps>"
+    "<4-5 sentence wrap-up summarizing what was covered. Mention key methods/concepts learned. Suggest next steps for the reader.>\\n\\n" +
+
+    "## FAQs\\n\\n" +
+    "### <SEO question 1>?\\n\\n<3-4 sentence detailed answer>\\n\\n" +
+    "### <SEO question 2>?\\n\\n<3-4 sentence detailed answer>\\n\\n" +
+    "### <SEO question 3>?\\n\\n<3-4 sentence detailed answer>\\n\\n" +
+    "### <SEO question 4>?\\n\\n<3-4 sentence detailed answer>\\n\\n" +
+    "### <SEO question 5>?\\n\\n<3-4 sentence detailed answer>\\n\\n" +
+    "### <SEO question 6>?\\n\\n<3-4 sentence detailed answer>\\n\\n" +
+    "### <SEO question 7>?\\n\\n<3-4 sentence detailed answer>\\n\\n" +
+    "### <SEO question 8>?\\n\\n<3-4 sentence detailed answer>"
   );
 }
 

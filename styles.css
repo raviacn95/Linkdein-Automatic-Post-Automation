@@ -322,6 +322,10 @@ body {
   color: var(--ink-muted);
   margin-left: auto;
 }
+.card-date {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
 
 .post-card h3 {
   font-size: 1.05rem;

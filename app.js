@@ -5,7 +5,7 @@
    ================================================================ */
 
 const STORAGE_KEY = "jsPlaywrightMcpBlogPosts";
-const CONTENT_VERSION = 10;
+const CONTENT_VERSION = 11;
 
 /* ── DOM Elements ────────────────────────────────────── */
 const searchInput = document.getElementById("search");
@@ -147,7 +147,15 @@ function markdownToHtml(md) {
     }
   );
 
-  // Lists
+  // Ordered lists (1. item)
+  html = html.replace(/(?:^|\n)(\d+\.\s+.+(?:\n\d+\.\s+.+)*)/g, chunk => {
+    const items = chunk.trim().split("\n")
+      .map(l => l.replace(/^\d+\.\s+/, "").trim()).filter(Boolean)
+      .map(i => `<li>${i}</li>`).join("");
+    return `<ol>${items}</ol>`;
+  });
+
+  // Unordered lists
   html = html.replace(/(?:^|\n)(-\s+.+(?:\n-\s+.+)*)/g, chunk => {
     const items = chunk.trim().split("\n")
       .map(l => l.replace(/^-\s+/, "").trim()).filter(Boolean)
@@ -162,7 +170,7 @@ function markdownToHtml(md) {
   return html.split(/\n\n+/).map(block => {
     const t = block.trim();
     if (!t) return "";
-    if (/^<h[1-3]>|^<ul>|^<pre>|^<table>|^<blockquote>/.test(t)) return t;
+    if (/^<h[1-3]>|^<ul>|^<ol>|^<pre>|^<table>|^<blockquote>/.test(t)) return t;
     return `<p>${t.replace(/\n/g, "<br>")}</p>`;
   }).join("\n");
 }
@@ -261,10 +269,12 @@ function openPost(post) {
   const level = (post.level || "beginner").toLowerCase();
   const levelLabels = { beginner: "🌱 Beginner", intermediate: "⭐ Intermediate", advanced: "🚀 Advanced" };
   const rt = readTime(post.content);
+  const postDate = post.createdAt ? new Date(post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "";
   pvMeta.innerHTML = `
     <span class="card-category cat-${post.category.toLowerCase()}">${escapeHtml(post.category)}</span>
     <span class="card-level lvl-${level}">${levelLabels[level] || level}</span>
     <span class="card-read-time">📖 ${rt} min read</span>
+    ${postDate ? `<span class="card-date">By <strong>Ravi</strong> · ${postDate}</span>` : ""}
   `;
 
   pvTitle.textContent = post.title;
