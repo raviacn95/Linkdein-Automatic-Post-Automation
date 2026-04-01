@@ -158,64 +158,73 @@ function buildLinkedInText(post) {
   const topic = String(post.category || "JavaScript").toLowerCase();
   const painPointByTopic = {
     playwright: [
-      "Tests keep failing after tiny UI changes and your team wastes hours debugging selectors.",
-      "Release confidence drops when flaky E2E results hide real regressions."
+      "Tests keep failing after tiny UI changes and your team wastes hours debugging selectors."
     ],
     javascript: [
-      "Small JavaScript bugs keep escaping to production and breaking critical user flows.",
       "Debugging inconsistent runtime behavior steals time from feature delivery."
     ],
     typescript: [
-      "Type errors slip through because strict mode is off and any is everywhere.",
-      "Refactoring without types turns every change into a guessing game."
+      "Type errors slip through because strict mode is off and any is everywhere."
     ],
     both: [
-      "Quality gaps between test and release pipelines cause last-minute firefighting.",
-      "Teams lose trust when automation and delivery signals conflict before go-live."
+      "Quality gaps between test and release pipelines cause last-minute firefighting."
     ],
     mcp: [
-      "AI test workflows fail when tool context is incomplete or inconsistent.",
-      "Teams spend more time wiring context than validating product behavior."
+      "AI test workflows fail when tool context is incomplete or inconsistent."
     ],
     tosca: [
-      "Model-based suites become brittle when app changes are not reflected quickly.",
-      "Maintenance overhead grows and slows regression cycles every sprint."
+      "Model-based suites become brittle when app changes are not reflected quickly."
     ]
   };
-  const painPointLines = painPointByTopic[topic] || painPointByTopic.javascript;
+  const painPoint = (painPointByTopic[topic] || painPointByTopic.javascript)[0];
 
   const separator = "\u2500".repeat(30);
 
-  // Strip markdown syntax for clean LinkedIn text
-  let content = String(post.content || "")
-    .replace(/```\w*\n?/g, "")
-    .replace(/```/g, "")
-    .replace(/\*\*/g, "")
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/#{1,3}\s*/g, "")
-    .replace(/\r\n/g, "\n")
-    .trim();
+  // Extract short summary sections from content
+  const rawContent = String(post.content || "");
 
-  // Format bullets: - item → • item
-  content = content
-    .replace(/\n\s*-\s+/g, "\n\n\u2022 ")
-    .replace(/\s*(Q:\s)/g, "\n\n$1")
-    .replace(/\s*(A:\s)/g, "\n\n$1")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  function extractSection(heading) {
+    // Match ## heading or ## emoji heading variants
+    const pattern = new RegExp("##\\s*(?:[\\u{1F4A1}\\u{2753}\\u{1F511}]\\s*)?" + heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "[\\s\\S]*?(?=\\n##\\s|$)", "u");
+    const m = rawContent.match(pattern);
+    if (!m) return "";
+    return m[0]
+      .replace(/^##\s*[^\n]*\n?/, "")
+      .replace(/```\w*\n?/g, "")
+      .replace(/```/g, "")
+      .replace(/\*\*/g, "")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/\r\n/g, "\n")
+      .replace(/\n\s*-\s+/g, "\n\n\u2022 ")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
 
-  // Build website deep link
-  const slug = String(post.title || "")
-    .replace(/[^a-zA-Z0-9\s]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .toLowerCase();
-  const websiteLink = "https://raviacn95.github.io/Linkdein-Automatic-Post-Automation/#post/" + slug;
+  const coreConcept = extractSection("Core Concept");
+  const keyRules = extractSection("Key Rules");
+  const tryThis = extractSection("Try This");
+  const quickQuiz = extractSection("Quick Quiz");
+  const keyTakeaway = extractSection("Key Takeaway");
+
+  // Build concise LinkedIn body
+  const bodyParts = [];
+  if (coreConcept) bodyParts.push("Core Concept " + coreConcept);
+  if (keyRules) bodyParts.push("Key Rules\n\n" + keyRules);
+  if (tryThis) bodyParts.push("\uD83D\uDCA1 Try This " + tryThis);
+  if (quickQuiz) {
+    let quiz = quickQuiz
+      .replace(/\s*(Q:\s)/g, "\n\nQ: ")
+      .replace(/\s*(A:\s)/g, "\n\nA: ")
+      .trim();
+    bodyParts.push("\u2753 Quick Quiz\n\n" + quiz);
+  }
+  if (keyTakeaway) bodyParts.push("\uD83D\uDD11 Key Takeaway " + keyTakeaway);
+
+  // Fallback: if no sections extracted, use excerpt as body
+  const body = bodyParts.length > 0 ? bodyParts.join("\n\n") : String(post.excerpt || "");
 
   const parts = [
-    painPointLines[0],
-    "",
-    painPointLines[1],
+    painPoint,
     "",
     separator,
     "",
@@ -227,12 +236,7 @@ function buildLinkedInText(post) {
     "",
     separator,
     "",
-    content,
-    "",
-    separator,
-    "",
-    "\uD83D\uDD17 Read the full detailed guide with code examples, comparison tables & step-by-step instructions:",
-    websiteLink
+    body
   ];
 
   return parts.join("\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, 3000);
