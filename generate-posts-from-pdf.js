@@ -558,6 +558,27 @@ function generatePostsFromText(rawText, cfg) {
 }
 
 /* ── Accumulation helpers ─────────────────────────────── */
+const HIGH_WATER_MARK_FILE = path.join(__dirname, ".auth", "post-count-hwm.json");
+
+function getHighWaterMark() {
+  try {
+    if (fs.existsSync(HIGH_WATER_MARK_FILE)) {
+      const data = JSON.parse(fs.readFileSync(HIGH_WATER_MARK_FILE, "utf8"));
+      return Number(data.maxPosts) || 0;
+    }
+  } catch { /* ignore */ }
+  return 0;
+}
+
+function updateHighWaterMark(count) {
+  const current = getHighWaterMark();
+  if (count > current) {
+    const dir = path.dirname(HIGH_WATER_MARK_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(HIGH_WATER_MARK_FILE, JSON.stringify({ maxPosts: count, updatedAt: new Date().toISOString() }, null, 2), "utf8");
+  }
+}
+
 function loadExistingPosts(filePath) {
   if (!fs.existsSync(filePath)) return [];
   const source = fs.readFileSync(filePath, "utf8");
@@ -570,6 +591,8 @@ function loadExistingPosts(filePath) {
   if (!Array.isArray(posts)) {
     throw new Error("posts-data.js did not produce a valid ALL_POSTS array");
   }
+  // Update high water mark whenever we successfully load posts
+  updateHighWaterMark(posts.length);
   return posts;
 }
 
@@ -927,27 +950,35 @@ async function callGemini(prompt, apiKey, model) {
 }
 
 async function callGitHubModels(prompt, apiKey, model) {
-  const response = await fetch("https://models.inference.ai.azure.com/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + apiKey
-    },
-    body: JSON.stringify({
-      model: model || "gpt-4o-mini",
-      temperature: 0.75,
-      messages: [
-        { role: "system", content: "You are a technical content expert. Return valid JSON only — no markdown fences, no explanation." },
-        { role: "user", content: prompt }
-      ]
-    })
-  });
-  if (!response.ok) {
-    const errText = await response.text().catch(() => response.statusText);
-    throw new Error("GitHub Models API " + response.status + ": " + errText);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 min total timeout
+  try {
+    const response = await fetch("https://models.inference.ai.azure.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + apiKey
+      },
+      body: JSON.stringify({
+        model: model || "gpt-4o-mini",
+        temperature: 0.75,
+        max_tokens: 4096,
+        messages: [
+          { role: "system", content: "You are a technical content expert. Return valid JSON only — no markdown fences, no explanation." },
+          { role: "user", content: prompt }
+        ]
+      }),
+      signal: controller.signal
+    });
+    if (!response.ok) {
+      const errText = await response.text().catch(() => response.statusText);
+      throw new Error("GitHub Models API " + response.status + ": " + errText);
+    }
+    const data = await response.json();
+    return String(data?.choices?.[0]?.message?.content || "");
+  } finally {
+    clearTimeout(timeoutId);
   }
-  const data = await response.json();
-  return String(data?.choices?.[0]?.message?.content || "");
 }
 
 async function callFreeAi(prompt, freeAiCfg) {
@@ -1159,15 +1190,18 @@ async function generatePostsFromConfig(options = {}) {
 
   // Verify: read back and check post count matches
   const verifiedCount = verifyWrittenPosts(outputPath);
-  if (verifiedCount < existingPosts.length) {
-    console.error("CRITICAL: Written file has " + verifiedCount + " posts but expected at least " + existingPosts.length + ". Restoring backup.");
+  const hwm = getHighWaterMark();
+  if (verifiedCount < existingPosts.length || verifiedCount < hwm) {
+    const expected = Math.max(existingPosts.length, hwm);
+    console.error("CRITICAL: Written file has " + verifiedCount + " posts but expected at least " + expected + " (HWM=" + hwm + "). Restoring backup.");
     if (fs.existsSync(backupPath)) {
       fs.copyFileSync(backupPath, outputPath);
       console.error("Backup restored successfully.");
     }
     throw new Error("Post data verification failed — backup restored.");
   } else {
-    console.log("  Verified: " + verifiedCount + " posts written successfully.");
+    console.log("  Verified: " + verifiedCount + " posts written successfully (HWM=" + hwm + ").");
+    updateHighWaterMark(verifiedCount);
     // Clean up backup on success
     if (fs.existsSync(backupPath)) fs.unlinkSync(backupPath);
   }

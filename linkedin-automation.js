@@ -569,40 +569,26 @@ async function postToLinkedIn(page, text, imagePath) {
       ]);
 
       if (mediaClicked) {
-        await humanDelay(page, 1000, 2000);
+        await humanDelay(page, 1500, 3000);
       }
 
-      // Use file chooser to upload
-      const [fileChooser] = await Promise.all([
-        page.waitForEvent("filechooser", { timeout: 8000 }),
-        mediaClicked
-          ? clickFirstVisible(page, [
-              'button:has-text("Select from computer")',
-              'button:has-text("Upload from computer")',
-              'button:has-text("select files to share")',
-              'label:has-text("Select")',
-              'input[type="file"]'
-            ])
-          : Promise.resolve()
-      ]).catch(() => [null]);
+      // Directly set files on the hidden <input type="file"> element
+      // This bypasses the filechooser event which is unreliable with LinkedIn
+      const fileInput = page.locator('input[type="file"]').first();
+      await fileInput.waitFor({ state: "attached", timeout: 8000 });
+      await fileInput.setInputFiles(imagePath);
+      console.log("  Uploaded workflow image: " + path.basename(imagePath));
+      await humanDelay(page, 3000, 5000);
 
-      if (fileChooser) {
-        await fileChooser.setFiles(imagePath);
-        console.log("  Uploaded workflow image: " + path.basename(imagePath));
-        await humanDelay(page, 2000, 4000);
-
-        // Click Done/Next if there's a media confirmation step
-        await clickFirstVisible(page, [
-          'button:has-text("Done")',
-          'button:has-text("Next")',
-          'button[aria-label="Done"]'
-        ]);
-        await humanDelay(page, 1000, 2000);
-      } else {
-        console.log("  Image upload: no file chooser detected, posting text only.");
-      }
+      // Click Done/Next if there's a media confirmation step
+      await clickFirstVisible(page, [
+        'button:has-text("Done")',
+        'button:has-text("Next")',
+        'button[aria-label="Done"]'
+      ]);
+      await humanDelay(page, 1500, 3000);
     } catch (imgErr) {
-      console.log("  Image upload skipped: " + (imgErr.message || imgErr));
+      console.log("  Image upload skipped (" + (imgErr.message || imgErr) + "), posting text only.");
     }
   }
 
@@ -811,16 +797,27 @@ async function runLinkedInAutomation(options = {}) {
     await context.storageState({ path: STORAGE_STATE_FILE });
   } finally {
     if (!options.keepBrowserOpen) {
-      await browser.close();
+      try {
+        // Give browser.close() 10 seconds max, then force kill
+        await Promise.race([
+          browser.close(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("browser.close timeout")), 10000))
+        ]);
+      } catch (closeErr) {
+        console.log("Browser close failed, force killing:", closeErr.message || closeErr);
+        try { browser.process()?.kill("SIGKILL"); } catch {}
+      }
     }
   }
 }
 
 if (require.main === module) {
-  runLinkedInAutomation().catch((error) => {
-    console.error("Automation failed:", error.message || error);
-    process.exit(1);
-  });
+  runLinkedInAutomation()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error("Automation failed:", error.message || error);
+      process.exit(1);
+    });
 }
 
 module.exports = {
