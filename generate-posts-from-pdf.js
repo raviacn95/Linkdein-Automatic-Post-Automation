@@ -1,0 +1,841 @@
+const fs = require("fs");
+const path = require("path");
+const readline = require("readline");
+const pdf = require("pdf-parse");
+
+const CONFIG_FILE = path.join(__dirname, "automation-config.json");
+
+const TOPIC_LIBRARY = [
+  {
+    topic: "Playwright",
+    category: "Playwright",
+    titleSeed: "Playwright Reliable E2E",
+    tags: ["playwright", "testing", "automation"],
+    core: [
+      "Playwright auto-waits for actionable state before clicks, types, and assertions.",
+      "Locator-first design keeps tests stable as UI structure evolves.",
+      "Tracing and video artifacts make flaky failures diagnosable in CI."
+    ],
+    rules: [
+      "Prefer role and test-id locators over brittle CSS chains.",
+      "Keep one user intent per test for faster triage.",
+      "Use retries for flaky infrastructure, not bad selectors."
+    ],
+    tryThis: "await page.getByRole('button', { name: 'Save' }).click();\nawait expect(page.getByText('Saved')).toBeVisible();",
+    quizQ: "Why is getByRole usually more robust than nth-child selectors?",
+    quizA: "It targets user-facing semantics and survives many layout changes.",
+    takeaway: "Reliable tests come from intent-driven locators and observable assertions."
+  },
+  {
+    topic: "TypeScript",
+    category: "JavaScript",
+    titleSeed: "TypeScript Safer Refactors",
+    tags: ["typescript", "types", "javascript"],
+    core: [
+      "TypeScript catches type mismatches during development before runtime.",
+      "Union types and narrowing model real-world data variability safely.",
+      "Interfaces and utility types keep contracts explicit across modules."
+    ],
+    rules: [
+      "Use strict mode and avoid any in business logic.",
+      "Model API responses with exact interfaces.",
+      "Use unknown at boundaries, then narrow deliberately."
+    ],
+    tryThis: "type Status = 'open' | 'closed';\nfunction isOpen(s: Status) { return s === 'open'; }\nconsole.log(isOpen('open'));",
+    quizQ: "When should unknown be preferred over any?",
+    quizA: "At external boundaries where validation and narrowing are required.",
+    takeaway: "Strong typing turns refactors from risky guesswork into confident change."
+  },
+  {
+    topic: "Azure DevOps",
+    category: "Both",
+    titleSeed: "Azure DevOps Pipeline Quality",
+    tags: ["azuredevops", "cicd", "devops"],
+    core: [
+      "Azure DevOps pipelines standardize build, test, and release steps.",
+      "Branch policies enforce quality gates before merge.",
+      "Artifacts and environments provide traceable deployment flow."
+    ],
+    rules: [
+      "Run lint, unit, and E2E checks in separate jobs.",
+      "Fail fast on validation errors to save compute time.",
+      "Version artifacts and promote across environments."
+    ],
+    tryThis: "trigger:\n- main\n\npool:\n  vmImage: ubuntu-latest\n\nsteps:\n- script: npm ci && npm test",
+    quizQ: "Why should artifacts be immutable between test and production stages?",
+    quizA: "Immutability guarantees the exact tested build is what gets deployed.",
+    takeaway: "Predictable delivery needs policy gates, reproducible builds, and clear promotion paths."
+  },
+  {
+    topic: "JavaScript",
+    category: "JavaScript",
+    titleSeed: "JavaScript Core Patterns",
+    tags: ["javascript", "variables", "basics"],
+    core: [
+      "JavaScript block scoping with let and const prevents accidental leaks.",
+      "Pure functions improve testability and composability.",
+      "Array methods like map, filter, and reduce simplify data transformations."
+    ],
+    rules: [
+      "Use const by default and let when reassignment is needed.",
+      "Avoid mutating shared objects inside utility functions.",
+      "Write small focused functions with clear input-output behavior."
+    ],
+    tryThis: "const nums = [1, 2, 3, 4];\nconst evens = nums.filter((n) => n % 2 === 0);\nconsole.log(evens);",
+    quizQ: "What is the practical difference between let and const?",
+    quizA: "Both are block-scoped; const prevents reassignment of the binding.",
+    takeaway: "Modern JavaScript is clearer and safer with immutable-first patterns."
+  }
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TOPIC_SEEDS — 100 unique subtopics for concurrent AI worker generation
+// 34 Playwright · 33 JavaScript · 33 TypeScript
+// ─────────────────────────────────────────────────────────────────────────────
+const TOPIC_SEEDS = [
+  // ── Playwright (34) ──────────────────────────────────────────────────────
+  { topic: "Playwright", subtopic: "Page Navigation and URL Control",              category: "Playwright",  tags: ["playwright","testing","e2e","navigation"] },
+  { topic: "Playwright", subtopic: "Locators: getByRole Best Practices",           category: "Playwright",  tags: ["playwright","locators","accessibility","testing"] },
+  { topic: "Playwright", subtopic: "Locators: getByText and getByLabel",           category: "Playwright",  tags: ["playwright","locators","ui","testing"] },
+  { topic: "Playwright", subtopic: "Locators: getByTestId Custom Attributes",      category: "Playwright",  tags: ["playwright","locators","testid","best-practices"] },
+  { topic: "Playwright", subtopic: "Auto-Waiting: Eliminating Flaky Sleeps",       category: "Playwright",  tags: ["playwright","auto-wait","flakiness","reliability"] },
+  { topic: "Playwright", subtopic: "Assertions: toBeVisible and toBeHidden",       category: "Playwright",  tags: ["playwright","assertions","visibility","testing"] },
+  { topic: "Playwright", subtopic: "Assertions: toHaveText and toContainText",     category: "Playwright",  tags: ["playwright","assertions","text","testing"] },
+  { topic: "Playwright", subtopic: "Assertions: toHaveValue and toBeChecked",      category: "Playwright",  tags: ["playwright","assertions","forms","testing"] },
+  { topic: "Playwright", subtopic: "Soft Assertions for Non-blocking Checks",      category: "Playwright",  tags: ["playwright","soft-assertions","debugging","testing"] },
+  { topic: "Playwright", subtopic: "Screenshots and Visual Regression Testing",    category: "Playwright",  tags: ["playwright","screenshots","visual","regression"] },
+  { topic: "Playwright", subtopic: "Video Recording in E2E Tests",                 category: "Playwright",  tags: ["playwright","video","debugging","ci"] },
+  { topic: "Playwright", subtopic: "Trace Viewer and Debugging Failures",          category: "Playwright",  tags: ["playwright","trace","debugging","ci"] },
+  { topic: "Playwright", subtopic: "Test Fixtures: Setup and Teardown",            category: "Playwright",  tags: ["playwright","fixtures","setup","testing"] },
+  { topic: "Playwright", subtopic: "beforeEach afterEach beforeAll afterAll Hooks",category: "Playwright",  tags: ["playwright","hooks","lifecycle","testing"] },
+  { topic: "Playwright", subtopic: "Page Object Model Pattern",                    category: "Playwright",  tags: ["playwright","pom","patterns","architecture"] },
+  { topic: "Playwright", subtopic: "API Testing with Playwright request",          category: "Playwright",  tags: ["playwright","api","testing","automation"] },
+  { topic: "Playwright", subtopic: "Network Interception and Request Mocking",     category: "Playwright",  tags: ["playwright","network","mocking","testing"] },
+  { topic: "Playwright", subtopic: "Authentication State with storageState",       category: "Playwright",  tags: ["playwright","auth","session","storagestate"] },
+  { topic: "Playwright", subtopic: "Multi-Browser Testing Chrome Firefox WebKit",  category: "Playwright",  tags: ["playwright","browsers","cross-browser","testing"] },
+  { topic: "Playwright", subtopic: "Mobile Emulation and Responsive Testing",      category: "Playwright",  tags: ["playwright","mobile","emulation","responsive"] },
+  { topic: "Playwright", subtopic: "Geolocation and Browser Permissions",          category: "Playwright",  tags: ["playwright","geolocation","permissions","testing"] },
+  { topic: "Playwright", subtopic: "Dialog Handling: alert confirm prompt",        category: "Playwright",  tags: ["playwright","dialogs","alerts","testing"] },
+  { topic: "Playwright", subtopic: "File Upload Testing Strategies",               category: "Playwright",  tags: ["playwright","file-upload","forms","testing"] },
+  { topic: "Playwright", subtopic: "iFrame Testing Strategies",                    category: "Playwright",  tags: ["playwright","iframe","web","testing"] },
+  { topic: "Playwright", subtopic: "Multiple Tabs and New Page Handling",          category: "Playwright",  tags: ["playwright","tabs","multi-page","testing"] },
+  { topic: "Playwright", subtopic: "Parallel Test Execution and Sharding",         category: "Playwright",  tags: ["playwright","parallel","sharding","performance"] },
+  { topic: "Playwright", subtopic: "Retry Strategies and Flakiness Control",       category: "Playwright",  tags: ["playwright","retries","flakiness","reliability"] },
+  { topic: "Playwright", subtopic: "Environment Variables in playwright.config",   category: "Playwright",  tags: ["playwright","config","environment","setup"] },
+  { topic: "Playwright", subtopic: "playwright.config.ts Full Overview",           category: "Playwright",  tags: ["playwright","config","typescript","setup"] },
+  { topic: "Playwright", subtopic: "CI/CD Integration with GitHub Actions",        category: "Playwright",  tags: ["playwright","ci","github-actions","devops"] },
+  { topic: "Playwright", subtopic: "Custom Reporters and Test Results",            category: "Playwright",  tags: ["playwright","reporters","results","testing"] },
+  { topic: "Playwright", subtopic: "Accessibility Testing with Playwright",        category: "Playwright",  tags: ["playwright","accessibility","axe","a11y"] },
+  { topic: "Playwright", subtopic: "Web Components and Shadow DOM Testing",        category: "Playwright",  tags: ["playwright","shadow-dom","components","testing"] },
+  { topic: "Playwright", subtopic: "Component Testing with Playwright CT",         category: "Playwright",  tags: ["playwright","component-testing","ct","react"] },
+  // ── JavaScript (33) ──────────────────────────────────────────────────────
+  { topic: "JavaScript", subtopic: "var vs let vs const Scoping Rules",            category: "JavaScript",  tags: ["javascript","variables","scope","es6"] },
+  { topic: "JavaScript", subtopic: "Arrow Functions vs Regular Functions",         category: "JavaScript",  tags: ["javascript","arrow-functions","es6","functions"] },
+  { topic: "JavaScript", subtopic: "Template Literals and Tagged Templates",       category: "JavaScript",  tags: ["javascript","template-literals","strings","es6"] },
+  { topic: "JavaScript", subtopic: "Array and Object Destructuring",               category: "JavaScript",  tags: ["javascript","destructuring","arrays","objects"] },
+  { topic: "JavaScript", subtopic: "Spread and Rest Operators",                    category: "JavaScript",  tags: ["javascript","spread","rest","es6"] },
+  { topic: "JavaScript", subtopic: "Default Function Parameters",                  category: "JavaScript",  tags: ["javascript","functions","parameters","defaults"] },
+  { topic: "JavaScript", subtopic: "Promises: then catch finally",                 category: "JavaScript",  tags: ["javascript","promises","async","es6"] },
+  { topic: "JavaScript", subtopic: "async/await Clean Async Code",                 category: "JavaScript",  tags: ["javascript","async","await","asynchronous"] },
+  { topic: "JavaScript", subtopic: "Promise.all race allSettled any",              category: "JavaScript",  tags: ["javascript","promise","concurrency","async"] },
+  { topic: "JavaScript", subtopic: "Array.map() for Data Transformation",          category: "JavaScript",  tags: ["javascript","map","arrays","functional"] },
+  { topic: "JavaScript", subtopic: "Array.filter() for Conditional Selection",     category: "JavaScript",  tags: ["javascript","filter","arrays","functional"] },
+  { topic: "JavaScript", subtopic: "Array.reduce() for Accumulation",              category: "JavaScript",  tags: ["javascript","reduce","arrays","functional"] },
+  { topic: "JavaScript", subtopic: "Array.find() and findIndex()",                 category: "JavaScript",  tags: ["javascript","find","arrays","search"] },
+  { topic: "JavaScript", subtopic: "Array.flat() and flatMap()",                   category: "JavaScript",  tags: ["javascript","flat","arrays","es2019"] },
+  { topic: "JavaScript", subtopic: "Object.keys() values() and entries()",         category: "JavaScript",  tags: ["javascript","objects","iteration","es6"] },
+  { topic: "JavaScript", subtopic: "Object.assign() and Object Spread",            category: "JavaScript",  tags: ["javascript","objects","merging","spread"] },
+  { topic: "JavaScript", subtopic: "Closures and Lexical Scope",                   category: "JavaScript",  tags: ["javascript","closures","scope","functions"] },
+  { topic: "JavaScript", subtopic: "Prototypal Inheritance and Prototype Chain",   category: "JavaScript",  tags: ["javascript","prototype","inheritance","oop"] },
+  { topic: "JavaScript", subtopic: "ES6 Classes and Inheritance",                  category: "JavaScript",  tags: ["javascript","classes","es6","oop"] },
+  { topic: "JavaScript", subtopic: "ES Modules import and export",                 category: "JavaScript",  tags: ["javascript","modules","import","export"] },
+  { topic: "JavaScript", subtopic: "Nullish Coalescing and Optional Chaining",     category: "JavaScript",  tags: ["javascript","nullish","optional-chaining","es2020"] },
+  { topic: "JavaScript", subtopic: "Error Handling try catch finally",             category: "JavaScript",  tags: ["javascript","errors","try-catch","debugging"] },
+  { topic: "JavaScript", subtopic: "Event Loop Call Stack and Microtasks",         category: "JavaScript",  tags: ["javascript","event-loop","async","microtasks"] },
+  { topic: "JavaScript", subtopic: "setTimeout and setInterval Patterns",          category: "JavaScript",  tags: ["javascript","timers","async","patterns"] },
+  { topic: "JavaScript", subtopic: "Fetch API and HTTP Requests",                  category: "JavaScript",  tags: ["javascript","fetch","http","api"] },
+  { topic: "JavaScript", subtopic: "JSON.parse and JSON.stringify",                category: "JavaScript",  tags: ["javascript","json","serialization","data"] },
+  { topic: "JavaScript", subtopic: "Local Storage and Session Storage",            category: "JavaScript",  tags: ["javascript","storage","browser","web"] },
+  { topic: "JavaScript", subtopic: "Regular Expressions in JavaScript",            category: "JavaScript",  tags: ["javascript","regex","patterns","strings"] },
+  { topic: "JavaScript", subtopic: "Map and Set Data Structures",                  category: "JavaScript",  tags: ["javascript","map","set","data-structures"] },
+  { topic: "JavaScript", subtopic: "WeakMap WeakRef and Memory Management",        category: "JavaScript",  tags: ["javascript","weakmap","memory","advanced"] },
+  { topic: "JavaScript", subtopic: "Generators and Iterators",                     category: "JavaScript",  tags: ["javascript","generators","iterators","advanced"] },
+  { topic: "JavaScript", subtopic: "Proxy and Reflect API",                        category: "JavaScript",  tags: ["javascript","proxy","reflect","metaprogramming"] },
+  { topic: "JavaScript", subtopic: "Short-Circuit Evaluation and Logical Assignment",category: "JavaScript",tags: ["javascript","logical","operators","es2021"] },
+  // ── TypeScript (33) ──────────────────────────────────────────────────────
+  { topic: "TypeScript", subtopic: "Basic Types string number boolean any",        category: "JavaScript",  tags: ["typescript","types","basics","javascript"] },
+  { topic: "TypeScript", subtopic: "Interfaces vs Type Aliases",                   category: "JavaScript",  tags: ["typescript","interfaces","types","design"] },
+  { topic: "TypeScript", subtopic: "Union Types and Intersection Types",           category: "JavaScript",  tags: ["typescript","union","intersection","types"] },
+  { topic: "TypeScript", subtopic: "Type Narrowing and Type Guards",               category: "JavaScript",  tags: ["typescript","narrowing","guards","safety"] },
+  { topic: "TypeScript", subtopic: "Generics Type Parameters and Constraints",     category: "JavaScript",  tags: ["typescript","generics","constraints","reusable"] },
+  { topic: "TypeScript", subtopic: "Generic Functions and Interfaces",             category: "JavaScript",  tags: ["typescript","generics","functions","patterns"] },
+  { topic: "TypeScript", subtopic: "Enums Numeric String and Const",               category: "JavaScript",  tags: ["typescript","enums","constants","types"] },
+  { topic: "TypeScript", subtopic: "Tuple Types and Labeled Tuples",               category: "JavaScript",  tags: ["typescript","tuples","arrays","types"] },
+  { topic: "TypeScript", subtopic: "Partial and Required Utility Types",           category: "JavaScript",  tags: ["typescript","partial","required","utility"] },
+  { topic: "TypeScript", subtopic: "Pick and Omit Utility Types",                  category: "JavaScript",  tags: ["typescript","pick","omit","utility"] },
+  { topic: "TypeScript", subtopic: "Readonly and ReadonlyArray",                   category: "JavaScript",  tags: ["typescript","readonly","immutable","safety"] },
+  { topic: "TypeScript", subtopic: "Record Type for Object Maps",                  category: "JavaScript",  tags: ["typescript","record","maps","objects"] },
+  { topic: "TypeScript", subtopic: "Exclude Extract and NonNullable",              category: "JavaScript",  tags: ["typescript","exclude","extract","utility"] },
+  { topic: "TypeScript", subtopic: "ReturnType and Parameters Utilities",          category: "JavaScript",  tags: ["typescript","returntype","parameters","inference"] },
+  { topic: "TypeScript", subtopic: "Conditional Types with extends",               category: "JavaScript",  tags: ["typescript","conditional","types","advanced"] },
+  { topic: "TypeScript", subtopic: "Mapped Types and Index Signatures",            category: "JavaScript",  tags: ["typescript","mapped","index-signature","types"] },
+  { topic: "TypeScript", subtopic: "Template Literal Types",                       category: "JavaScript",  tags: ["typescript","template-literal","string","types"] },
+  { topic: "TypeScript", subtopic: "Infer Keyword in Conditional Types",           category: "JavaScript",  tags: ["typescript","infer","conditional","advanced"] },
+  { topic: "TypeScript", subtopic: "Discriminated Unions Pattern",                 category: "JavaScript",  tags: ["typescript","discriminated","unions","patterns"] },
+  { topic: "TypeScript", subtopic: "Declaration Merging",                          category: "JavaScript",  tags: ["typescript","declaration","merging","modules"] },
+  { topic: "TypeScript", subtopic: "abstract Classes and Methods",                 category: "JavaScript",  tags: ["typescript","abstract","classes","oop"] },
+  { topic: "TypeScript", subtopic: "Access Modifiers public private protected",    category: "JavaScript",  tags: ["typescript","access","modifiers","encapsulation"] },
+  { topic: "TypeScript", subtopic: "Function Overloads",                           category: "JavaScript",  tags: ["typescript","overloads","functions","signatures"] },
+  { topic: "TypeScript", subtopic: "Type Assertions as and satisfies",             category: "JavaScript",  tags: ["typescript","assertions","satisfies","safety"] },
+  { topic: "TypeScript", subtopic: "Non-null Assertion Operator",                  category: "JavaScript",  tags: ["typescript","non-null","assertion","safety"] },
+  { topic: "TypeScript", subtopic: "keyof and typeof Operators",                   category: "JavaScript",  tags: ["typescript","keyof","typeof","type-level"] },
+  { topic: "TypeScript", subtopic: "Decorators Class and Method",                  category: "JavaScript",  tags: ["typescript","decorators","metadata","advanced"] },
+  { topic: "TypeScript", subtopic: "Strict Mode Configuration",                    category: "JavaScript",  tags: ["typescript","strict","config","best-practices"] },
+  { topic: "TypeScript", subtopic: "tsconfig.json Key Compiler Options",           category: "JavaScript",  tags: ["typescript","tsconfig","compiler","setup"] },
+  { topic: "TypeScript", subtopic: "Path Aliases and Module Resolution",           category: "JavaScript",  tags: ["typescript","paths","modules","config"] },
+  { topic: "TypeScript", subtopic: "Type Declaration Files .d.ts",                 category: "JavaScript",  tags: ["typescript","declaration","dts","types"] },
+  { topic: "TypeScript", subtopic: "DefinitelyTyped and @types Packages",          category: "JavaScript",  tags: ["typescript","definitelytyped","types","npm"] },
+  { topic: "TypeScript", subtopic: "Migrating JavaScript to TypeScript",           category: "JavaScript",  tags: ["typescript","migration","javascript","gradual"] }
+];
+
+function ask(question) {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
+function loadConfig() {
+  const defaults = {
+    scheduler: {
+      enabled: true,
+      intervalMinutes: 60,
+      intervalJitterPercent: 20,
+      runImmediately: true,
+      maxRuns: 0
+    },
+    linkedin: {
+      postCount: 2,
+      startIndex: 0,
+      delayBetweenPostsMinSec: 30,
+      delayBetweenPostsMaxSec: 90,
+      prePostDelayMinSec: 2,
+      prePostDelayMaxSec: 5
+    },
+    safetyLimits: {
+      maxPostsPerDay: 10,
+      similarityThreshold: 0.6,
+      maxHistory: 50
+    },
+    contentGeneration: {
+      sourceMode: "topics",
+      targetPostCount: 100,
+      pdfPath: "",
+      promptForPdfPath: true,
+      defaultCategory: "JavaScript",
+      autoGenerateOnEveryRun: true,
+      topicPool: ["Playwright", "TypeScript", "Azure DevOps", "JavaScript"],
+      tags: ["javascript", "automation"],
+      outputFile: "posts-data.js"
+    },
+    aiGeneration: {
+      enabled: false,
+      endpoint: "https://api.openai.com/v1/chat/completions",
+      model: "gpt-4o-mini",
+      apiKeyEnvVar: "OPENAI_API_KEY",
+      systemPrompt: "Generate high-quality technical social posts as valid JSON only."
+    }
+  };
+
+  if (!fs.existsSync(CONFIG_FILE)) {
+    return defaults;
+  }
+
+  const parsed = JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
+  return {
+    ...defaults,
+    ...parsed,
+    scheduler: {
+      ...defaults.scheduler,
+      ...(parsed.scheduler || {})
+    },
+    linkedin: {
+      ...defaults.linkedin,
+      ...(parsed.linkedin || {})
+    },
+    safetyLimits: {
+      ...defaults.safetyLimits,
+      ...(parsed.safetyLimits || {})
+    },
+    contentGeneration: {
+      ...defaults.contentGeneration,
+      ...(parsed.contentGeneration || {})
+    },
+    aiGeneration: {
+      ...defaults.aiGeneration,
+      ...(parsed.aiGeneration || {})
+    }
+  };
+}
+
+function normalizeSentence(text) {
+  return String(text || "")
+    .replace(/\s+/g, " ")
+    .replace(/[\u0000-\u001f]/g, "")
+    .trim();
+}
+
+function splitIntoSentences(text) {
+  return normalizeSentence(text)
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 25);
+}
+
+function extractCodeBlocks(rawText) {
+  const lines = rawText.split(/\r?\n/).map((l) => l.trim());
+  const codeLines = lines.filter((line) =>
+    /\b(function|const|let|var|if|for|while|return|=>|console\.log|class|import|export)\b/.test(line)
+  );
+
+  const blocks = [];
+  for (let i = 0; i < codeLines.length; i += 3) {
+    const snippet = codeLines.slice(i, i + 3).join("\n");
+    if (snippet.length > 0) {
+      blocks.push(snippet);
+    }
+  }
+  return blocks;
+}
+
+function buildDetailedContent({ core, rules, tryThis, quizQ, quizA, takeaway }) {
+  return [
+    "## Core Concept",
+    "",
+    core,
+    "",
+    "## Key Rules",
+    "",
+    `- ${rules[0]}`,
+    "",
+    `- ${rules[1]}`,
+    "",
+    `- ${rules[2]}`,
+    "",
+    "## 💡 Try This",
+    "",
+    "```js",
+    tryThis,
+    "```",
+    "",
+    "## ❓ Quick Quiz",
+    "",
+    `Q: ${quizQ}`,
+    "",
+    `A: ${quizA}`,
+    "",
+    "## 🔑 Key Takeaway",
+    "",
+    takeaway
+  ].join("\n");
+}
+
+function generatedTimestamp(baseTime, index) {
+  return new Date(baseTime - index * 60000).toISOString();
+}
+
+function createTopicPosts(cfg) {
+  const target = Number(cfg.targetPostCount || 100);
+  const topicPool = Array.isArray(cfg.topicPool) && cfg.topicPool.length > 0 ? cfg.topicPool : ["JavaScript"];
+  const selectedTopicTemplates = TOPIC_LIBRARY.filter((entry) => topicPool.includes(entry.topic));
+  const templates = selectedTopicTemplates.length > 0 ? selectedTopicTemplates : TOPIC_LIBRARY;
+  const nowSeed = Date.now();
+  const baseTime = Date.now();
+
+  const posts = [];
+  for (let i = 0; i < target; i += 1) {
+    const tpl = templates[i % templates.length];
+    const rotation = (i + nowSeed) % tpl.core.length;
+    const core = tpl.core[rotation];
+    const rules = [
+      tpl.rules[rotation % tpl.rules.length],
+      tpl.rules[(rotation + 1) % tpl.rules.length],
+      tpl.rules[(rotation + 2) % tpl.rules.length]
+    ];
+
+    const title = `${tpl.titleSeed} ${i + 1}`;
+    const excerpt = core.length > 140 ? `${core.slice(0, 137)}...` : core;
+    const tags = Array.from(new Set([...(cfg.tags || []), ...tpl.tags])).slice(0, 6);
+
+    posts.push({
+      id: i + 1,
+      category: tpl.category || cfg.defaultCategory || "JavaScript",
+      title,
+      tags,
+      excerpt,
+      sourceUrl: "",
+      createdAt: generatedTimestamp(baseTime, i),
+      content: buildDetailedContent({
+        core,
+        rules,
+        tryThis: tpl.tryThis,
+        quizQ: tpl.quizQ,
+        quizA: tpl.quizA,
+        takeaway: tpl.takeaway
+      })
+    });
+  }
+
+  return posts;
+}
+
+function generatePostsFromText(rawText, cfg) {
+  const sentencePool = splitIntoSentences(rawText);
+  const codePool = extractCodeBlocks(rawText);
+  const target = Number(cfg.targetPostCount || 100);
+  const tags = Array.isArray(cfg.tags) && cfg.tags.length > 0 ? cfg.tags : ["javascript", "automation"];
+  const posts = [];
+  const baseTime = Date.now();
+
+  if (sentencePool.length === 0) {
+    throw new Error("PDF content looks empty after parsing. Use a text-based PDF with selectable text.");
+  }
+
+  for (let i = 0; i < target; i += 1) {
+    const core = sentencePool[i % sentencePool.length];
+    const rules = [
+      sentencePool[(i + 1) % sentencePool.length] || "Prefer small reusable functions.",
+      sentencePool[(i + 2) % sentencePool.length] || "Validate inputs and expected outputs.",
+      sentencePool[(i + 3) % sentencePool.length] || "Keep naming explicit and consistent."
+    ];
+    const quizQ = sentencePool[(i + 4) % sentencePool.length] || "What test case would fail first?";
+    const quizA = sentencePool[(i + 5) % sentencePool.length] || "Start with empty, invalid, and boundary inputs.";
+    const takeaway = sentencePool[(i + 6) % sentencePool.length] || "Capture reusable patterns and validate behavior with examples.";
+    const code = codePool.length > 0 ? codePool[i % codePool.length] : "const result = values.filter(Boolean);\nconsole.log(result);";
+
+    const titleWords = normalizeSentence(core)
+      .replace(/[^a-zA-Z0-9\s]/g, "")
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 7)
+      .join(" ");
+
+    const title = `Generated Insight ${i + 1}: ${titleWords || "Practical Concept"}`;
+    const excerpt = core.length > 140 ? `${core.slice(0, 137)}...` : core;
+
+    posts.push({
+      id: i + 1,
+      category: cfg.defaultCategory || "JavaScript",
+      title,
+      tags,
+      excerpt,
+      sourceUrl: "",
+      createdAt: generatedTimestamp(baseTime, i),
+      content: buildDetailedContent({
+        core,
+        rules,
+        tryThis: code,
+        quizQ,
+        quizA,
+        takeaway
+      })
+    });
+  }
+
+  return posts;
+}
+
+function toPostsDataJs(posts) {
+  const lines = [];
+  lines.push("/* ================================================================");
+  lines.push("   AUTO-GENERATED POSTS");
+  lines.push("   Regenerate with: npm run posts:generate");
+  lines.push("   ================================================================ */");
+  lines.push("");
+  lines.push("// eslint-disable-next-line no-unused-vars");
+  lines.push("const ALL_POSTS = [");
+
+  posts.forEach((post, index) => {
+    lines.push("  {");
+    lines.push(`    id: ${post.id}, category: ${JSON.stringify(post.category)},`);
+    lines.push(`    title: ${JSON.stringify(post.title)},`);
+    lines.push(`    tags: ${JSON.stringify(post.tags)},`);
+    lines.push(`    excerpt: ${JSON.stringify(post.excerpt)},`);
+    lines.push(`    sourceUrl: ${JSON.stringify(post.sourceUrl || "")},`);
+    lines.push(`    createdAt: ${JSON.stringify(post.createdAt || generatedTimestamp(Date.now(), index))},`);
+    lines.push(`    content: ${JSON.stringify(post.content)}`);
+    lines.push(index === posts.length - 1 ? "  }" : "  },");
+  });
+
+  lines.push("];\n");
+  return lines.join("\n");
+}
+
+async function resolvePdfPath(cfg) {
+  const cliPath = process.argv[2] ? process.argv[2].trim() : "";
+  if (cliPath) {
+    return path.resolve(__dirname, cliPath);
+  }
+
+  if (cfg.promptForPdfPath || !cfg.pdfPath) {
+    const entered = await ask("Enter PDF path to generate posts from: ");
+    if (!entered) {
+      throw new Error("No PDF path provided.");
+    }
+    return path.resolve(__dirname, entered);
+  }
+
+  return path.resolve(__dirname, cfg.pdfPath);
+}
+
+function stripCodeFence(text) {
+  const trimmed = String(text || "").trim();
+  if (trimmed.startsWith("```") && trimmed.endsWith("```")) {
+    return trimmed.replace(/^```[a-zA-Z]*\n?/, "").replace(/```$/, "").trim();
+  }
+  return trimmed;
+}
+
+function normalizeAiPost(post, index, cfg) {
+  const title = normalizeSentence(post.title || `Generated Insight ${index + 1}`);
+  const excerpt = normalizeSentence(post.excerpt || "");
+  const content = normalizeSentence(post.content || "").replace(/\\n/g, "\n");
+  const category = normalizeSentence(post.category || cfg.defaultCategory || "JavaScript");
+  const tags = Array.isArray(post.tags) && post.tags.length > 0
+    ? post.tags.map((t) => normalizeSentence(t.toLowerCase())).filter(Boolean).slice(0, 8)
+    : (cfg.tags || ["javascript", "automation"]);
+
+  return {
+    id: index + 1,
+    category,
+    title,
+    tags,
+    excerpt: excerpt || content.slice(0, 140),
+    sourceUrl: normalizeSentence(post.sourceUrl || ""),
+    createdAt: normalizeSentence(post.createdAt || generatedTimestamp(Date.now(), index)),
+    content
+  };
+}
+
+async function createAiPosts(cfg, aiCfg) {
+  const apiKey = process.env[aiCfg.apiKeyEnvVar || "OPENAI_API_KEY"];
+  if (!aiCfg.enabled || !apiKey) {
+    return null;
+  }
+
+  const target = Number(cfg.targetPostCount || 100);
+  const topicPool = Array.isArray(cfg.topicPool) && cfg.topicPool.length > 0
+    ? cfg.topicPool.join(", ")
+    : "Playwright, TypeScript, Azure DevOps, JavaScript";
+
+  const userPrompt = [
+    `Create ${target} detailed technical posts.`,
+    `Topics should come from: ${topicPool}.`,
+    "Return strict JSON only, no markdown.",
+    "Schema: [{id, category, title, tags, excerpt, content}]",
+    "content must include markdown sections exactly:",
+    "## Core Concept",
+    "## Key Rules",
+    "## Try This",
+    "## Quick Quiz",
+    "## Key Takeaway"
+  ].join("\n");
+
+  const response = await fetch(aiCfg.endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: aiCfg.model,
+      temperature: 0.7,
+      messages: [
+        { role: "system", content: aiCfg.systemPrompt },
+        { role: "user", content: userPrompt }
+      ]
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`AI request failed: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) {
+    throw new Error("AI response did not contain content.");
+  }
+
+  const parsed = JSON.parse(stripCodeFence(text));
+  if (!Array.isArray(parsed) || parsed.length === 0) {
+    throw new Error("AI response JSON is not a non-empty array.");
+  }
+
+  return parsed.slice(0, target).map((post, index) => normalizeAiPost(post, index, cfg));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FREE AI GENERATION — Groq (llama-3.1-8b-instant) or Google Gemini free tier
+// Get a free key: https://console.groq.com  |  https://aistudio.google.com
+// Set env var GROQ_API_KEY or GEMINI_API_KEY before running.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function buildPostPrompt(seed) {
+  return (
+    "You are a senior " + seed.topic + " expert writing a LinkedIn post.\n" +
+    "Topic: \"" + seed.subtopic + "\"\n\n" +
+    "STYLE RULES (mandatory):\n" +
+    "- Conversational tone: ask questions, invite opinions, share personal experience.\n" +
+    "- Short paragraphs (2-3 lines max) for mobile readability.\n" +
+    "- Use bullet points and numbered lists for scannability.\n" +
+    "- Authentic voice — no marketing speak.\n" +
+    "- Educational: provide actionable insights and frameworks.\n\n" +
+    "Return ONLY a valid JSON object (no markdown fences, no extra text).\n" +
+    "Schema: { \"title\": string, \"tags\": string[], \"excerpt\": string, \"content\": string }\n\n" +
+    "The content field must use \\n for line breaks. Add a BLANK LINE (\\n\\n) between every section.\n" +
+    "Follow this EXACT layout:\n\n" +
+    "## Core Concept\\n\\n<2-3 conversational sentences explaining the idea — ask a question to hook the reader>\\n\\n" +
+    "## Key Rules\\n\\n- <rule 1>\\n\\n- <rule 2>\\n\\n- <rule 3>\\n\\n" +
+    "## \uD83D\uDCA1 Try This\\n\\n```js\\n<3-6 line code snippet>\\n```\\n\\n" +
+    "## \u2753 Quick Quiz\\n\\nQ: <short question>\\n\\nA: <short answer>\\n\\n" +
+    "## \uD83D\uDD11 Key Takeaway\\n\\n<one punchy actionable sentence>"
+  );
+}
+
+async function callGroq(prompt, apiKey, model) {
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + apiKey
+    },
+    body: JSON.stringify({
+      model: model || "llama-3.1-8b-instant",
+      temperature: 0.75,
+      messages: [
+        { role: "system", content: "You are a technical content expert. Return valid JSON only — no markdown fences, no explanation." },
+        { role: "user", content: prompt }
+      ]
+    })
+  });
+  if (!response.ok) {
+    const errText = await response.text().catch(() => response.statusText);
+    throw new Error("Groq API " + response.status + ": " + errText);
+  }
+  const data = await response.json();
+  return String(data?.choices?.[0]?.message?.content || "");
+}
+
+async function callGemini(prompt, apiKey, model) {
+  const modelId = model || "gemini-1.5-flash";
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelId + ":generateContent?key=" + apiKey;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.75, responseMimeType: "application/json" }
+    })
+  });
+  if (!response.ok) {
+    const errText = await response.text().catch(() => response.statusText);
+    throw new Error("Gemini API " + response.status + ": " + errText);
+  }
+  const data = await response.json();
+  return String(data?.candidates?.[0]?.content?.parts?.[0]?.text || "");
+}
+
+async function callGitHubModels(prompt, apiKey, model) {
+  const response = await fetch("https://models.inference.ai.azure.com/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + apiKey
+    },
+    body: JSON.stringify({
+      model: model || "gpt-4o-mini",
+      temperature: 0.75,
+      messages: [
+        { role: "system", content: "You are a technical content expert. Return valid JSON only — no markdown fences, no explanation." },
+        { role: "user", content: prompt }
+      ]
+    })
+  });
+  if (!response.ok) {
+    const errText = await response.text().catch(() => response.statusText);
+    throw new Error("GitHub Models API " + response.status + ": " + errText);
+  }
+  const data = await response.json();
+  return String(data?.choices?.[0]?.message?.content || "");
+}
+
+async function callFreeAi(prompt, freeAiCfg) {
+  const provider = String(freeAiCfg.provider || "groq").toLowerCase();
+  if (provider === "gemini") {
+    const apiKey = process.env[freeAiCfg.gemini?.apiKeyEnvVar || "GEMINI_API_KEY"] || "";
+    if (!apiKey) throw new Error("GEMINI_API_KEY environment variable is not set.");
+    return callGemini(prompt, apiKey, freeAiCfg.gemini?.model);
+  }
+  if (provider === "copilot" || provider === "github") {
+    const apiKey = process.env[freeAiCfg.copilot?.apiKeyEnvVar || "GITHUB_TOKEN"] || "";
+    if (!apiKey) throw new Error("GITHUB_TOKEN environment variable is not set. Get a free PAT from https://github.com/settings/tokens");
+    return callGitHubModels(prompt, apiKey, freeAiCfg.copilot?.model);
+  }
+  // Default: Groq
+  const apiKey = process.env[freeAiCfg.groq?.apiKeyEnvVar || "GROQ_API_KEY"] || "";
+  if (!apiKey) throw new Error("GROQ_API_KEY environment variable is not set.");
+  return callGroq(prompt, apiKey, freeAiCfg.groq?.model);
+}
+
+function parseFreeAiResponse(rawText, seed, index, cfg) {
+  const cleaned = stripCodeFence(rawText.trim());
+  let obj;
+  try {
+    obj = JSON.parse(cleaned);
+  } catch {
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error("No JSON object found in AI response.");
+    obj = JSON.parse(match[0]);
+  }
+  return normalizeAiPost(
+    {
+      ...obj,
+      category: seed.category,
+      tags: Array.isArray(obj.tags) && obj.tags.length > 0 ? obj.tags : seed.tags
+    },
+    index,
+    cfg
+  );
+}
+
+function createFallbackPost(seed, index, cfg) {
+  const tpl = TOPIC_LIBRARY.find((t) => t.topic === seed.topic) || TOPIC_LIBRARY[index % TOPIC_LIBRARY.length];
+  const rotation = index % tpl.core.length;
+  const core = tpl.core[rotation];
+  const rules = [
+    tpl.rules[rotation % tpl.rules.length],
+    tpl.rules[(rotation + 1) % tpl.rules.length],
+    tpl.rules[(rotation + 2) % tpl.rules.length]
+  ];
+  return {
+    id: index + 1,
+    category: seed.category,
+    title: seed.subtopic,
+    tags: seed.tags,
+    excerpt: core.length > 140 ? core.slice(0, 137) + "..." : core,
+    sourceUrl: "",
+    createdAt: generatedTimestamp(Date.now(), index),
+    content: buildDetailedContent({ core, rules, tryThis: tpl.tryThis, quizQ: tpl.quizQ, quizA: tpl.quizA, takeaway: tpl.takeaway })
+  };
+}
+
+async function createFreeAiPostsWithWorkers(cfg, freeAiCfg) {
+  const target = Number(cfg.targetPostCount || 4);
+  const concurrency = Math.min(Number(freeAiCfg.concurrentWorkers || 5), 10);
+  const batchDelayMs = Number(freeAiCfg.batchDelayMs || 2000);
+
+  // Randomly pick 'target' seeds from the full 100 pool so each run gets fresh topics
+  const shuffled = [...TOPIC_SEEDS].sort(() => Math.random() - 0.5);
+  const seeds = shuffled.slice(0, target);
+  const results = [];
+
+  console.log("Free AI workers: " + seeds.length + " posts | " + concurrency + " concurrent | provider: " + (freeAiCfg.provider || "groq"));
+
+  for (let i = 0; i < seeds.length; i += concurrency) {
+    const batch = seeds.slice(i, i + concurrency);
+    const settled = await Promise.allSettled(
+      batch.map(async (seed, batchIdx) => {
+        const index = i + batchIdx;
+        const prompt = buildPostPrompt(seed);
+        const raw = await callFreeAi(prompt, freeAiCfg);
+        return parseFreeAiResponse(raw, seed, index, cfg);
+      })
+    );
+
+    settled.forEach((result, batchIdx) => {
+      const index = i + batchIdx;
+      if (result.status === "fulfilled") {
+        results.push(result.value);
+      } else {
+        const reason = result.reason?.message || String(result.reason);
+        console.warn("  Worker " + (index + 1) + " failed (" + seeds[index].subtopic + "): " + reason + " — using template fallback.");
+        results.push(createFallbackPost(seeds[index], index, cfg));
+      }
+    });
+
+    const done = Math.min(i + concurrency, seeds.length);
+    process.stdout.write("  Progress: " + done + "/" + seeds.length + "\r");
+
+    if (i + concurrency < seeds.length) {
+      await new Promise((resolve) => setTimeout(resolve, batchDelayMs));
+    }
+  }
+
+  console.log("\n  All workers finished.");
+  return results;
+}
+
+async function generatePostsFromConfig(options = {}) {
+  const config = loadConfig();
+  const cfg = config.contentGeneration;
+  const aiCfg = config.aiGeneration || {};
+  const freeAiCfg = config.freeAiGeneration || {};
+  const mode = ["pdf", "ai"].includes(cfg.sourceMode) ? cfg.sourceMode : "topics";
+  const outputPath = path.resolve(__dirname, cfg.outputFile || "posts-data.js");
+
+  let posts;
+  const useFreeAi = freeAiCfg.enabled && cfg.autoGenerateOnEveryRun && mode !== "pdf";
+
+  if (useFreeAi) {
+    try {
+      posts = await createFreeAiPostsWithWorkers(cfg, freeAiCfg);
+    } catch (err) {
+      console.warn("Free AI generation failed: " + (err.message || err) + ". Falling back to topic templates.");
+      posts = createTopicPosts(cfg);
+    }
+  } else if (mode === "pdf") {
+    const pdfPath = await resolvePdfPath(cfg);
+    if (!fs.existsSync(pdfPath)) {
+      throw new Error("PDF not found at: " + pdfPath);
+    }
+
+    const pdfBuffer = fs.readFileSync(pdfPath);
+    const parsed = await pdf(pdfBuffer);
+    posts = generatePostsFromText(parsed.text || "", cfg);
+  } else if (mode === "ai") {
+    const aiPosts = await createAiPosts(cfg, aiCfg);
+    if (aiPosts && aiPosts.length > 0) {
+      posts = aiPosts;
+    } else {
+      posts = createTopicPosts(cfg);
+    }
+  } else {
+    posts = createTopicPosts(cfg);
+  }
+
+  const effectiveMode = useFreeAi ? "free-ai (" + (freeAiCfg.provider || "groq") + ")" : mode;
+  fs.writeFileSync(outputPath, toPostsDataJs(posts), "utf8");
+
+  if (!options.silent) {
+    console.log("Generated " + posts.length + " detailed posts using '" + effectiveMode + "' mode.");
+    console.log("Output: " + outputPath);
+  }
+
+  return { posts, mode: effectiveMode, outputPath, config };
+}
+
+if (require.main === module) {
+  generatePostsFromConfig().catch((error) => {
+    console.error("Generation failed:", error.message || error);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  generatePostsFromConfig,
+  loadConfig
+};

@@ -1,0 +1,66 @@
+{
+  "scheduler": {
+    "enabled": true,
+    "intervalMinutes": 60,
+    "intervalJitterPercent": 20,
+    "runImmediately": true,
+    "maxRuns": 0
+  },
+  "linkedin": {
+    "postCount": 2,
+    "startIndex": 0,
+    "delayBetweenPostsMinSec": 30,
+    "delayBetweenPostsMaxSec": 90,
+    "prePostDelayMinSec": 2,
+    "prePostDelayMaxSec": 5
+  },
+  "safetyLimits": {
+    "maxPostsPerDay": 10,
+    "similarityThreshold": 0.6,
+    "maxHistory": 50
+  },
+  "contentGeneration": {
+    "sourceMode": "topics",
+    "targetPostCount": 2,
+    "pdfPath": "",
+    "promptForPdfPath": true,
+    "defaultCategory": "JavaScript",
+    "autoGenerateOnEveryRun": true,
+    "topicPool": [
+      "Playwright",
+      "TypeScript",
+      "Azure DevOps",
+      "JavaScript"
+    ],
+    "tags": [
+      "javascript",
+      "automation"
+    ],
+    "outputFile": "posts-data.js"
+  },
+  "aiGeneration": {
+    "enabled": false,
+    "endpoint": "https://api.openai.com/v1/chat/completions",
+    "model": "gpt-4o-mini",
+    "apiKeyEnvVar": "OPENAI_API_KEY",
+    "systemPrompt": "Generate high-quality technical social posts as valid JSON only."
+  },
+  "freeAiGeneration": {
+    "enabled": true,
+    "provider": "copilot",
+    "concurrentWorkers": 1,
+    "batchDelayMs": 5000,
+    "copilot": {
+      "apiKeyEnvVar": "GITHUB_TOKEN",
+      "model": "gpt-4o-mini"
+    },
+    "groq": {
+      "apiKeyEnvVar": "GROQ_API_KEY",
+      "model": "llama-3.1-8b-instant"
+    },
+    "gemini": {
+      "apiKeyEnvVar": "GEMINI_API_KEY",
+      "model": "gemini-1.5-flash"
+    }
+  }
+}

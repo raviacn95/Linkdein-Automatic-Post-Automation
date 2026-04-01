@@ -1,0 +1,16 @@
+{
+  "name": "js-playwright-mcp-blog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LinkedIn post automation using Playwright and local post data",
+  "main": "linkedin-automation.js",
+  "scripts": {
+    "linkedin:post": "node linkedin-automation.js",
+    "posts:generate": "node generate-posts-from-pdf.js",
+    "linkedin:scheduler": "node scheduler.js"
+  },
+  "dependencies": {
+    "pdf-parse": "^1.1.1",
+    "playwright": "^1.54.2"
+  }
+}
