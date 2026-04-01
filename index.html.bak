@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS · Playwright · TypeScript — Learning Hub | Basics to Architect | Free 2026</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="100+ free detailed tutorial guides covering JavaScript, Playwright, and TypeScript — from beginner to architect level. Each guide includes step by step examples, comparison tables, best practices, common issues with fixes, FAQs, and code examples." />
+    <meta name="keywords" content="JavaScript tutorial, Playwright tutorial, TypeScript guide, JavaScript guide with examples, Playwright testing guide, TypeScript best practices, step by step tutorial, beginner to architect, automation testing, end-to-end testing, web development, free learning, comparison tables, FAQs, code examples" />
+    <meta name="author" content="Ravi" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://raviacn95.github.io/Linkdein-Automatic-Post-Automation/" />
+
+    <!-- Open Graph (Facebook, LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JS · Playwright · TypeScript — Learning Hub" />
+    <meta property="og:description" content="100+ free detailed tutorial guides from beginner to architect level. Step by step examples, comparison tables, best practices, FAQs, and code examples." />
+    <meta property="og:url" content="https://raviacn95.github.io/Linkdein-Automatic-Post-Automation/" />
+    <meta property="og:site_name" content="JS Playwright MCP Knowledge Hub" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="JS · Playwright · TypeScript — Learning Hub" />
+    <meta name="twitter:description" content="100+ free detailed tutorial guides from beginner to architect level with step by step examples, comparison tables, best practices, and FAQs." />
+
+    <!-- Structured Data: WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "JS Playwright MCP Knowledge Hub",
+      "url": "https://raviacn95.github.io/js-playwright-mcp-blog/",
+      "description": "100+ free detailed tutorial guides covering JavaScript, Playwright, and TypeScript with step by step examples, comparison tables, and FAQs",
+      "publisher": {
+        "@type": "Person",
+        "name": "Ravi"
+      }
+    }
+    </script>
+
+    <!-- Structured Data: Blog -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "name": "JS Playwright MCP Knowledge Hub",
+      "url": "https://raviacn95.github.io/js-playwright-mcp-blog/",
+      "description": "Comprehensive learning resource with 100+ detailed tutorial guides covering JavaScript, Playwright, and TypeScript from beginner to architect level with code examples, comparison tables, best practices, and FAQs",
+      "blogPost": [
+        {
+          "@type": "BlogPosting",
+          "headline": "JS Variables: var, let & const",
+          "description": "Understand scoping rules and when to pick var, let, or const.",
+          "keywords": "javascript, variables, basics"
+        },
+        {
+          "@type": "BlogPosting",
+          "headline": "What is Playwright & Key Features",
+          "description": "Open-source E2E framework by Microsoft with cross-browser, auto-wait, and parallel execution.",
+          "keywords": "playwright, overview, features"
+        },
+        {
+          "@type": "BlogPosting",
+          "headline": "What is MCP (Model Context Protocol)?",
+          "description": "MCP is NOT a test framework — it's a protocol standardizing how AI models, tools, and context communicate.",
+          "keywords": "mcp, protocol, ai-testing"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Structured Data: FAQ (boosts SEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Playwright and what are its key features?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Playwright is an open-source automation framework by Microsoft for end-to-end testing. Key features include cross-browser support, auto-wait mechanism, multi-language support, mobile emulation, network interception, and parallel test execution."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is MCP (Model Context Protocol)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "MCP is a protocol that standardizes how AI models, tools like Playwright, and context like DOM and logs communicate in a structured, machine-actionable way. It is not a test framework but a communication bridge."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between var, let, and const in JavaScript?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "var is function-scoped and can be redeclared. let is block-scoped and can be updated but not redeclared. const is block-scoped and cannot be updated or redeclared. Modern JS prefers let and const."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2441085120272132" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics Placeholder — Replace G-XXXXXXX with your real ID -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script> -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="background-glow background-glow-a" aria-hidden="true"></div>
+    <div class="background-glow background-glow-b" aria-hidden="true"></div>
+
+    <header class="hero">
+      <p class="badge">Learning Hub &mdash; Basics to Architect</p>
+      <h1>JS &middot; Playwright &middot; TypeScript Learning Hub</h1>
+      <p class="hero-copy">
+        100+ structured lessons covering JavaScript, Playwright, and TypeScript &mdash; from beginner fundamentals to architect-level patterns.
+        Each post includes workflow steps, architecture flows, code examples, and quizzes.
+      </p>
+      <div class="learning-path-nav" id="learning-path-nav">
+        <button class="path-btn active" data-level="All">All Levels</button>
+        <button class="path-btn path-beginner" data-level="beginner">&#127793; Beginner</button>
+        <button class="path-btn path-intermediate" data-level="intermediate">&#11088; Intermediate</button>
+        <button class="path-btn path-advanced" data-level="advanced">&#128640; Advanced / Architect</button>
+      </div>
+    </header>
+
+    <!-- AD SLOT 1: Leaderboard Banner (top of page - highest CPM) -->
+    <div class="ad-slot ad-leaderboard" id="ad-top">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="TOP_SLOT_ID" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <main class="layout">
+      <section class="panel composer" aria-labelledby="composer-title">
+        <h2 id="composer-title">Write Post</h2>
+        <form id="post-form">
+          <input type="hidden" id="post-id" />
+
+          <label for="title">Title</label>
+          <input id="title" name="title" type="text" placeholder="Ex: Playwright Retry Strategy for Flaky UI" required />
+
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="">Select category</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="TypeScript">TypeScript</option>
+            <option value="Playwright">Playwright</option>
+            <option value="MCP">MCP</option>
+            <option value="TOSCA">TOSCA</option>
+            <option value="Both">Both</option>
+          </select>
+
+          <label for="tags">Tags (comma separated)</label>
+          <input id="tags" name="tags" type="text" placeholder="automation, selectors, regression" />
+
+          <label for="excerpt">Short Summary</label>
+          <textarea id="excerpt" name="excerpt" rows="3" placeholder="Two-line summary for card view" required></textarea>
+
+          <label for="cover-image">Cover Image</label>
+          <input id="cover-image" name="cover-image" type="file" accept="image/*" />
+          <img id="cover-preview" class="cover-preview hidden" alt="Cover preview" />
+
+          <label for="content">Full Content</label>
+          <textarea id="content" name="content" rows="10" placeholder="Write your post details here..." required></textarea>
+          <p class="hint">Markdown supported: headings, lists, bold, italics, links, code blocks.</p>
+
+          <div class="button-row">
+            <button class="btn-primary" type="submit" id="save-btn">Publish Post</button>
+            <button class="btn-ghost" type="button" id="clear-btn">Clear</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel feed" aria-labelledby="feed-title">
+        <div class="feed-head">
+          <h2 id="feed-title">Published Posts</h2>
+          <div class="toolbar">
+            <input id="search" type="search" placeholder="Search title, tag, text..." />
+            <select id="filter-category">
+              <option value="All">All Categories</option>
+              <option value="JavaScript">JavaScript</option>
+              <option value="TypeScript">TypeScript</option>
+              <option value="Playwright">Playwright</option>
+              <option value="MCP">MCP</option>
+              <option value="TOSCA">TOSCA</option>
+              <option value="Both">Both</option>
+            </select>
+            <button id="export-btn" class="btn-ghost" type="button">Export JSON</button>
+            <button id="import-btn" class="btn-ghost" type="button">Import JSON</button>
+            <input id="import-file" type="file" accept="application/json" class="hidden" />
+          </div>
+        </div>
+
+        <div id="posts" class="posts" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <dialog id="viewer" class="viewer">
+      <article id="viewer-content"></article>
+      <form method="dialog">
+        <button class="btn-ghost">Close</button>
+      </form>
+    </dialog>
+
+    <template id="post-card-template">
+      <article class="post-card">
+        <img class="card-cover hidden" alt="Post cover" />
+        <div class="meta-row">
+          <span class="category"></span>
+          <time></time>
+        </div>
+        <h3></h3>
+        <p class="excerpt"></p>
+        <div class="tags"></div>
+        <div class="card-actions">
+          <button class="btn-ghost read-btn" type="button">Read</button>
+          <button class="btn-ghost edit-btn" type="button">Edit</button>
+          <button class="btn-danger delete-btn" type="button">Delete</button>
+        </div>
+      </article>
+    </template>
+
+    <!-- AD SLOT 2: Between content and resources (high visibility) -->
+    <div class="ad-slot ad-mid" id="ad-mid">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="MID_SLOT_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- REVENUE SECTION: Recommended Resources (Affiliate Links) -->
+    <section class="revenue-section" id="resources">
+      <h2>🔧 Recommended Tools & Resources</h2>
+      <p class="revenue-subtitle">Handpicked tools and courses we use daily — affiliate links help keep this hub free</p>
+      <div class="affiliate-grid">
+        <a href="https://www.hostinger.com/special/playwright-testing" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+          <div class="affiliate-icon">🌐</div>
+          <h3>Hostinger Web Hosting</h3>
+          <p>Fast, affordable hosting for your test apps and portfolios. Up to 75% off.</p>
+          <span class="affiliate-cta">Get Hosting →</span>
+        </a>
+        <a href="https://www.udemy.com/topic/playwright/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+          <div class="affiliate-icon">🎭</div>
+          <h3>Playwright Courses on Udemy</h3>
+          <p>End-to-end testing masterclasses — from zero to CI/CD expert</p>
+          <span class="affiliate-cta">Browse Courses →</span>
+        </a>
+        <a href="https://www.semrush.com/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+          <div class="affiliate-icon">📊</div>
+          <h3>SEMrush SEO Toolkit</h3>
+          <p>Rank your blog higher. Keyword research, site audit, and competitor analysis.</p>
+          <span class="affiliate-cta">Start Free Trial →</span>
+        </a>
+        <a href="https://www.udemy.com/topic/javascript/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+          <div class="affiliate-icon">📘</div>
+          <h3>JavaScript Masterclass</h3>
+          <p>Complete JS guide from ES6+ basics to advanced patterns — 60+ hours</p>
+          <span class="affiliate-cta">Enroll Now →</span>
+        </a>
+        <a href="https://www.browserstack.com/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+          <div class="affiliate-icon">☁️</div>
+          <h3>BrowserStack Cloud Testing</h3>
+          <p>Run Playwright tests at scale across 3000+ real browsers and devices</p>
+          <span class="affiliate-cta">Try Free →</span>
+        </a>
+        <a href="https://www.udemy.com/topic/typescript/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+          <div class="affiliate-icon">🔷</div>
+          <h3>TypeScript Deep Dive</h3>
+          <p>Master TypeScript from basics to advanced generics and patterns</p>
+          <span class="affiliate-cta">Learn More →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- EMAIL LEAD MAGNET SECTION -->
+    <section class="lead-magnet-section" id="newsletter">
+      <div class="lead-magnet-inner">
+        <div class="lead-magnet-icon">📧</div>
+        <h2>Get the Free Automation Cheat Sheet</h2>
+        <p>Join 1,000+ developers. Get our <strong>"Top 50 Playwright + JavaScript Automation Hacks"</strong> PDF free — plus weekly tips on testing, TypeScript, and career growth.</p>
+        <form class="lead-magnet-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="9ae0f5b6-8b8b-40ac-a5ba-cdfdfa1e4420" />
+          <input type="hidden" name="subject" value="New Newsletter Subscriber from Learning Hub" />
+          <input type="hidden" name="from_name" value="Automation Learning Hub" />
+          <input type="hidden" name="redirect" value="https://raviacn95.github.io/Linkdein-Automatic-Post-Automation/" />
+          <input type="email" name="email" placeholder="you@example.com" required class="lead-magnet-email" />
+          <button type="submit" class="lead-magnet-btn">🎁 Send Me the Cheat Sheet</button>
+        </form>
+        <p class="lead-magnet-note">No spam, ever. Unsubscribe anytime.</p>
+      </div>
+    </section>
+
+    <!-- DIGITAL PRODUCTS SECTION -->
+    <section class="products-section" id="products">
+      <h2>🛒 Digital Products & Templates</h2>
+      <p class="products-subtitle">Ready-to-use resources to 10x your productivity</p>
+      <div class="products-grid">
+        <div class="product-card">
+          <div class="product-badge">Popular</div>
+          <div class="product-icon">📦</div>
+          <h3>Playwright CI/CD Starter Kit</h3>
+          <p>GitHub Actions + Azure DevOps pipeline templates, config files, and best practices for Playwright.</p>
+          <div class="product-price">₹499 <span class="product-price-old">₹999</span></div>
+          <a href="https://gumroad.com/" class="product-btn" target="_blank" rel="noopener noreferrer">Get It Now →</a>
+        </div>
+        <div class="product-card">
+          <div class="product-badge">New</div>
+          <div class="product-icon">📄</div>
+          <h3>SAP Tosca Automation Pack</h3>
+          <p>50+ reusable Tosca modules, test data templates, and execution checklists for SAP workflows.</p>
+          <div class="product-price">₹799 <span class="product-price-old">₹1499</span></div>
+          <a href="https://gumroad.com/" class="product-btn" target="_blank" rel="noopener noreferrer">Get It Now →</a>
+        </div>
+        <div class="product-card">
+          <div class="product-icon">📚</div>
+          <h3>JavaScript Interview Prep eBook</h3>
+          <p>200+ frequently asked JS questions with explanations, code examples, and patterns.</p>
+          <div class="product-price">₹299 <span class="product-price-old">₹599</span></div>
+          <a href="https://gumroad.com/" class="product-btn" target="_blank" rel="noopener noreferrer">Get It Now →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONSULTING / COURSES SECTION -->
+    <section class="consulting-section" id="consulting">
+      <div class="consulting-inner">
+        <div class="consulting-text">
+          <h2>🎓 1-on-1 Consulting & Training</h2>
+          <p>Need help with <strong>SAP Automation, Playwright setup, or TypeScript migration</strong>? Book a personalised consulting session or request a custom training workshop for your team.</p>
+          <ul class="consulting-features">
+            <li>✅ Playwright test architecture review</li>
+            <li>✅ SAP Tosca automation strategy</li>
+            <li>✅ CI/CD pipeline setup for E2E tests</li>
+            <li>✅ TypeScript migration guidance</li>
+            <li>✅ Team workshops (remote or on-site)</li>
+          </ul>
+          <div class="consulting-actions">
+            <a href="mailto:raviacn95@gmail.com?subject=Consulting%20Request%20from%20Learning%20Hub" class="consulting-btn-primary">📅 Book a Session</a>
+            <a href="https://www.linkedin.com/in/raviacn95/" class="consulting-btn-secondary" target="_blank" rel="noopener noreferrer">💬 Connect on LinkedIn</a>
+          </div>
+        </div>
+        <div class="consulting-stats">
+          <div class="stat-card"><div class="stat-number">8+</div><div class="stat-label">Years Experience</div></div>
+          <div class="stat-card"><div class="stat-number">50+</div><div class="stat-label">Projects Delivered</div></div>
+          <div class="stat-card"><div class="stat-number">100+</div><div class="stat-label">Free Tutorials</div></div>
+          <div class="stat-card"><div class="stat-number">SAP</div><div class="stat-label">& Playwright Expert</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AD SLOT 3: Before footer (catches scroll-to-bottom users) -->
+    <div class="ad-slot ad-prefooter" id="ad-bottom">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="BOTTOM_SLOT_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- DONATION / SUPPORT SECTION -->
+    <section class="support-section">
+      <h2>☕ Support This Blog</h2>
+      <p>If this hub helped you, consider buying me a coffee. Every bit keeps this free for everyone.</p>
+      <div class="support-buttons">
+        <a href="https://buymeacoffee.com/raviacn95" class="btn-donate" target="_blank" rel="noopener noreferrer">☕ Buy Me a Coffee</a>
+        <a href="https://github.com/sponsors/raviacn95" class="btn-sponsor" target="_blank" rel="noopener noreferrer">💖 GitHub Sponsors</a>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <p><strong>JS · Playwright · TypeScript Learning Hub</strong> — 100+ free structured lessons for students and developers, from basics to architect level.</p>
+        <p class="footer-topics">Topics: JavaScript ES6+, Playwright E2E Testing, TypeScript, Browser Automation, CI/CD, Workflows, Architecture Patterns</p>
+        <p class="footer-copy">&copy; 2026 <a href="https://github.com/raviacn95" target="_blank" rel="noopener noreferrer">Ravi</a> · Hosted free on GitHub Pages · Open Source</p>
+      </div>
+    </footer>
+
+    <script src="posts-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
