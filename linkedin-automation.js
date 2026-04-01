@@ -179,49 +179,100 @@ function buildLinkedInText(post) {
   const painPoint = (painPointByTopic[topic] || painPointByTopic.javascript)[0];
 
   const separator = "\u2500".repeat(30);
-
-  // Extract short summary sections from content
   const rawContent = String(post.content || "");
 
-  function extractSection(heading) {
-    // Match ## heading or ## emoji heading variants
-    const pattern = new RegExp("##\\s*(?:[\\u{1F4A1}\\u{2753}\\u{1F511}]\\s*)?" + heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "[\\s\\S]*?(?=\\n##\\s|$)", "u");
-    const m = rawContent.match(pattern);
-    if (!m) return "";
-    return m[0]
-      .replace(/^##\s*[^\n]*\n?/, "")
-      .replace(/```\w*\n?/g, "")
-      .replace(/```/g, "")
+  // ── Helpers ──────────────────────────────────────────
+  function stripMd(text) {
+    return text
+      .replace(/```\w*\n?/g, "").replace(/```/g, "")
       .replace(/\*\*/g, "")
       .replace(/`([^`]+)`/g, "$1")
       .replace(/\r\n/g, "\n")
-      .replace(/\n\s*-\s+/g, "\n\n\u2022 ")
+      .trim();
+  }
+
+  function extractSection(heading) {
+    const esc = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const pattern = new RegExp("##\\s*(?:[\\u{1F4A1}\\u{2753}\\u{1F511}]\\s*)?" + esc + "[\\s\\S]*?(?=\\n##\\s|$)", "u");
+    const m = rawContent.match(pattern);
+    if (!m) return "";
+    return stripMd(m[0].replace(/^##\s*[^\n]*\n?/, ""))
+      .replace(/\n\s*-\s+/g, "\n\u2022 ")
       .replace(/\n{3,}/g, "\n\n")
       .trim();
   }
 
-  const coreConcept = extractSection("Core Concept");
-  const keyRules = extractSection("Key Rules");
-  const tryThis = extractSection("Try This");
-  const quickQuiz = extractSection("Quick Quiz");
-  const keyTakeaway = extractSection("Key Takeaway");
-
-  // Build concise LinkedIn body
-  const bodyParts = [];
-  if (coreConcept) bodyParts.push("Core Concept " + coreConcept);
-  if (keyRules) bodyParts.push("Key Rules\n\n" + keyRules);
-  if (tryThis) bodyParts.push("\uD83D\uDCA1 Try This " + tryThis);
-  if (quickQuiz) {
-    let quiz = quickQuiz
-      .replace(/\s*(Q:\s)/g, "\n\nQ: ")
-      .replace(/\s*(A:\s)/g, "\n\nA: ")
-      .trim();
-    bodyParts.push("\u2753 Quick Quiz\n\n" + quiz);
+  function firstLines(text, maxLines) {
+    if (!text) return "";
+    const lines = text.split("\n").filter((l) => l.trim());
+    return lines.slice(0, maxLines).join("\n").trim();
   }
-  if (keyTakeaway) bodyParts.push("\uD83D\uDD11 Key Takeaway " + keyTakeaway);
 
-  // Fallback: if no sections extracted, use excerpt as body
-  const body = bodyParts.length > 0 ? bodyParts.join("\n\n") : String(post.excerpt || "");
+  function extractFirstCodeBlock() {
+    const m = rawContent.match(/```\w*\n([\s\S]*?)```/);
+    return m ? m[1].trim() : "";
+  }
+
+  function extractQA() {
+    const qMatch = rawContent.match(/Q:\s*([^\n]+)/);
+    const aMatch = rawContent.match(/A:\s*([^\n]+)/);
+    if (qMatch && aMatch) return { q: qMatch[1].trim(), a: aMatch[1].trim() };
+    // Try FAQ sections
+    const faqMatch = rawContent.match(/###\s*([^\n?]+\?)\s*\n+([\s\S]*?)(?=\n###|\n##|$)/);
+    if (faqMatch) return { q: faqMatch[1].trim(), a: stripMd(faqMatch[2]).split("\n")[0].trim() };
+    return null;
+  }
+
+  // ── Build concise body sections (2-3 lines each) ────
+  // Core Concept: first paragraph from "What is" or "How to Use" or first content paragraph
+  let concept = extractSection("Core Concept");
+  if (!concept) concept = extractSection("What is");
+  if (!concept) concept = extractSection("How to Use");
+  if (!concept) {
+    // Fallback: first meaningful lines from content
+    concept = stripMd(rawContent).replace(/^##[^\n]*\n?/, "").trim();
+  }
+  concept = firstLines(concept, 3);
+
+  // Key Rules: from "Key Rules" or "Best Practices" — pick 3 bullet points
+  let rules = extractSection("Key Rules");
+  if (!rules) rules = extractSection("Best Practices");
+  if (rules) {
+    const bullets = rules.match(/[\u2022\-]\s*[^\n]+/g) || [];
+    rules = bullets.slice(0, 3).map((b) => b.replace(/^[\-]\s*/, "\u2022 ")).join("\n\n");
+  }
+
+  // Try This: first code snippet, trimmed to 3 lines
+  let tryCode = extractSection("Try This");
+  if (!tryCode) {
+    const code = extractFirstCodeBlock();
+    tryCode = code ? firstLines(code, 3) : "";
+  } else {
+    tryCode = firstLines(tryCode, 3);
+  }
+
+  // Quick Quiz: first Q&A pair
+  let quizText = "";
+  const qa = extractQA();
+  if (qa) {
+    quizText = "Q: " + qa.q + "\n\nA: " + qa.a;
+  }
+
+  // Key Takeaway: from "Key Takeaway" or "Conclusion" — 2 lines
+  let takeaway = extractSection("Key Takeaway");
+  if (!takeaway) takeaway = extractSection("Conclusion");
+  takeaway = firstLines(takeaway, 2);
+
+  // ── Assemble ─────────────────────────────────────────
+  const body = [];
+  if (concept) body.push("Core Concept " + concept);
+  if (rules) body.push("Key Rules\n\n" + rules);
+  if (tryCode) body.push("\uD83D\uDCA1 Try This " + tryCode);
+  if (quizText) body.push("\u2753 Quick Quiz\n\n" + quizText);
+  if (takeaway) body.push("\uD83D\uDD11 Key Takeaway " + takeaway);
+
+  // Final fallback
+  const bodyText = body.length > 0 ? body.join("\n\n") : String(post.excerpt || "");
 
   const parts = [
     painPoint,
@@ -236,7 +287,7 @@ function buildLinkedInText(post) {
     "",
     separator,
     "",
-    body
+    bodyText
   ];
 
   return parts.join("\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, 3000);
