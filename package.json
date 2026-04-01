@@ -10,6 +10,7 @@
     "linkedin:scheduler": "node scheduler.js"
   },
   "dependencies": {
+    "canvas": "^3.2.3",
     "pdf-parse": "^1.1.1",
     "playwright": "^1.54.2"
   }

@@ -3,6 +3,7 @@ const path = require("path");
 const vm = require("vm");
 const readline = require("readline");
 const { chromium } = require("playwright");
+const { createCanvas } = require("canvas");
 const { generatePostsFromConfig, loadConfig } = require("./generate-posts-from-pdf");
 
 const POSTS_FILE = path.join(__dirname, "posts-data.js");
@@ -274,6 +275,14 @@ function buildLinkedInText(post) {
   // Final fallback
   const bodyText = body.length > 0 ? body.join("\n\n") : String(post.excerpt || "");
 
+  // Build website deep link
+  const slug = String(post.title || "")
+    .replace(/[^a-zA-Z0-9\s]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .toLowerCase();
+  const websiteLink = "https://raviacn95.github.io/Linkdein-Automatic-Post-Automation/#post/" + slug;
+
   const parts = [
     painPoint,
     "",
@@ -287,10 +296,218 @@ function buildLinkedInText(post) {
     "",
     separator,
     "",
-    bodyText
+    bodyText,
+    "",
+    separator,
+    "",
+    "\uD83D\uDD17 Read the full guide with code examples & step-by-step instructions:",
+    websiteLink
   ];
 
   return parts.join("\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, 3000);
+}
+
+// ── Workflow PNG Image Generator ─────────────────────────────────────────────
+
+const WORKFLOW_IMAGES_DIR = path.join(__dirname, ".workflow-images");
+
+function generateWorkflowPng(post) {
+  if (!fs.existsSync(WORKFLOW_IMAGES_DIR)) fs.mkdirSync(WORKFLOW_IMAGES_DIR, { recursive: true });
+
+  const title = String(post.title || "Topic Overview");
+  const category = String(post.category || "JavaScript");
+  const rawContent = String(post.content || "");
+  const tags = Array.isArray(post.tags) ? post.tags.slice(0, 5) : [];
+
+  // Extract 4-6 key workflow steps from content headings
+  const headings = [];
+  const hMatches = rawContent.matchAll(/^##\s+(.+)$/gm);
+  for (const m of hMatches) {
+    const h = m[1].replace(/[*`#]/g, "").trim();
+    if (h && !h.startsWith("FAQ") && !h.startsWith("Related") && !h.startsWith("Conclusion")) {
+      headings.push(h.length > 35 ? h.substring(0, 32) + "..." : h);
+    }
+    if (headings.length >= 5) break;
+  }
+  // Fallback steps if content has no headings
+  if (headings.length < 3) {
+    headings.length = 0;
+    headings.push("Understand Concept", "Write Code", "Test & Validate", "Deploy & Monitor");
+  }
+
+  // ── Canvas Setup ──
+  const W = 1200, H = 630;
+  const canvas = createCanvas(W, H);
+  const ctx = canvas.getContext("2d");
+
+  // ── Color scheme by category ──
+  const schemes = {
+    playwright: { bg1: "#0f172a", bg2: "#1e293b", accent: "#22d3ee", accent2: "#06b6d4", text: "#f1f5f9", badge: "#164e63" },
+    javascript: { bg1: "#0f172a", bg2: "#1e293b", accent: "#fbbf24", accent2: "#f59e0b", text: "#f1f5f9", badge: "#78350f" },
+    typescript: { bg1: "#0f172a", bg2: "#1e293b", accent: "#3b82f6", accent2: "#2563eb", text: "#f1f5f9", badge: "#1e3a5f" },
+    both:       { bg1: "#0f172a", bg2: "#1e293b", accent: "#a78bfa", accent2: "#8b5cf6", text: "#f1f5f9", badge: "#4c1d95" },
+    mcp:        { bg1: "#0f172a", bg2: "#1e293b", accent: "#34d399", accent2: "#10b981", text: "#f1f5f9", badge: "#065f46" },
+    tosca:      { bg1: "#0f172a", bg2: "#1e293b", accent: "#fb7185", accent2: "#f43f5e", text: "#f1f5f9", badge: "#881337" }
+  };
+  const c = schemes[category.toLowerCase()] || schemes.javascript;
+
+  // ── Background gradient ──
+  const grad = ctx.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, c.bg1);
+  grad.addColorStop(1, c.bg2);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle grid pattern
+  ctx.strokeStyle = "rgba(255,255,255,0.03)";
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+  // ── Category badge ──
+  ctx.fillStyle = c.badge;
+  roundRect(ctx, 40, 30, ctx.measureText(category.toUpperCase()).width + 60, 36, 18);
+  ctx.fill();
+  ctx.font = "bold 14px Arial, sans-serif";
+  ctx.fillStyle = c.accent;
+  ctx.textAlign = "center";
+  ctx.fillText(category.toUpperCase(), 40 + (ctx.measureText(category.toUpperCase()).width + 60) / 2, 53);
+
+  // ── Title ──
+  ctx.textAlign = "left";
+  ctx.fillStyle = c.text;
+  ctx.font = "bold 28px Arial, sans-serif";
+  const titleLines = wrapText(ctx, title, W - 100);
+  let ty = 95;
+  for (const line of titleLines.slice(0, 2)) {
+    ctx.fillText(line, 40, ty);
+    ty += 36;
+  }
+
+  // ── Accent underline ──
+  const uGrad = ctx.createLinearGradient(40, ty, 300, ty);
+  uGrad.addColorStop(0, c.accent);
+  uGrad.addColorStop(1, "transparent");
+  ctx.fillStyle = uGrad;
+  ctx.fillRect(40, ty, 260, 3);
+
+  // ── Workflow flow boxes ──
+  const boxY = ty + 35;
+  const boxH = 50;
+  const gap = 16;
+  const totalSteps = headings.length;
+  const maxBoxW = Math.min(180, (W - 80 - gap * (totalSteps - 1)) / totalSteps);
+  const totalW = totalSteps * maxBoxW + (totalSteps - 1) * gap;
+  let bx = (W - totalW) / 2;
+
+  for (let i = 0; i < totalSteps; i++) {
+    const x = bx + i * (maxBoxW + gap);
+
+    // Box with rounded corners
+    ctx.fillStyle = "rgba(255,255,255,0.06)";
+    roundRect(ctx, x, boxY, maxBoxW, boxH, 10);
+    ctx.fill();
+
+    // Border
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 1.5;
+    roundRect(ctx, x, boxY, maxBoxW, boxH, 10);
+    ctx.stroke();
+
+    // Step number circle
+    ctx.fillStyle = c.accent;
+    ctx.beginPath();
+    ctx.arc(x + 20, boxY + boxH / 2, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = c.bg1;
+    ctx.font = "bold 13px Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(String(i + 1), x + 20, boxY + boxH / 2 + 5);
+
+    // Step label
+    ctx.fillStyle = c.text;
+    ctx.font = "12px Arial, sans-serif";
+    ctx.textAlign = "left";
+    const label = headings[i].length > 18 ? headings[i].substring(0, 16) + ".." : headings[i];
+    ctx.fillText(label, x + 38, boxY + boxH / 2 + 4);
+
+    // Arrow between boxes
+    if (i < totalSteps - 1) {
+      const arrowX = x + maxBoxW + 2;
+      const arrowY = boxY + boxH / 2;
+      ctx.fillStyle = c.accent;
+      ctx.beginPath();
+      ctx.moveTo(arrowX, arrowY - 5);
+      ctx.lineTo(arrowX + gap - 4, arrowY);
+      ctx.lineTo(arrowX, arrowY + 5);
+      ctx.fill();
+    }
+  }
+
+  // ── Crux summary line ──
+  const summaryY = boxY + boxH + 40;
+  const excerpt = String(post.excerpt || "").substring(0, 120);
+  ctx.fillStyle = "rgba(255,255,255,0.6)";
+  ctx.font = "italic 16px Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(excerpt + (post.excerpt && post.excerpt.length > 120 ? "..." : ""), W / 2, summaryY);
+
+  // ── Tags row ──
+  const tagY = summaryY + 35;
+  ctx.font = "13px Arial, sans-serif";
+  ctx.textAlign = "center";
+  let tagStr = tags.map((t) => "#" + t).join("  ");
+  ctx.fillStyle = c.accent2;
+  ctx.fillText(tagStr, W / 2, tagY);
+
+  // ── Bottom branding bar ──
+  ctx.fillStyle = "rgba(0,0,0,0.3)";
+  ctx.fillRect(0, H - 50, W, 50);
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.font = "13px Arial, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("raviacn95.github.io/Linkdein-Automatic-Post-Automation", 40, H - 22);
+  ctx.textAlign = "right";
+  ctx.fillStyle = c.accent;
+  ctx.font = "bold 14px Arial, sans-serif";
+  ctx.fillText("Ravi \u2022 Learning Hub", W - 40, H - 22);
+
+  // ── Save ──
+  const slug = title.replace(/[^a-zA-Z0-9]/g, "-").replace(/-+/g, "-").toLowerCase().substring(0, 60);
+  const imgPath = path.join(WORKFLOW_IMAGES_DIR, slug + ".png");
+  fs.writeFileSync(imgPath, canvas.toBuffer("image/png"));
+  return imgPath;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(" ");
+  const lines = [];
+  let current = "";
+  for (const word of words) {
+    const test = current ? current + " " + word : word;
+    if (ctx.measureText(test).width > maxWidth) {
+      if (current) lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
 }
 
 async function ensureLoggedIn(page, context) {
@@ -319,7 +536,7 @@ async function clickFirstVisible(page, selectors) {
   return false;
 }
 
-async function postToLinkedIn(page, text) {
+async function postToLinkedIn(page, text, imagePath) {
   // Simulate browsing the feed briefly before posting
   await humanScroll(page);
   await humanDelay(page, 1000, 3000);
@@ -338,6 +555,56 @@ async function postToLinkedIn(page, text) {
 
   // Wait for composer to animate open
   await humanDelay(page, 1500, 3000);
+
+  // ── Upload image if provided ──
+  if (imagePath && fs.existsSync(imagePath)) {
+    try {
+      // Click the media/photo button in the composer toolbar
+      const mediaClicked = await clickFirstVisible(page, [
+        'button[aria-label*="Add media"]',
+        'button[aria-label*="Add a photo"]',
+        'button[aria-label*="photo"]',
+        'button[aria-label*="image"]',
+        'button[aria-label*="Media"]'
+      ]);
+
+      if (mediaClicked) {
+        await humanDelay(page, 1000, 2000);
+      }
+
+      // Use file chooser to upload
+      const [fileChooser] = await Promise.all([
+        page.waitForEvent("filechooser", { timeout: 8000 }),
+        mediaClicked
+          ? clickFirstVisible(page, [
+              'button:has-text("Select from computer")',
+              'button:has-text("Upload from computer")',
+              'button:has-text("select files to share")',
+              'label:has-text("Select")',
+              'input[type="file"]'
+            ])
+          : Promise.resolve()
+      ]).catch(() => [null]);
+
+      if (fileChooser) {
+        await fileChooser.setFiles(imagePath);
+        console.log("  Uploaded workflow image: " + path.basename(imagePath));
+        await humanDelay(page, 2000, 4000);
+
+        // Click Done/Next if there's a media confirmation step
+        await clickFirstVisible(page, [
+          'button:has-text("Done")',
+          'button:has-text("Next")',
+          'button[aria-label="Done"]'
+        ]);
+        await humanDelay(page, 1000, 2000);
+      } else {
+        console.log("  Image upload: no file chooser detected, posting text only.");
+      }
+    } catch (imgErr) {
+      console.log("  Image upload skipped: " + (imgErr.message || imgErr));
+    }
+  }
 
   const editorCandidates = [
     'div[role="textbox"][contenteditable="true"]',
@@ -401,14 +668,14 @@ async function postToLinkedIn(page, text) {
   await humanDelay(page, 3000, 6000);
 }
 
-async function postToLinkedInWithRetry(page, text) {
+async function postToLinkedInWithRetry(page, text, imagePath) {
   try {
-    await postToLinkedIn(page, text);
+    await postToLinkedIn(page, text, imagePath);
     return;
   } catch (firstError) {
     await page.goto("https://www.linkedin.com/feed/", { waitUntil: "domcontentloaded", timeout: 60000 });
     await page.waitForTimeout(1500);
-    await postToLinkedIn(page, text);
+    await postToLinkedIn(page, text, imagePath);
     console.log(`Recovered after retry: ${firstError.message || firstError}`);
   }
 }
@@ -501,13 +768,23 @@ async function runLinkedInAutomation(options = {}) {
       }
 
       console.log(`Posting ${posted + 1}/${selected.length}: ${post.title}`);
+
+      // Generate workflow PNG for this topic
+      let imagePath = null;
+      try {
+        imagePath = generateWorkflowPng(post);
+        console.log("  Generated workflow image: " + path.basename(imagePath));
+      } catch (imgErr) {
+        console.log("  Workflow image generation failed: " + (imgErr.message || imgErr));
+      }
+
       await page.goto("https://www.linkedin.com/feed/", { waitUntil: "domcontentloaded", timeout: 60000 });
 
       // Configurable pre-post delay
       await humanDelay(page, prePostMinSec * 1000, prePostMaxSec * 1000);
 
       try {
-        await postToLinkedInWithRetry(page, text);
+        await postToLinkedInWithRetry(page, text, imagePath);
         addToHistory(history, post.title, text);
         savePostHistory(history);
         incrementDailyPostCount();
