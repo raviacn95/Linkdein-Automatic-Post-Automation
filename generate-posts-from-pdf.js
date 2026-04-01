@@ -955,6 +955,41 @@ async function callFreeAi(prompt, freeAiCfg) {
   return callGroq(prompt, apiKey, freeAiCfg.groq?.model);
 }
 
+function repairTruncatedJson(text) {
+  // Try to salvage a truncated JSON response by extracting fields individually
+  const titleMatch = text.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  const excerptMatch = text.match(/"excerpt"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  const levelMatch = text.match(/"level"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  const tagsMatch = text.match(/"tags"\s*:\s*(\[[^\]]*\])/);
+  // Content is the largest field — grab from "content": " until end of available text
+  const contentStart = text.indexOf('"content"');
+  let content = "";
+  if (contentStart !== -1) {
+    const afterKey = text.substring(contentStart);
+    const valueMatch = afterKey.match(/^"content"\s*:\s*"([\s\S]*)$/);
+    if (valueMatch) {
+      // Remove trailing incomplete JSON artifacts
+      content = valueMatch[1]
+        .replace(/"\s*}?\s*$/, "")  // trailing " or "}
+        .replace(/\\n/g, "\n")
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, "\\");
+    }
+  }
+  if (!titleMatch) return null;
+  let tags = [];
+  if (tagsMatch) {
+    try { tags = JSON.parse(tagsMatch[1]); } catch { tags = []; }
+  }
+  return {
+    title: titleMatch[1].replace(/\\"/g, '"'),
+    excerpt: excerptMatch ? excerptMatch[1].replace(/\\"/g, '"') : "",
+    level: levelMatch ? levelMatch[1] : "beginner",
+    tags,
+    content: content || ""
+  };
+}
+
 function parseFreeAiResponse(rawText, seed, index, cfg) {
   const cleaned = stripCodeFence(rawText.trim());
   let obj;
@@ -962,8 +997,18 @@ function parseFreeAiResponse(rawText, seed, index, cfg) {
     obj = JSON.parse(cleaned);
   } catch {
     const match = cleaned.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error("No JSON object found in AI response.");
-    obj = JSON.parse(match[0]);
+    if (match) {
+      try { obj = JSON.parse(match[0]); } catch { /* fall through to repair */ }
+    }
+    if (!obj) {
+      // Attempt to repair truncated JSON from long AI responses
+      obj = repairTruncatedJson(cleaned);
+      if (obj) {
+        console.log("  Repaired truncated JSON for: " + (obj.title || seed.subtopic));
+      } else {
+        throw new Error("No valid JSON found in AI response.");
+      }
+    }
   }
   return normalizeAiPost(
     {
