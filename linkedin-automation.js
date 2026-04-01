@@ -380,19 +380,32 @@ async function runLinkedInAutomation(options = {}) {
 
   const allPosts = loadAllPosts();
   const requestedCount = Number(process.env.POST_COUNT || linkedinCfg.postCount || 1);
-  const startIndex = Number(process.env.START_INDEX || linkedinCfg.startIndex || 0);
 
   if (Number.isNaN(requestedCount) || requestedCount < 1) {
     throw new Error("POST_COUNT must be a positive integer.");
   }
 
-  if (Number.isNaN(startIndex) || startIndex < 0) {
-    throw new Error("START_INDEX must be 0 or greater.");
+  // Prefer posts NOT yet in LinkedIn history (newest first)
+  const history = loadPostHistory();
+  const unposted = allPosts.filter((post) => {
+    const text = buildLinkedInText(post);
+    return !isDuplicateOfHistory(text, history).match;
+  });
+
+  let selected;
+  if (unposted.length > 0) {
+    // Take the newest unposted posts (end of array = most recently generated)
+    selected = unposted.slice(-requestedCount).reverse();
+    console.log("Selected " + selected.length + " unposted post(s) for LinkedIn.");
+  } else {
+    // All posts already posted — pick random ones for re-sharing
+    const shuffled = [...allPosts].sort(() => Math.random() - 0.5);
+    selected = shuffled.slice(0, requestedCount);
+    console.log("All posts already posted. Re-sharing " + selected.length + " random post(s).");
   }
 
-  const selected = allPosts.slice(startIndex, startIndex + requestedCount);
   if (selected.length === 0) {
-    throw new Error("No posts available for the requested START_INDEX/POST_COUNT.");
+    throw new Error("No posts available to post.");
   }
 
   if (!fs.existsSync(STATE_DIR)) {
