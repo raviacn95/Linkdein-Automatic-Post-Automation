@@ -560,16 +560,29 @@ function generatePostsFromText(rawText, cfg) {
 /* ── Accumulation helpers ─────────────────────────────── */
 function loadExistingPosts(filePath) {
   if (!fs.existsSync(filePath)) return [];
+  const source = fs.readFileSync(filePath, "utf8");
+  // If the file is trivially small (header only), treat as empty
+  if (source.trim().length < 50) return [];
+  const sandbox = { console };
+  vm.createContext(sandbox);
+  vm.runInContext(source + "\n;globalThis.__ALL_POSTS = ALL_POSTS;", sandbox);
+  const posts = sandbox.__ALL_POSTS;
+  if (!Array.isArray(posts)) {
+    throw new Error("posts-data.js did not produce a valid ALL_POSTS array");
+  }
+  return posts;
+}
+
+function verifyWrittenPosts(filePath) {
   try {
     const source = fs.readFileSync(filePath, "utf8");
     const sandbox = { console };
     vm.createContext(sandbox);
     vm.runInContext(source + "\n;globalThis.__ALL_POSTS = ALL_POSTS;", sandbox);
     const posts = sandbox.__ALL_POSTS;
-    return Array.isArray(posts) ? posts : [];
-  } catch (err) {
-    console.warn("Could not load existing posts: " + (err.message || err));
-    return [];
+    return Array.isArray(posts) ? posts.length : 0;
+  } catch {
+    return -1;
   }
 }
 
@@ -971,9 +984,9 @@ function repairTruncatedJson(text) {
       // Remove trailing incomplete JSON artifacts
       content = valueMatch[1]
         .replace(/"\s*}?\s*$/, "")  // trailing " or "}
-        .replace(/\\n/g, "\n")
-        .replace(/\\"/g, '"')
-        .replace(/\\\\/g, "\\");
+        .replace(/\\\\/g, "\\")   // \\ → \ (must be first)
+        .replace(/\\"/g, '"')      // \" → "
+        .replace(/\\n/g, "\n");    // \n → newline
     }
   }
   if (!titleMatch) return null;
@@ -1134,7 +1147,30 @@ async function generatePostsFromConfig(options = {}) {
   const existingPosts = loadExistingPosts(outputPath);
   const dedupThreshold = cfg.dedupThreshold || 0.75;
   const allPosts = mergeAndDedupPosts(existingPosts, posts, dedupThreshold);
-  fs.writeFileSync(outputPath, toPostsDataJs(allPosts), "utf8");
+
+  // Safety: backup before writing
+  const backupPath = outputPath + ".bak";
+  if (fs.existsSync(outputPath)) {
+    fs.copyFileSync(outputPath, backupPath);
+  }
+
+  const outputContent = toPostsDataJs(allPosts);
+  fs.writeFileSync(outputPath, outputContent, "utf8");
+
+  // Verify: read back and check post count matches
+  const verifiedCount = verifyWrittenPosts(outputPath);
+  if (verifiedCount < existingPosts.length) {
+    console.error("CRITICAL: Written file has " + verifiedCount + " posts but expected at least " + existingPosts.length + ". Restoring backup.");
+    if (fs.existsSync(backupPath)) {
+      fs.copyFileSync(backupPath, outputPath);
+      console.error("Backup restored successfully.");
+    }
+    throw new Error("Post data verification failed — backup restored.");
+  } else {
+    console.log("  Verified: " + verifiedCount + " posts written successfully.");
+    // Clean up backup on success
+    if (fs.existsSync(backupPath)) fs.unlinkSync(backupPath);
+  }
 
   if (!options.silent) {
     console.log("Generated " + posts.length + " new posts using '" + effectiveMode + "' mode.");
