@@ -189,13 +189,13 @@ function buildLinkedInText(post) {
     .replace(/\r\n/g, "\n")
     .trim();
 
-  // Extract Core Concept text (everything between ## Core Concept and next ##)
+  // Extract Core Concept text — handle ## / # / ### prefix or no prefix at all
   let coreConcept = "";
-  const coreMatch = content.match(/##\s*Core Concept\s*([\s\S]*?)(?=##|$)/);
+  const coreMatch = content.match(/(?:#{1,3}\s*)?Core\s+Concept[:\s]*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
   if (coreMatch) {
     coreConcept = coreMatch[1].trim();
     // Remove Core Concept section from content so it doesn't repeat
-    content = content.replace(/##\s*Core Concept\s*[\s\S]*?(?=##|$)/, "").trim();
+    content = content.replace(coreMatch[0], "").trim();
   }
 
   // Insert line breaks before ## headers (AI often returns everything on one line)
@@ -224,9 +224,9 @@ function buildLinkedInText(post) {
     "",
     "\u2500".repeat(30),
     "",
-    "Tests keep failing after tiny UI changes and your team wastes hours debugging selectors.",
+    painPointLines[0],
     "",
-    "Release confidence drops when flaky E2E results hide real regressions."
+    painPointLines[1]
   ];
 
   return parts.join("\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, 3000);
