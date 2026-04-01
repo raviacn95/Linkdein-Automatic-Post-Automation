@@ -153,7 +153,7 @@ function loadAllPosts() {
 
 function buildLinkedInText(post) {
   const tags = Array.isArray(post.tags) ? post.tags : [];
-  const hashtags = tags.map((t) => `#${String(t).replace(/\s+/g, "")}`).join(" ");
+  const hashtags = tags.map((t) => `hashtag#${String(t).replace(/\s+/g, "")}`).join(" ");
 
   const topic = String(post.category || "JavaScript").toLowerCase();
   const painPointByTopic = {
@@ -184,87 +184,55 @@ function buildLinkedInText(post) {
   };
   const painPointLines = painPointByTopic[topic] || painPointByTopic.javascript;
 
-  // Level badge for LinkedIn
-  const level = String(post.level || "beginner").toLowerCase();
-  const levelEmoji = { beginner: "\uD83C\uDF31", intermediate: "\u2B50", advanced: "\uD83D\uDE80" };
-  const levelBadge = `${levelEmoji[level] || "\uD83C\uDF31"} Level: ${level.charAt(0).toUpperCase() + level.slice(1)}`;
+  const separator = "\u2500".repeat(30);
 
-  // Strip markdown syntax
+  // Strip markdown syntax for clean LinkedIn text
   let content = String(post.content || "")
     .replace(/```\w*\n?/g, "")
     .replace(/```/g, "")
     .replace(/\*\*/g, "")
-    .replace(/`([^`]+)`/g, "$1")                  // inline code → plain text
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/#{1,3}\s*/g, "")
     .replace(/\r\n/g, "\n")
     .trim();
 
-  // Extract key sections from the detailed tutorial content
-  let quickUsage = "";
-  const quickMatch = content.match(/(?:#{1,3}\s*)?How to Use[^?]*\?\s*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
-  if (quickMatch) {
-    quickUsage = quickMatch[1].trim().slice(0, 300);
-    content = content.replace(quickMatch[0], "").trim();
-  }
-
-  // Extract "What is" section as intro
-  let whatIs = "";
-  const whatMatch = content.match(/(?:#{1,3}\s*)?What is[^?]*\?\s*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
-  if (whatMatch) {
-    whatIs = whatMatch[1].trim().slice(0, 400);
-    content = content.replace(whatMatch[0], "").trim();
-  }
-
-  // Extract Best Practices
-  let bestPractices = "";
-  const bpMatch = content.match(/(?:#{1,3}\s*)?Best Practices\s*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
-  if (bpMatch) {
-    bestPractices = bpMatch[1].trim().slice(0, 400);
-  }
-
-  // Fallback: try old Core Concept format
-  let coreConcept = "";
-  if (!quickUsage && !whatIs) {
-    const coreMatch = content.match(/(?:#{1,3}\s*)?Core\s+Concept[:\s]*([\s\S]*?)(?=(?:#{1,3}\s)|$)/i);
-    if (coreMatch) {
-      coreConcept = coreMatch[1].trim();
-      content = content.replace(coreMatch[0], "").trim();
-    }
-  }
-
-  // Insert line breaks before ## headers (AI often returns everything on one line)
+  // Format bullets: - item → • item
   content = content
-    .replace(/\s*##\s+/g, "\n\n")                 // ## Header → double newline + header text
-    .replace(/\s*-\s+/g, "\n\n\u2022 ")           // - bullet → newline + bullet char
-    .replace(/\s*(Q:\s)/g, "\n\n$1")              // Q: on new line
-    .replace(/\s*(A:\s)/g, "\n\n$1")              // A: on new line
-    .replace(/\n{3,}/g, "\n\n")                   // collapse 3+ newlines to 2
+    .replace(/\n\s*-\s+/g, "\n\n\u2022 ")
+    .replace(/\s*(Q:\s)/g, "\n\n$1")
+    .replace(/\s*(A:\s)/g, "\n\n$1")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 
-  // Build a compelling LinkedIn post from the detailed tutorial
-  const introText = quickUsage || whatIs || coreConcept || post.excerpt || "";
+  // Build website deep link
+  const slug = String(post.title || "")
+    .replace(/[^a-zA-Z0-9\s]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .toLowerCase();
+  const websiteLink = "https://raviacn95.github.io/Linkdein-Automatic-Post-Automation/#post/" + slug;
 
   const parts = [
-    "\uD83D\uDCD6 " + (post.title || ""),
+    painPointLines[0],
     "",
-    levelBadge,
+    painPointLines[1],
     "",
-    "\u2500".repeat(30),
+    separator,
     "",
-    introText,
+    post.title || "",
+    "",
+    post.excerpt || "",
     "",
     hashtags,
     "",
-    "\u2500".repeat(30),
+    separator,
     "",
-    bestPractices ? "\u2705 Best Practices:\n\n" + bestPractices : "",
+    content,
     "",
-    "\u2500".repeat(30),
+    separator,
     "",
-    "\uD83D\uDC49 Read the full detailed guide with code examples, comparison tables, FAQs, and step-by-step instructions on our Learning Hub.",
-    "",
-    painPointLines[0],
-    "",
-    painPointLines[1]
+    "\uD83D\uDD17 Read the full detailed guide with code examples, comparison tables & step-by-step instructions:",
+    websiteLink
   ];
 
   return parts.join("\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, 3000);
