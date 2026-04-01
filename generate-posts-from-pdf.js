@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
 const pdf = require("pdf-parse");
+const vm = require("vm");
 
 const CONFIG_FILE = path.join(__dirname, "automation-config.json");
 
@@ -556,6 +557,61 @@ function generatePostsFromText(rawText, cfg) {
   return posts;
 }
 
+/* ── Accumulation helpers ─────────────────────────────── */
+function loadExistingPosts(filePath) {
+  if (!fs.existsSync(filePath)) return [];
+  try {
+    const source = fs.readFileSync(filePath, "utf8");
+    const sandbox = { console };
+    vm.createContext(sandbox);
+    vm.runInContext(source + "\n;globalThis.__ALL_POSTS = ALL_POSTS;", sandbox);
+    const posts = sandbox.__ALL_POSTS;
+    return Array.isArray(posts) ? posts : [];
+  } catch (err) {
+    console.warn("Could not load existing posts: " + (err.message || err));
+    return [];
+  }
+}
+
+function tokenizeTitle(text) {
+  return String(text).toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(Boolean);
+}
+
+function titleSimilarity(a, b) {
+  const tA = new Set(tokenizeTitle(a));
+  const tB = new Set(tokenizeTitle(b));
+  if (tA.size === 0 || tB.size === 0) return 0;
+  let inter = 0;
+  for (const w of tA) { if (tB.has(w)) inter++; }
+  const union = new Set([...tA, ...tB]).size;
+  return union > 0 ? inter / union : 0;
+}
+
+function isDuplicatePost(newPost, existingPosts, threshold) {
+  const t = threshold || 0.75;
+  for (const ep of existingPosts) {
+    if (titleSimilarity(newPost.title, ep.title) >= t) return true;
+  }
+  return false;
+}
+
+function mergeAndDedupPosts(existingPosts, newPosts, threshold) {
+  const merged = [...existingPosts];
+  let added = 0;
+  for (const np of newPosts) {
+    if (!isDuplicatePost(np, merged, threshold)) {
+      merged.push(np);
+      added++;
+    } else {
+      console.log("  Skipped duplicate: " + np.title);
+    }
+  }
+  // Re-assign sequential IDs
+  merged.forEach((p, i) => { p.id = i + 1; });
+  console.log("  Merged: " + added + " new + " + existingPosts.length + " existing = " + merged.length + " total posts.");
+  return merged;
+}
+
 function toPostsDataJs(posts) {
   const lines = [];
   lines.push("/* ================================================================");
@@ -983,14 +1039,20 @@ async function generatePostsFromConfig(options = {}) {
   }
 
   const effectiveMode = useFreeAi ? "free-ai (" + (freeAiCfg.provider || "groq") + ")" : mode;
-  fs.writeFileSync(outputPath, toPostsDataJs(posts), "utf8");
+
+  // Accumulate: load existing posts, merge with dedup, then write
+  const existingPosts = loadExistingPosts(outputPath);
+  const dedupThreshold = cfg.dedupThreshold || 0.75;
+  const allPosts = mergeAndDedupPosts(existingPosts, posts, dedupThreshold);
+  fs.writeFileSync(outputPath, toPostsDataJs(allPosts), "utf8");
 
   if (!options.silent) {
-    console.log("Generated " + posts.length + " detailed posts using '" + effectiveMode + "' mode.");
+    console.log("Generated " + posts.length + " new posts using '" + effectiveMode + "' mode.");
+    console.log("Total posts on website: " + allPosts.length);
     console.log("Output: " + outputPath);
   }
 
-  return { posts, mode: effectiveMode, outputPath, config };
+  return { posts: allPosts, mode: effectiveMode, outputPath, config };
 }
 
 if (require.main === module) {

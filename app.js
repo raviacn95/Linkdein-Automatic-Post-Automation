@@ -5,7 +5,7 @@
    ================================================================ */
 
 const STORAGE_KEY = "jsPlaywrightMcpBlogPosts";
-const CONTENT_VERSION = 9;
+const CONTENT_VERSION = 10;
 
 /* ── DOM Elements ────────────────────────────────────── */
 const searchInput = document.getElementById("search");
@@ -58,7 +58,7 @@ function syncPostsFromSource() {
     return s && p.title === s.title && p.excerpt === s.excerpt && p.content === s.content;
   });
   const current = autoGen.length === ALL_POSTS.length &&
-    autoGen.every(p => p.contentVersion === CONTENT_VERSION && typeof p.content === "string" && p.content.length > 200) &&
+    autoGen.every(p => p.contentVersion === CONTENT_VERSION && typeof p.content === "string" && p.content.length > 50) &&
     sourceMatch;
   if (current) return;
 
