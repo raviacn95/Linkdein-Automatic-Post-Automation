@@ -274,7 +274,7 @@ function openPost(post) {
     <span class="card-category cat-${post.category.toLowerCase()}">${escapeHtml(post.category)}</span>
     <span class="card-level lvl-${level}">${levelLabels[level] || level}</span>
     <span class="card-read-time">📖 ${rt} min read</span>
-    ${postDate ? `<span class="card-date">By <strong>Ravi</strong> · ${postDate}</span>` : ""}
+    ${postDate ? `<span class="card-date">By <strong>Ajay Kumar</strong> · ${postDate}</span>` : ""}
   `;
 
   pvTitle.textContent = post.title;
