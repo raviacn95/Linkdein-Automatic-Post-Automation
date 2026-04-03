@@ -9,10 +9,10 @@
   "linkedin": {
     "postCount": 2,
     "startIndex": 0,
-    "delayBetweenPostsMinSec": 30,
-    "delayBetweenPostsMaxSec": 90,
+    "delayBetweenPostsMinSec": 20,
+    "delayBetweenPostsMaxSec": 45,
     "prePostDelayMinSec": 2,
-    "prePostDelayMaxSec": 5
+    "prePostDelayMaxSec": 4
   },
   "safetyLimits": {
     "maxPostsPerDay": 26,
@@ -21,7 +21,7 @@
   },
   "contentGeneration": {
     "sourceMode": "topics",
-    "targetPostCount": 2,
+    "targetPostCount": 10,
     "pdfPath": "",
     "promptForPdfPath": true,
     "defaultCategory": "JavaScript",
@@ -47,11 +47,14 @@
   "freeAiGeneration": {
     "enabled": true,
     "provider": "copilot",
-    "concurrentWorkers": 1,
-    "batchDelayMs": 5000,
+    "multiProvider": true,
+    "concurrentWorkers": 3,
+    "batchDelayMs": 1000,
+    "maxRetriesPerProvider": 4,
     "copilot": {
       "apiKeyEnvVar": "GITHUB_TOKEN",
-      "model": "gpt-4o-mini"
+      "model": "gpt-4o-mini",
+      "minIntervalMs": 65000
     },
     "groq": {
       "apiKeyEnvVar": "GROQ_API_KEY",

@@ -7,7 +7,18 @@
   "scripts": {
     "linkedin:post": "node linkedin-automation.js",
     "posts:generate": "node generate-posts-from-pdf.js",
-    "linkedin:scheduler": "node scheduler.js"
+    "linkedin:scheduler": "node scheduler.js",
+    "growth:run": "node linkedin-growth/growth-orchestrator.js",
+    "growth:force": "node linkedin-growth/growth-orchestrator.js --force",
+    "growth:schedule": "node linkedin-growth/growth-scheduler.js",
+    "growth:engage": "node linkedin-growth/engagement.js",
+    "growth:autolike": "node linkedin-growth/auto-like-keywords.js",
+    "growth:profileview": "node linkedin-growth/profile-view-loop.js",
+    "growth:connect": "node linkedin-growth/connections.js",
+    "growth:analytics": "node linkedin-growth/analytics.js",
+    "growth:analytics:trend": "node linkedin-growth/analytics.js --trend",
+    "growth:repurpose": "node linkedin-growth/repurpose.js",
+    "daily:start": "node daily-auto-post.js"
   },
   "dependencies": {
     "canvas": "^3.2.3",
