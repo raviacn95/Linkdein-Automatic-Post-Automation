@@ -4,7 +4,313 @@ const vm = require("vm");
 const readline = require("readline");
 const { chromium } = require("playwright");
 const { createCanvas } = require("canvas");
+
 const { generatePostsFromConfig, loadConfig } = require("./generate-posts-from-pdf");
+const { getUniquePolls } = require("./poll-generator");
+// ── LinkedIn Poll Posting Automation ─────────────────────────────────────────
+async function postLinkedInPolls(options = {}) {
+  const config = loadConfig();
+  const linkedinCfg = config.linkedin || {};
+  const delayMinSec = Number(linkedinCfg.delayBetweenPostsMinSec || 30);
+  const delayMaxSec = Number(linkedinCfg.delayBetweenPostsMaxSec || 90);
+  const prePostMinSec = Number(linkedinCfg.prePostDelayMinSec || 2);
+  const prePostMaxSec = Number(linkedinCfg.prePostDelayMaxSec || 5);
+
+  // Load poll history to avoid duplicates
+  const POLL_HISTORY_FILE = path.join(STATE_DIR, "poll-history.json");
+  let pollHistory = [];
+  if (fs.existsSync(POLL_HISTORY_FILE)) {
+    try {
+      pollHistory = JSON.parse(fs.readFileSync(POLL_HISTORY_FILE, "utf8"));
+    } catch { pollHistory = []; }
+  }
+  // Get unique polls, avoiding last 200 questions
+  const polls = getUniquePolls(5, pollHistory.map(p => p.question));
+  if (!polls.length) throw new Error("No unique polls available");
+
+  if (!fs.existsSync(STATE_DIR)) fs.mkdirSync(STATE_DIR, { recursive: true });
+  const browser = await chromium.launch({ headless: false, channel: "msedge" });
+  const context = await browser.newContext(
+    fs.existsSync(STORAGE_STATE_FILE) ? { storageState: STORAGE_STATE_FILE } : {}
+  );
+  const page = await context.newPage();
+
+  try {
+    await ensureLoggedIn(page, context);
+
+    for (let i = 0; i < polls.length; i++) {
+      const poll = polls[i];
+      // Go to LinkedIn feed with retry
+      let gotoTries = 0, gotoSuccess = false;
+      while (gotoTries < 3 && !gotoSuccess) {
+        try {
+          await page.goto("https://www.linkedin.com/feed/", { waitUntil: "domcontentloaded", timeout: 90000 });
+          gotoSuccess = true;
+        } catch (e) {
+          await page.waitForTimeout(3000);
+          gotoTries++;
+        }
+      }
+      if (!gotoSuccess) {
+        console.error("Failed to load LinkedIn feed after retries. Skipping poll.");
+        continue;
+      }
+      await humanDelay(page, prePostMinSec * 1000, prePostMaxSec * 1000);
+
+      // Open poll composer with retry and fallback selectors
+      const composerSelectors = [
+        'div[role="button"]:has-text("Start a post")',
+        'button[aria-label*="Start a post"]',
+        'button:has-text("Start a post")',
+        'button:has-text("Create a post")',
+        'div[role="button"]:has-text("Create a post")'
+      ];
+      let composerTries = 0, openedComposer = false;
+      while (composerTries < 3 && !openedComposer) {
+        openedComposer = await clickFirstVisible(page, composerSelectors);
+        if (!openedComposer) {
+          await page.waitForTimeout(2000);
+          composerTries++;
+        }
+      }
+      if (!openedComposer) {
+        await page.screenshot({ path: `poll-composer-fail-${i}.png` });
+        console.error("Could not open LinkedIn post composer. Skipping poll.");
+        continue;
+      }
+      await humanDelay(page, 1200, 2500);
+
+      // Click the '+' sign to expand more options (retry)
+      let plusTries = 0, plusClicked = false;
+      while (plusTries < 2 && !plusClicked) {
+        const plusButton = page.locator('button:has(svg[data-test-icon="add-medium"])').first();
+        try {
+          await plusButton.waitFor({ timeout: 8000 });
+          await plusButton.click();
+          await humanDelay(page, 500, 1200);
+          plusClicked = true;
+        } catch (e) {
+          plusTries++;
+        }
+      }
+
+      // Click the Poll button with robust selectors and retry
+      const pollSelectors = [
+        'button:has(svg[data-test-icon="analytics-medium"])',
+        'button[aria-label*="Poll"]',
+        'button:has-text("Poll")',
+        'button[title*="Poll"]',
+        'button[data-control-name*="poll"]'
+      ];
+      let pollBtnTries = 0, pollBtnClicked = false;
+      while (pollBtnTries < 3 && !pollBtnClicked) {
+        let pollButton = null;
+        for (const sel of pollSelectors) {
+          pollButton = page.locator(sel).first();
+          try {
+            await pollButton.waitFor({ timeout: 12000 });
+            await pollButton.click();
+            pollBtnClicked = true;
+            break;
+          } catch (e) {
+            // Try next selector
+          }
+        }
+        if (!pollBtnClicked) {
+          await page.waitForTimeout(2000);
+          pollBtnTries++;
+        }
+      }
+      if (!pollBtnClicked) {
+        await page.screenshot({ path: `poll-btn-fail-${i}.png` });
+        console.error("Could not find/click Poll button. Skipping poll.");
+        continue;
+      }
+      await humanDelay(page, 800, 1800);
+
+
+
+      // Wait for poll dialog to fully render
+      await page.waitForTimeout(2000);
+
+      // Try robust selectors for poll question textarea
+      let qInput = page.locator('textarea[placeholder*="your question" i],textarea[placeholder*="question" i]').first();
+      try {
+        await qInput.waitFor({ timeout: 12000 });
+      } catch (e) {
+        // Fallback: any visible textarea in the dialog
+        qInput = page.locator('form textarea').first();
+        try {
+          await qInput.waitFor({ timeout: 6000 });
+        } catch (e2) {
+          // Take screenshot for debugging
+          await page.screenshot({ path: 'poll-dialog-debug.png' });
+          throw new Error('Poll question textarea not found. Screenshot saved as poll-dialog-debug.png');
+        }
+      }
+      await qInput.fill(poll.question);
+
+      // Shuffle answers, trim to 30 chars, ensure unique and non-empty
+      let allAnswers = [poll.correct, ...poll.distractors]
+        .map(ans => String(ans).slice(0, 30).trim())
+        .filter(ans => ans.length > 0);
+      // Ensure uniqueness
+      allAnswers = Array.from(new Set(allAnswers));
+      // If less than 4 unique, pad with generic distractors
+      const genericDistractors = ["Option A", "Option B", "Option C", "Option D", "Other"]; 
+      while (allAnswers.length < 4) {
+        const next = genericDistractors[allAnswers.length % genericDistractors.length];
+        if (!allAnswers.includes(next)) allAnswers.push(next);
+      }
+      // Shuffle
+      allAnswers = allAnswers.sort(() => Math.random() - 0.5);
+
+      // Wait for option fields to render
+      await page.waitForTimeout(1000);
+
+      // Try robust selectors for option fields
+      let optionInputs = [];
+      try {
+        // Scope to poll dialog/form: find the closest form to the question textarea
+        const pollForm = await qInput.evaluateHandle(node => node.closest('form'));
+        optionInputs = await page.locator('input[placeholder^="E.g."]', pollForm).all();
+        if (optionInputs.length < 2) throw new Error('Not enough option fields');
+      } catch (e) {
+        // Fallback: any visible input fields in the poll form
+        const pollForm = await qInput.evaluateHandle(node => node.closest('form'));
+        optionInputs = await page.locator('input[type="text"]', pollForm).all();
+        if (optionInputs.length < 2) {
+          await page.screenshot({ path: 'poll-options-debug.png' });
+          throw new Error('Poll option input fields not found. Screenshot saved as poll-options-debug.png');
+        }
+      }
+
+      // Fill first two options
+      for (let j = 0; j < 2; j++) {
+        await optionInputs[j].fill(allAnswers[j] || "");
+      }
+
+      // Click '+ Add option' for the next two
+      for (let j = 2; j < 4; j++) {
+        const addOptionBtn = page.locator('button:has-text("Add option")').first();
+        await addOptionBtn.waitFor({ timeout: 8000 });
+        await addOptionBtn.click();
+        // Wait for the new input to appear (longer wait for robustness)
+        await page.waitForTimeout(2000);
+        // Debug: log all input fields and their visibility after clicking Add option
+        const pollForm = await qInput.evaluateHandle(node => node.closest('form'));
+        let allInputs = await page.locator('input', pollForm).all();
+        let debugInputs = [];
+        for (const inp of allInputs) {
+          const placeholder = await inp.getAttribute('placeholder');
+          const visible = await inp.isVisible();
+          debugInputs.push({ placeholder, visible });
+        }
+        console.log(`All poll option inputs after Add option (j=${j}):`, debugInputs);
+        await page.screenshot({ path: `poll-options-debug-allinputs-${j}.png` });
+        // Wait until the number of visible option inputs increases
+        let tries = 0;
+        let found = false;
+        while (tries < 10) {
+          let allInputs = await page.locator('input[placeholder^="E.g."]', pollForm).all();
+          optionInputs = [];
+          for (const inp of allInputs) {
+            if (await inp.isVisible()) optionInputs.push(inp);
+          }
+          if (optionInputs.length > j) { found = true; break; }
+          await page.waitForTimeout(400);
+          tries++;
+        }
+        // Log for debugging
+        console.log(`Detected ${optionInputs.length} visible option inputs after Add option (j=${j})`);
+        if (!found) {
+          await page.screenshot({ path: `poll-options-debug-${j}.png` });
+          throw new Error(`Poll option input field ${j+1} not found. Screenshot saved as poll-options-debug-${j}.png`);
+        }
+        await optionInputs[j].fill(allAnswers[j] || "");
+      }
+
+      // --- Validation: Check for LinkedIn poll errors before clicking 'Done' ---
+      let retryCount = 0;
+      let pollValid = false;
+      while (retryCount < 3 && !pollValid) {
+        await page.waitForTimeout(800);
+        const pollForm = await qInput.evaluateHandle(node => node.closest('form'));
+        const errorMessages = await page.locator('[class*="error" i], [class*="Error" i], [role="alert"], .artdeco-inline-feedback').allTextContents();
+        const hasError = errorMessages.some(msg => msg && msg.trim().length > 0 && !msg.includes('modal window'));
+        if (!hasError) {
+          pollValid = true;
+          break;
+        }
+        console.log('LinkedIn poll validation error detected:', errorMessages);
+        await page.screenshot({ path: `poll-validation-error-retry${retryCount+1}.png` });
+        // Regenerate answers and refill
+        allAnswers = [poll.correct, ...poll.distractors, 'Option A', 'Option B', 'Option C', 'Option D', 'Other']
+          .map(ans => String(ans).slice(0, 30).trim())
+          .filter(ans => ans.length > 0);
+        allAnswers = Array.from(new Set(allAnswers)).sort(() => Math.random() - 0.5).slice(0, 4);
+        for (let j = 0; j < 4; j++) {
+          await optionInputs[j].fill('');
+          await page.waitForTimeout(200);
+          await optionInputs[j].fill(allAnswers[j] || '');
+        }
+        retryCount++;
+      }
+      if (!pollValid) {
+        throw new Error('Poll validation error detected after retries. Please check poll options for compliance.');
+      }
+
+      // Optionally set poll duration (skip for default)
+
+  // Click 'Done' after filling 4 options
+      // Use a stable locator for the 'Done' button (role=button, text=Done, enabled)
+      const doneBtn = page.getByRole('button', { name: /^done$/i, exact: true });
+      try {
+        await doneBtn.waitFor({ state: 'visible', timeout: 30000 });
+        await page.waitForFunction(
+          (el) => el && !el.disabled && el.offsetParent !== null,
+          await doneBtn.elementHandle(),
+          { timeout: 30000 }
+        );
+      } catch (e) {
+        await page.screenshot({ path: 'poll-done-btn-debug.png' });
+        throw new Error('Done button did not become enabled after 30s. Screenshot saved as poll-done-btn-debug.png');
+      }
+      await humanDelay(page, 400, 900);
+      await doneBtn.click();
+      await humanDelay(page, 1200, 2500);
+
+  // Post the poll
+  const postBtn = page.locator('button:has-text("Post")').last();
+  await postBtn.waitFor({ timeout: 10000 });
+  await humanDelay(page, 500, 1200);
+  await postBtn.click();
+  await humanDelay(page, 2500, 5000);
+
+      // Wait between polls
+      if (i < polls.length - 1) {
+        const waitMs = randomBetween(delayMinSec * 1000, delayMaxSec * 1000);
+        await page.waitForTimeout(waitMs);
+      }
+      // Add to poll history and save (keep last 200)
+      pollHistory.push({ question: poll.question, postedAt: new Date().toISOString() });
+      if (pollHistory.length > 200) pollHistory = pollHistory.slice(-200);
+      fs.writeFileSync(POLL_HISTORY_FILE, JSON.stringify(pollHistory, null, 2), "utf8");
+    }
+    await context.storageState({ path: STORAGE_STATE_FILE });
+  } finally {
+    if (!options.keepBrowserOpen) {
+      try {
+        await Promise.race([
+          browser.close(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("browser.close timeout")), 10000))
+        ]);
+      } catch (closeErr) {
+        try { browser.process()?.kill("SIGKILL"); } catch {}
+      }
+    }
+  }
+}
 
 const POSTS_FILE = path.join(__dirname, "posts-data.js");
 const STATE_DIR = path.join(__dirname, ".auth");
@@ -1028,15 +1334,23 @@ async function runLinkedInAutomation(options = {}) {
   }
 }
 
+
 if (require.main === module) {
-  runLinkedInAutomation()
-    .then(() => process.exit(0))
-    .catch((error) => {
+  const mode = process.argv[2];
+  if (mode === "polls") {
+    postLinkedInPolls().then(() => process.exit(0)).catch((error) => {
+      console.error("Poll automation failed:", error.message || error);
+      process.exit(1);
+    });
+  } else {
+    runLinkedInAutomation().then(() => process.exit(0)).catch((error) => {
       console.error("Automation failed:", error.message || error);
       process.exit(1);
     });
+  }
 }
 
 module.exports = {
-  runLinkedInAutomation
+  runLinkedInAutomation,
+  postLinkedInPolls
 };
