@@ -1,0 +1,114 @@
+{
+  "engagement": {
+    "enabled": true,
+    "maxLikesPerSession": 15,
+    "maxCommentsPerSession": 5,
+    "hashtags": [
+      "#SAPTesting",
+      "#Automation",
+      "#Playwright",
+      "#TestAutomation",
+      "#JavaScript",
+      "#TypeScript",
+      "#QualityAssurance",
+      "#SoftwareTesting"
+    ],
+    "commentTemplates": [
+      "Great insights! #{topic} automation is definitely the way forward. 🚀",
+      "Really helpful perspective on #{topic}. Thanks for sharing!",
+      "Love this! I have been working on similar #{topic} patterns — very relevant.",
+      "Excellent point about #{topic}. Very useful for modern QA teams!",
+      "This resonates a lot with my work in #{topic}. Appreciate you sharing!",
+      "Solid post on #{topic}. These best practices save hours of debugging.",
+      "Bookmarking this! #{topic} tips like these are gold for automation engineers."
+    ],
+    "delayBetweenActionsMinSec": 35,
+    "delayBetweenActionsMaxSec": 90
+  },
+  "autoLikeKeywords": {
+    "enabled": true,
+    "keywordFilePath": ".auth/excel-keywords.csv",
+    "words": [
+      "sap",
+      "playwright",
+      "automation",
+      "typescript",
+      "javascript",
+      "tosca"
+    ],
+    "maxLikesPerSession": 25,
+    "feedScrollRounds": 6,
+    "delayBetweenLikesMinSec": 20,
+    "delayBetweenLikesMaxSec": 45
+  },
+  "profileViewLoop": {
+    "enabled": true,
+    "repetitions": 100,
+    "skipConnectedOrFollowing": true,
+    "recentHistoryLimit": 200,
+    "useFeedProfileDiscovery": true,
+    "discoveryScrollRounds": 10,
+    "discoveryRefreshCycles": 2,
+    "profileUrlsFilePath": ".auth/profile-urls.txt",
+    "profileUrls": [],
+    "minViewSeconds": 3,
+    "maxViewSeconds": 8
+  },
+  "connections": {
+    "enabled": true,
+    "maxRequestsPerSession": 10,
+    "maxRequestsPerDay": 20,
+    "targetKeywords": [
+      "SAP test automation engineer",
+      "QA automation engineer India",
+      "Playwright automation tester",
+      "software testing recruiter",
+      "SDET engineer",
+      "SAP consultant automation",
+      "TypeScript test engineer"
+    ],
+    "connectionMessage": "Hi {name}, I share practical insights on {topic} and automation testing. Would love to connect!",
+    "topics": [
+      "SAP testing",
+      "Playwright automation",
+      "JavaScript test automation",
+      "SDET practices"
+    ],
+    "delayBetweenRequestsMinSec": 50,
+    "delayBetweenRequestsMaxSec": 120
+  },
+  "analytics": {
+    "enabled": true,
+    "trackFollowers": false,
+    "trackImpressions": false,
+    "trackProfileViews": true,
+    "outputCsvPath": ".auth/analytics-history.csv",
+    "outputJsonPath": ".auth/analytics-history.json"
+  },
+  "repurpose": {
+    "enabled": true,
+    "maxPostsToRepurpose": 3,
+    "repurposeIntervalDays": 7,
+    "addHashtags": true,
+    "extraHashtags": [
+      "#LearnToCode",
+      "#CareerGrowth",
+      "#TechSkills",
+      "#AutomationTesting"
+    ]
+  },
+  "scheduler": {
+    "fullCycleIntervalHours": 4,
+    "engagementIntervalHours": 4,
+    "autoLikeIntervalHours": 4,
+    "profileViewIntervalHours": 12,
+    "connectionIntervalHours": 8,
+    "analyticsIntervalHours": 24,
+    "repurposeIntervalHours": 168,
+    "runEngagementImmediately": true,
+    "runAutoLikeImmediately": true,
+    "runProfileViewImmediately": false,
+    "runConnectionsImmediately": false,
+    "runAnalyticsImmediately": true
+  }
+}

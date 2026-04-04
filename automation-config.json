@@ -21,15 +21,15 @@
   },
   "contentGeneration": {
     "sourceMode": "topics",
-    "targetPostCount": 10,
+    "targetPostCount": 20,
+    "pdfSourceDir": "C:\\Users\\ravir\\Music\\Post Every 1 mintues\\Pdfs",
     "pdfPath": "",
     "promptForPdfPath": true,
-    "defaultCategory": "JavaScript",
+    "defaultCategory": "DSA",
     "autoGenerateOnEveryRun": true,
     "topicPool": [
-      "Playwright",
-      "TypeScript",
-      "JavaScript"
+      "DSA",
+      "System Design"
     ],
     "tags": [
       "javascript",
@@ -48,9 +48,9 @@
     "enabled": true,
     "provider": "copilot",
     "multiProvider": true,
-    "concurrentWorkers": 3,
-    "batchDelayMs": 1000,
-    "maxRetriesPerProvider": 4,
+    "concurrentWorkers": 20,
+    "batchDelayMs": 0,
+    "maxRetriesPerProvider": 1,
     "copilot": {
       "apiKeyEnvVar": "GITHUB_TOKEN",
       "model": "gpt-4o-mini",

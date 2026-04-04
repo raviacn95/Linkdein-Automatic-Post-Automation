@@ -28,25 +28,34 @@ async function humanDelay(page, minMs, maxMs) {
   await page.waitForTimeout(delay);
 }
 
+// Move mouse to a random area on the page — simulates real cursor movement
+async function humanMouseJitter(page) {
+  const x = randomBetween(200, 900);
+  const y = randomBetween(150, 500);
+  await page.mouse.move(x, y, { steps: randomBetween(5, 15) });
+  await humanDelay(page, 200, 600);
+}
+
 async function humanScroll(page) {
   const scrolls = randomBetween(1, 3);
   for (let s = 0; s < scrolls; s++) {
     await page.mouse.wheel(0, randomBetween(150, 400));
-    await humanDelay(page, 500, 1500);
+    await humanDelay(page, 400, 1000);
   }
   // Scroll back up
   await page.mouse.wheel(0, -randomBetween(200, 500));
-  await humanDelay(page, 400, 900);
+  await humanDelay(page, 300, 700);
 }
 
 async function humanType(page, editor, text) {
-  // Type in chunks to simulate real typing behavior
-  const chunkSize = randomBetween(80, 200);
+  // Type in natural-looking chunks — realistic speed to avoid bot detection
+  const chunkSize = randomBetween(100, 250);
   for (let i = 0; i < text.length; i += chunkSize) {
     const chunk = text.slice(i, i + chunkSize);
-    await editor.pressSequentially(chunk, { delay: randomBetween(5, 20) });
+    await editor.pressSequentially(chunk, { delay: randomBetween(8, 25) });
     if (i + chunkSize < text.length) {
-      await humanDelay(page, 200, 600);
+      // Brief "thinking" pause between chunks like a real person
+      await humanDelay(page, 150, 500);
     }
   }
 }
@@ -175,9 +184,20 @@ function buildLinkedInText(post) {
     ],
     tosca: [
       "Model-based suites become brittle when app changes are not reflected quickly."
+    ],
+    dsa: [
+      "Interview rejections happen not because you can't code — but because you pick the wrong data structure.",
+      "Brute-force solutions pass small inputs but TLE on real constraints every time.",
+      "Skipping Big O analysis is why good devs still fail system-scale problems."
+    ],
+    "system design": [
+      "Most system design interviews fail at requirements — not architecture.",
+      "Designing without estimating scale leads to solutions that look good on paper but break in production.",
+      "Ignoring failure modes in your architecture is the fastest way to get rejected at senior interviews."
     ]
   };
-  const painPoint = (painPointByTopic[topic] || painPointByTopic.javascript)[0];
+  const topicPainPoints = painPointByTopic[topic] || painPointByTopic.javascript;
+  const painPoint = topicPainPoints[Math.floor(Math.random() * topicPainPoints.length)];
 
   const separator = "\u2500".repeat(30);
   const rawContent = String(post.content || "");
@@ -264,18 +284,7 @@ function buildLinkedInText(post) {
   if (!takeaway) takeaway = extractSection("Conclusion");
   takeaway = firstLines(takeaway, 2);
 
-  // ── Assemble ─────────────────────────────────────────
-  const body = [];
-  if (concept) body.push("Core Concept " + concept);
-  if (rules) body.push("Key Rules\n\n" + rules);
-  if (tryCode) body.push("\uD83D\uDCA1 Try This " + tryCode);
-  if (quizText) body.push("\u2753 Quick Quiz\n\n" + quizText);
-  if (takeaway) body.push("\uD83D\uDD11 Key Takeaway " + takeaway);
-
-  // Final fallback
-  const bodyText = body.length > 0 ? body.join("\n\n") : String(post.excerpt || "");
-
-  // Build website deep link
+  // ── Randomly pick one of 8 LinkedIn post style templates ────────────────
   const slug = String(post.title || "")
     .replace(/[^a-zA-Z0-9\s]/g, "")
     .trim()
@@ -283,25 +292,172 @@ function buildLinkedInText(post) {
     .toLowerCase();
   const websiteLink = "https://raviacn95.github.io/Linkdein-Automatic-Post-Automation/#post/" + slug;
 
+  const styleIndex = Math.floor(Math.random() * 8);
+
+  let bodyText;
+
+  if (styleIndex === 0) {
+    // ── 1. Authority Explainer ───────────────────────────────────────────
+    const insight = firstLines(concept, 2);
+    const badPattern = tryCode ? "❌ Common mistake:\n" + firstLines(tryCode, 2) : "";
+    const goodPattern = tryCode ? "✅ Better approach:\n" + firstLines(tryCode, 3) : "";
+    bodyText = [
+      painPoint, "",
+      separator, "",
+      "🚀 " + (post.title || ""), "",
+      insight, "",
+      badPattern ? badPattern + "\n" : "",
+      goodPattern ? goodPattern + "\n" : "",
+      "Why it matters:",
+      rules ? rules : "",
+      "", "👉 " + (firstLines(takeaway, 1) || post.excerpt || ""),
+      "", hashtags, "", separator, "",
+      "🔗 Full guide with examples:", websiteLink
+    ].filter(Boolean).join("\n");
+
+  } else if (styleIndex === 1) {
+    // ── 2. SEO Blog Style ────────────────────────────────────────────────
+    const def = firstLines(concept, 3);
+    const benefits = rules ? rules.split("\n").filter(l => l.trim()).slice(0, 2).map(l => "✔ " + l.replace(/^[•\-]\s*/, "")).join("\n") : "";
+    bodyText = [
+      "📈 " + (post.title || ""), "",
+      post.excerpt || "", "",
+      hashtags, "",
+      separator, "",
+      def, "",
+      benefits ? "Key Benefits:\n" + benefits : "",
+      "", "When to Use:",
+      firstLines(concept, 1),
+      "", "👉 " + (firstLines(takeaway, 1) || post.excerpt || ""),
+      "", separator, "",
+      "🔗 Read the full guide:", websiteLink
+    ].filter(Boolean).join("\n");
+
+  } else if (styleIndex === 2) {
+    // ── 3. Problem → Solution → Framework ───────────────────────────────
+    const problem = firstLines(concept, 2);
+    const solution = firstLines(takeaway, 2) || firstLines(concept, 2);
+    const framework = rules ? rules.split("\n").filter(l => l.trim()).map((l, i) => (i + 1) + ". " + l.replace(/^[•\-]\s*/, "")).slice(0, 3).join("\n") : "";
+    bodyText = [
+      "🎯 " + (post.title || ""), "",
+      hashtags, "",
+      separator, "",
+      "❗ Problem:", problem, "",
+      "💡 Solution:", solution, "",
+      framework ? "Framework:\n" + framework : "",
+      "", "👉 " + (firstLines(takeaway, 1) || post.excerpt || ""),
+      "", separator, "",
+      "🔗 Full breakdown with code:", websiteLink
+    ].filter(Boolean).join("\n");
+
+  } else if (styleIndex === 3) {
+    // ── 4. Myth Busting ──────────────────────────────────────────────────
+    const myth = firstLines(concept, 1);
+    const reality = firstLines(takeaway, 2) || firstLines(concept, 2);
+    const correct = tryCode ? "✅ Correct Approach:\n" + firstLines(tryCode, 3) : "";
+    bodyText = [
+      "🔥 " + (post.title || ""), "",
+      hashtags, "",
+      separator, "",
+      '❌ Myth: "' + myth + '"', "",
+      "✅ Reality:", reality, "",
+      correct ? correct + "\n" : "",
+      "When it actually works:",
+      firstLines(concept, 2),
+      "", "👉 " + (firstLines(takeaway, 1) || post.excerpt || ""),
+      "", separator, "",
+      "🔗 Deep dive here:", websiteLink
+    ].filter(Boolean).join("\n");
+
+  } else if (styleIndex === 4) {
+    // ── 5. Deep Insight Breakdown ────────────────────────────────────────
+    const insight = firstLines(concept, 3);
+    const pros = rules ? rules.split("\n").filter(l => l.trim()).slice(0, 2).map(l => "✔ " + l.replace(/^[•\-]\s*/, "")).join("\n") : "";
+    const cons = "✖ Avoid when: " + (firstLines(concept, 1) || "context is oversimplified");
+    bodyText = [
+      "🧠 " + (post.title || ""), "",
+      post.excerpt || "", "",
+      hashtags, "",
+      separator, "",
+      insight, "",
+      "Trade-offs:",
+      pros ? pros : "",
+      cons, "",
+      quizText ? "❓ Quick Quiz\n" + quizText + "\n" : "",
+      "👉 " + (firstLines(takeaway, 1) || post.excerpt || ""),
+      "", separator, "",
+      "🔗 Full expert breakdown:", websiteLink
+    ].filter(Boolean).join("\n");
+
+  } else if (styleIndex === 5) {
+    // ── 6. Storytelling Format ───────────────────────────────────────────
+    const setup = firstLines(concept, 2);
+    const problem = firstLines(concept, 1);
+    const turningPoint = firstLines(takeaway, 1) || "We rethought the entire approach."
+    const outcome = firstLines(takeaway, 2) || "Performance improved dramatically.";
+    bodyText = [
+      "⚡ " + (post.title || ""), "",
+      hashtags, "",
+      separator, "",
+      "Story: " + setup, "",
+      "Problem: " + problem, "",
+      "Turning Point: " + turningPoint, "",
+      tryCode ? "New Approach:\n" + firstLines(tryCode, 3) + "\n" : "",
+      "Outcome: " + outcome,
+      "", "👉 Lesson: " + (firstLines(concept, 1) || post.excerpt || ""),
+      "", separator, "",
+      "🔗 Read the full story:", websiteLink
+    ].filter(Boolean).join("\n");
+
+  } else if (styleIndex === 6) {
+    // ── 7. Practical Guide / How-To ──────────────────────────────────────
+    const steps = rules ? rules.split("\n").filter(l => l.trim()).slice(0, 3).map((l, i) =>
+      "Step " + (i + 1) + ": " + l.replace(/^[•\-]\s*/, "")
+    ).join("\n") : "";
+    bodyText = [
+      "🛠️ " + (post.title || ""), "",
+      post.excerpt || "", "",
+      hashtags, "",
+      separator, "",
+      "Goal: " + firstLines(concept, 1), "",
+      steps ? steps : "",
+      "",
+      tryCode ? "Code:\n" + firstLines(tryCode, 4) + "\n" : "",
+      "Common Mistakes:",
+      quizText ? quizText : "✖ Skipping edge case validation",
+      "", "👉 " + (firstLines(takeaway, 1) || post.excerpt || ""),
+      "", separator, "",
+      "🔗 Complete step-by-step guide:", websiteLink
+    ].filter(Boolean).join("\n");
+
+  } else {
+    // ── 8. Comparison Post ───────────────────────────────────────────────
+    const ruleLines = rules ? rules.split("\n").filter(l => l.trim()) : [];
+    const optionA = ruleLines[0] ? "Option A: " + ruleLines[0].replace(/^[•\-]\s*/, "") : "";
+    const optionB = ruleLines[1] ? "Option B: " + ruleLines[1].replace(/^[•\-]\s*/, "") : "";
+    const verdict = firstLines(takeaway, 1) || firstLines(concept, 1);
+    bodyText = [
+      "📊 " + (post.title || ""), "",
+      post.excerpt || "", "",
+      hashtags, "",
+      separator, "",
+      optionA, "✔ Pros: simpler, widely supported", "✖ Cons: may not scale", "",
+      optionB, "✔ Pros: flexible, powerful", "✖ Cons: more complex", "",
+      "When to use each:",
+      ruleLines[0] ? "→ A: " + ruleLines[0].replace(/^[•\-]\s*/, "") : "",
+      ruleLines[1] ? "→ B: " + ruleLines[1].replace(/^[•\-]\s*/, "") : "",
+      "", "👉 Verdict: " + verdict,
+      "", separator, "",
+      "🔗 Full comparison with examples:", websiteLink
+    ].filter(Boolean).join("\n");
+  }
+
   const parts = [
     painPoint,
     "",
     separator,
     "",
-    post.title || "",
-    "",
-    post.excerpt || "",
-    "",
-    hashtags,
-    "",
-    separator,
-    "",
-    bodyText,
-    "",
-    separator,
-    "",
-    "\uD83D\uDD17 Read the full guide with code examples & step-by-step instructions:",
-    websiteLink
+    bodyText
   ];
 
   return parts.join("\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, 3000);
@@ -347,7 +503,9 @@ function generateWorkflowPng(post) {
     typescript: { bg1: "#0f172a", bg2: "#1e293b", accent: "#3b82f6", accent2: "#2563eb", text: "#f1f5f9", badge: "#1e3a5f" },
     both:       { bg1: "#0f172a", bg2: "#1e293b", accent: "#a78bfa", accent2: "#8b5cf6", text: "#f1f5f9", badge: "#4c1d95" },
     mcp:        { bg1: "#0f172a", bg2: "#1e293b", accent: "#34d399", accent2: "#10b981", text: "#f1f5f9", badge: "#065f46" },
-    tosca:      { bg1: "#0f172a", bg2: "#1e293b", accent: "#fb7185", accent2: "#f43f5e", text: "#f1f5f9", badge: "#881337" }
+    tosca:      { bg1: "#0f172a", bg2: "#1e293b", accent: "#fb7185", accent2: "#f43f5e", text: "#f1f5f9", badge: "#881337" },
+    dsa:        { bg1: "#0f172a", bg2: "#1e293b", accent: "#4ade80", accent2: "#22c55e", text: "#f1f5f9", badge: "#14532d" },
+    "system design": { bg1: "#0f172a", bg2: "#1e293b", accent: "#fb923c", accent2: "#f97316", text: "#f1f5f9", badge: "#7c2d12" }
   };
   const c = schemes[category.toLowerCase()] || schemes.javascript;
 
@@ -537,9 +695,10 @@ async function clickFirstVisible(page, selectors) {
 }
 
 async function postToLinkedIn(page, text, imagePath) {
-  // Simulate browsing the feed briefly before posting
+  // Browse feed briefly like a real user before posting
   await humanScroll(page);
-  await humanDelay(page, 1000, 3000);
+  await humanMouseJitter(page);
+  await humanDelay(page, 800, 2000);
 
   const openedComposer = await clickFirstVisible(page, [
     'div[role="button"]:has-text("Start a post")',
@@ -554,41 +713,64 @@ async function postToLinkedIn(page, text, imagePath) {
   }
 
   // Wait for composer to animate open
-  await humanDelay(page, 1500, 3000);
+  await humanDelay(page, 1200, 2500);
 
-  // ── Upload image if provided ──
+  // ── Upload image if provided (with retry) ──
   if (imagePath && fs.existsSync(imagePath)) {
-    try {
-      // Click the media/photo button in the composer toolbar
-      const mediaClicked = await clickFirstVisible(page, [
-        'button[aria-label*="Add media"]',
-        'button[aria-label*="Add a photo"]',
-        'button[aria-label*="photo"]',
-        'button[aria-label*="image"]',
-        'button[aria-label*="Media"]'
-      ]);
+    let imageUploaded = false;
+    for (let attempt = 1; attempt <= 2 && !imageUploaded; attempt++) {
+      try {
+        if (attempt > 1) {
+          console.log("  Retrying image upload (attempt " + attempt + ")...");
+          await humanDelay(page, 1500, 2500);
+        }
 
-      if (mediaClicked) {
-        await humanDelay(page, 1500, 3000);
+        // Click the media/photo button in the composer toolbar
+        // LinkedIn uses share-promoted-detour-button with data-test-icon="image-medium"
+        const mediaClicked = await clickFirstVisible(page, [
+          'button:has(svg[data-test-icon="image-medium"])',
+          'button.share-promoted-detour-button:has(svg[data-test-icon="image-medium"])',
+          '.share-promoted-detour-button:has(svg[data-test-icon="image-medium"])',
+          'button[aria-label*="Add media"]',
+          'button[aria-label*="Add a photo"]',
+          'button[aria-label*="photo"]',
+          'button[aria-label*="image"]',
+          'button[aria-label*="Media"]',
+          'button[aria-label*="media"]',
+          'button[aria-label*="Photo"]',
+          'button[aria-label*="Image"]'
+        ]);
+
+        if (mediaClicked) {
+          console.log("  Media button clicked successfully.");
+          await humanDelay(page, 1500, 3000);
+        } else {
+          console.log("  Media button not found, looking for file input directly...");
+        }
+
+        // Directly set files on the hidden <input type="file"> element
+        // This bypasses the filechooser event which is unreliable with LinkedIn
+        const fileInput = page.locator('input[type="file"]').first();
+        await fileInput.waitFor({ state: "attached", timeout: 12000 });
+        await fileInput.setInputFiles(imagePath);
+        console.log("  Uploaded workflow image: " + path.basename(imagePath));
+        imageUploaded = true;
+        await humanDelay(page, 3000, 5000);
+
+        // Click Done/Next if there's a media confirmation step
+        await clickFirstVisible(page, [
+          'button:has-text("Done")',
+          'button:has-text("Next")',
+          'button[aria-label="Done"]',
+          'button[aria-label="Next"]'
+        ]);
+        await humanDelay(page, 1200, 2500);
+      } catch (imgErr) {
+        console.log("  Image upload attempt " + attempt + " failed: " + (imgErr.message || imgErr));
       }
-
-      // Directly set files on the hidden <input type="file"> element
-      // This bypasses the filechooser event which is unreliable with LinkedIn
-      const fileInput = page.locator('input[type="file"]').first();
-      await fileInput.waitFor({ state: "attached", timeout: 8000 });
-      await fileInput.setInputFiles(imagePath);
-      console.log("  Uploaded workflow image: " + path.basename(imagePath));
-      await humanDelay(page, 3000, 5000);
-
-      // Click Done/Next if there's a media confirmation step
-      await clickFirstVisible(page, [
-        'button:has-text("Done")',
-        'button:has-text("Next")',
-        'button[aria-label="Done"]'
-      ]);
-      await humanDelay(page, 1500, 3000);
-    } catch (imgErr) {
-      console.log("  Image upload skipped (" + (imgErr.message || imgErr) + "), posting text only.");
+    }
+    if (!imageUploaded) {
+      console.log("  WARNING: Image upload failed after 2 attempts, posting text only.");
     }
   }
 
@@ -617,17 +799,18 @@ async function postToLinkedIn(page, text, imagePath) {
   }
 
   await editor.click();
-  await humanDelay(page, 500, 1200);
+  await humanDelay(page, 400, 900);
 
   // Type like a human — in chunks with small pauses
   await humanType(page, editor, text);
 
-  // Pause before clicking Post (like a human reviewing)
-  await humanDelay(page, 2000, 5000);
+  // Pause before clicking Post (reviewing like a human)
+  await humanMouseJitter(page);
+  await humanDelay(page, 1500, 3500);
 
   const postButton = page.locator('button:has-text("Post")').last();
   await postButton.waitFor({ timeout: 10000 });
-  await humanDelay(page, 500, 1500);
+  await humanDelay(page, 500, 1200);
   await postButton.click();
 
   // Check for duplicate post warning within 4 seconds
@@ -651,18 +834,43 @@ async function postToLinkedIn(page, text, imagePath) {
   }
 
   // Wait for post to publish
-  await humanDelay(page, 3000, 6000);
+  await humanDelay(page, 2500, 5000);
 }
 
 async function postToLinkedInWithRetry(page, text, imagePath) {
-  try {
-    await postToLinkedIn(page, text, imagePath);
-    return;
-  } catch (firstError) {
-    await page.goto("https://www.linkedin.com/feed/", { waitUntil: "domcontentloaded", timeout: 60000 });
-    await page.waitForTimeout(1500);
-    await postToLinkedIn(page, text, imagePath);
-    console.log(`Recovered after retry: ${firstError.message || firstError}`);
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      await postToLinkedIn(page, text, imagePath);
+      return;
+    } catch (err) {
+      const msg = err.message || String(err);
+      // Don't retry duplicate posts
+      if (msg.includes("DUPLICATE_POST")) throw err;
+
+      console.log(`  Attempt ${attempt}/${maxAttempts} failed: ${msg}`);
+
+      // Save debug screenshot on failure
+      try {
+        const screenshotDir = path.join(__dirname, ".auth");
+        if (!fs.existsSync(screenshotDir)) fs.mkdirSync(screenshotDir, { recursive: true });
+        const screenshotPath = path.join(screenshotDir, `fail-attempt-${attempt}-${Date.now()}.png`);
+        await page.screenshot({ path: screenshotPath }).catch(() => {});
+        console.log(`  Debug screenshot: ${path.basename(screenshotPath)}`);
+      } catch {}
+
+      if (attempt < maxAttempts) {
+        // Exponential backoff: 2s, 4s
+        const backoff = 2000 * attempt;
+        console.log(`  Retrying in ${backoff / 1000}s...`);
+        await page.waitForTimeout(backoff);
+        // Navigate back to feed for clean retry
+        await page.goto("https://www.linkedin.com/feed/", { waitUntil: "domcontentloaded", timeout: 60000 }).catch(() => {});
+        await page.waitForTimeout(1500);
+      } else {
+        throw err;
+      }
+    }
   }
 }
 
@@ -700,19 +908,18 @@ async function runLinkedInAutomation(options = {}) {
     return !isDuplicateOfHistory(text, history).match;
   });
 
-  let selected;
+  let candidates;
   if (unposted.length > 0) {
-    // Take the newest unposted posts (end of array = most recently generated)
-    selected = unposted.slice(-requestedCount).reverse();
-    console.log("Selected " + selected.length + " unposted post(s) for LinkedIn.");
+    // Prefer newest unposted posts first, but keep the full queue so duplicates can fall through.
+    candidates = [...unposted].reverse();
+    console.log("Prepared " + candidates.length + " unposted candidate(s) for LinkedIn.");
   } else {
     // All posts already posted — pick random ones for re-sharing
-    const shuffled = [...allPosts].sort(() => Math.random() - 0.5);
-    selected = shuffled.slice(0, requestedCount);
-    console.log("All posts already posted. Re-sharing " + selected.length + " random post(s).");
+    candidates = [...allPosts].sort(() => Math.random() - 0.5);
+    console.log("All posts already posted. Re-sharing from " + candidates.length + " random candidate(s).");
   }
 
-  if (selected.length === 0) {
+  if (candidates.length === 0) {
     throw new Error("No posts available to post.");
   }
 
@@ -732,20 +939,22 @@ async function runLinkedInAutomation(options = {}) {
     const history = loadPostHistory();
     const dailyLog = getDailyPostCount();
     let posted = 0;
+    let attempted = 0;
 
     if (dailyLog.count >= MAX_POSTS_PER_DAY) {
       console.log(`Daily limit reached (${dailyLog.count}/${MAX_POSTS_PER_DAY}). Skipping this cycle.`);
       return;
     }
 
-    for (let i = 0; i < selected.length; i += 1) {
+    for (let i = 0; i < candidates.length && posted < requestedCount; i += 1) {
       if (getDailyPostCount().count >= MAX_POSTS_PER_DAY) {
         console.log(`Daily limit reached (${MAX_POSTS_PER_DAY}). Stopping.`);
         break;
       }
 
-      const post = selected[i];
+      const post = candidates[i];
       const text = buildLinkedInText(post);
+      attempted += 1;
 
       const dupCheck = isDuplicateOfHistory(text, history);
       if (dupCheck.match) {
@@ -753,7 +962,7 @@ async function runLinkedInAutomation(options = {}) {
         continue;
       }
 
-      console.log(`Posting ${posted + 1}/${selected.length}: ${post.title}`);
+      console.log(`Posting ${posted + 1}/${requestedCount} (candidate ${attempted}/${candidates.length}): ${post.title}`);
 
       // Generate workflow PNG for this topic
       let imagePath = null;
@@ -764,7 +973,13 @@ async function runLinkedInAutomation(options = {}) {
         console.log("  Workflow image generation failed: " + (imgErr.message || imgErr));
       }
 
-      await page.goto("https://www.linkedin.com/feed/", { waitUntil: "domcontentloaded", timeout: 60000 });
+      await page.goto("https://www.linkedin.com/feed/", { waitUntil: "domcontentloaded", timeout: 60000 })
+        .catch(async () => {
+          // Retry navigation once on network failure
+          console.log("  Feed navigation failed, retrying...");
+          await page.waitForTimeout(2000);
+          await page.goto("https://www.linkedin.com/feed/", { waitUntil: "domcontentloaded", timeout: 60000 });
+        });
 
       // Configurable pre-post delay
       await humanDelay(page, prePostMinSec * 1000, prePostMaxSec * 1000);
@@ -782,18 +997,20 @@ async function runLinkedInAutomation(options = {}) {
           savePostHistory(history);
           continue;
         }
-        throw postError;
+        // Log and continue with remaining posts instead of crashing
+        console.error(`Failed to post "${post.title}": ${postError.message || postError}`);
+        continue;
       }
 
       // Configurable randomized delay between posts
-      if (i < selected.length - 1) {
+      if (posted < requestedCount && i < candidates.length - 1) {
         const waitMs = randomBetween(delayMinSec * 1000, delayMaxSec * 1000);
         console.log(`  Waiting ${Math.round(waitMs / 1000)}s before next post...`);
         await page.waitForTimeout(waitMs);
       }
     }
 
-    console.log(`Automation finished. Posted ${posted}/${selected.length}.`);
+    console.log(`Automation finished. Posted ${posted}/${requestedCount} after checking ${attempted} candidate(s).`);
     await context.storageState({ path: STORAGE_STATE_FILE });
   } finally {
     if (!options.keepBrowserOpen) {

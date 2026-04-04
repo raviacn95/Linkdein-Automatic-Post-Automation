@@ -94,6 +94,50 @@ const TOPIC_LIBRARY = [
     quizQ: "What is the practical difference between let and const?",
     quizA: "Both are block-scoped; const prevents reassignment of the binding.",
     takeaway: "Modern JavaScript is clearer and safer with immutable-first patterns."
+  },
+  {
+    topic: "DSA",
+    category: "DSA",
+    titleSeed: "Data Structures & Algorithms",
+    tags: ["dsa", "algorithms", "data-structures", "coding-interview"],
+    core: [
+      "Choosing the right data structure is the first step to an efficient solution.",
+      "Time and space complexity analysis determines if your solution scales.",
+      "Recursion and dynamic programming convert exponential problems into polynomial ones."
+    ],
+    rules: [
+      "Always analyze time and space complexity before coding.",
+      "Prefer iterative solutions when recursion depth risks stack overflow.",
+      "Use hash maps to trade space for time in lookup-heavy problems."
+    ],
+    workflow: "1. Understand the problem and constraints.\n2. Identify the best data structure for the task.\n3. Sketch the algorithm on paper or whiteboard.\n4. Analyze time and space complexity.\n5. Code the solution with clean variable names.\n6. Test with edge cases: empty input, single element, large input.",
+    architecture: "A DSA solution flows through: input parsing → data structure setup → core algorithm (traversal / divide-and-conquer / greedy / DP) → result extraction. Choosing arrays vs. linked lists vs. trees vs. graphs depends on access patterns and mutation frequency. Sorting and hashing are the backbone of most optimised solutions.",
+    tryThis: "// Two Sum — O(n) using hash map\nfunction twoSum(nums, target) {\n  const map = {};\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map[complement] !== undefined) return [map[complement], i];\n    map[nums[i]] = i;\n  }\n  return [];\n}",
+    quizQ: "Why does a hash map give O(1) average-case lookup?",
+    quizA: "Keys are hashed to indices; direct index access is constant time.",
+    takeaway: "Master the tradeoff between time and space — that is the DSA interview edge."
+  },
+  {
+    topic: "System Design",
+    category: "System Design",
+    titleSeed: "System Design Fundamentals",
+    tags: ["system-design", "scalability", "architecture", "distributed-systems"],
+    core: [
+      "Horizontal scaling and load balancing keep services reliable under high traffic.",
+      "CAP theorem forces a choice between consistency and availability during partitions.",
+      "Caching at the right layer can reduce database load by orders of magnitude."
+    ],
+    rules: [
+      "Start with requirements: scale, latency SLA, consistency needs, and read/write ratio.",
+      "Design for failure — every component will eventually fail; plan for it.",
+      "Prefer simple proven components over clever custom solutions."
+    ],
+    workflow: "1. Clarify functional and non-functional requirements.\n2. Estimate scale: QPS, storage, bandwidth.\n3. Sketch high-level architecture: clients, APIs, services, databases.\n4. Deep-dive on bottlenecks: caching, sharding, replication.\n5. Discuss trade-offs and failure scenarios.\n6. Summarise monitoring and alerting strategy.",
+    architecture: "A typical distributed system has: client → CDN → load balancer → stateless API servers → cache layer (Redis) → primary database + read replicas → message queue → background workers. Each hop adds latency; the goal is to minimise hops on the critical path while maximising horizontal scalability.",
+    tryThis: "// Rate limiter using Token Bucket (conceptual)\nclass TokenBucket {\n  constructor(capacity, refillRatePerSec) {\n    this.capacity = capacity;\n    this.tokens = capacity;\n    this.refillRate = refillRatePerSec;\n    setInterval(() => { this.tokens = Math.min(this.capacity, this.tokens + this.refillRate); }, 1000);\n  }\n  consume() { if (this.tokens > 0) { this.tokens--; return true; } return false; }\n}",
+    quizQ: "When should you choose eventual consistency over strong consistency?",
+    quizA: "Choose eventual consistency when availability and partition tolerance outweigh the cost of stale reads — e.g. social feeds, shopping carts.",
+    takeaway: "Great system design is about asking the right questions and making explicit trade-offs."
   }
 ];
 
@@ -204,7 +248,77 @@ const TOPIC_SEEDS = [
   { topic: "TypeScript", subtopic: "Decorators Class and Method",                  category: "TypeScript",  tags: ["typescript","decorators","metadata","advanced"], level: "advanced" },
   { topic: "TypeScript", subtopic: "Path Aliases and Module Resolution",           category: "TypeScript",  tags: ["typescript","paths","modules","config"], level: "advanced" },
   { topic: "TypeScript", subtopic: "Type Declaration Files .d.ts",                 category: "TypeScript",  tags: ["typescript","declaration","dts","types"], level: "advanced" },
-  { topic: "TypeScript", subtopic: "Migrating JavaScript to TypeScript",           category: "TypeScript",  tags: ["typescript","migration","javascript","gradual"], level: "advanced" }
+  { topic: "TypeScript", subtopic: "Migrating JavaScript to TypeScript",           category: "TypeScript",  tags: ["typescript","migration","javascript","gradual"], level: "advanced" },
+  // ── DSA (34) ── Beginner → Intermediate → Advanced ───────────────────────
+  { topic: "DSA", subtopic: "Arrays: Basics and Common Operations",              category: "DSA", tags: ["dsa","arrays","basics","algorithms"], level: "beginner" },
+  { topic: "DSA", subtopic: "Strings: Pattern Matching Fundamentals",            category: "DSA", tags: ["dsa","strings","pattern","algorithms"], level: "beginner" },
+  { topic: "DSA", subtopic: "Linked Lists: Singly vs Doubly Linked",             category: "DSA", tags: ["dsa","linked-list","data-structures","beginners"], level: "beginner" },
+  { topic: "DSA", subtopic: "Stacks and Queues: Core Use Cases",                 category: "DSA", tags: ["dsa","stack","queue","data-structures"], level: "beginner" },
+  { topic: "DSA", subtopic: "Hash Maps and Hash Sets Explained",                 category: "DSA", tags: ["dsa","hashmap","hashset","lookup"], level: "beginner" },
+  { topic: "DSA", subtopic: "Big O Notation: Time and Space Complexity",         category: "DSA", tags: ["dsa","bigo","complexity","algorithms"], level: "beginner" },
+  { topic: "DSA", subtopic: "Recursion: Base Case and Recursive Case",           category: "DSA", tags: ["dsa","recursion","algorithms","basics"], level: "beginner" },
+  { topic: "DSA", subtopic: "Binary Search Explained with Examples",             category: "DSA", tags: ["dsa","binary-search","search","algorithms"], level: "beginner" },
+  { topic: "DSA", subtopic: "Sorting Algorithms: Bubble, Selection, Insertion",  category: "DSA", tags: ["dsa","sorting","algorithms","beginners"], level: "beginner" },
+  { topic: "DSA", subtopic: "Two Pointer Technique: Concept and Examples",       category: "DSA", tags: ["dsa","two-pointer","arrays","patterns"], level: "beginner" },
+  { topic: "DSA", subtopic: "Sliding Window Pattern: Variable and Fixed Size",   category: "DSA", tags: ["dsa","sliding-window","arrays","patterns"], level: "beginner" },
+  { topic: "DSA", subtopic: "Merge Sort and Quick Sort Deep Dive",               category: "DSA", tags: ["dsa","merge-sort","quick-sort","sorting"], level: "intermediate" },
+  { topic: "DSA", subtopic: "Binary Trees: Traversal BFS and DFS",               category: "DSA", tags: ["dsa","binary-tree","bfs","dfs"], level: "intermediate" },
+  { topic: "DSA", subtopic: "Binary Search Trees: Insert Search Delete",         category: "DSA", tags: ["dsa","bst","trees","data-structures"], level: "intermediate" },
+  { topic: "DSA", subtopic: "Heaps and Priority Queues",                         category: "DSA", tags: ["dsa","heap","priority-queue","algorithms"], level: "intermediate" },
+  { topic: "DSA", subtopic: "Graph Representation: Adjacency List vs Matrix",    category: "DSA", tags: ["dsa","graphs","adjacency","data-structures"], level: "intermediate" },
+  { topic: "DSA", subtopic: "BFS for Shortest Path in Unweighted Graphs",        category: "DSA", tags: ["dsa","bfs","graphs","shortest-path"], level: "intermediate" },
+  { topic: "DSA", subtopic: "DFS for Cycle Detection and Topological Sort",      category: "DSA", tags: ["dsa","dfs","graphs","topological-sort"], level: "intermediate" },
+  { topic: "DSA", subtopic: "Dynamic Programming: Memoisation vs Tabulation",   category: "DSA", tags: ["dsa","dp","memoisation","tabulation"], level: "intermediate" },
+  { topic: "DSA", subtopic: "Greedy Algorithms: When They Work and When They Don't", category: "DSA", tags: ["dsa","greedy","algorithms","patterns"], level: "intermediate" },
+  { topic: "DSA", subtopic: "Backtracking: Subsets Permutations Combinations",  category: "DSA", tags: ["dsa","backtracking","recursion","patterns"], level: "intermediate" },
+  { topic: "DSA", subtopic: "Trie Data Structure and Prefix Search",             category: "DSA", tags: ["dsa","trie","prefix","strings"], level: "intermediate" },
+  { topic: "DSA", subtopic: "Disjoint Set Union / Union-Find",                   category: "DSA", tags: ["dsa","union-find","graphs","algorithms"], level: "advanced" },
+  { topic: "DSA", subtopic: "Dijkstra's Algorithm for Weighted Shortest Path",   category: "DSA", tags: ["dsa","dijkstra","graphs","shortest-path"], level: "advanced" },
+  { topic: "DSA", subtopic: "Bellman-Ford and Detecting Negative Cycles",        category: "DSA", tags: ["dsa","bellman-ford","graphs","algorithms"], level: "advanced" },
+  { topic: "DSA", subtopic: "Floyd-Warshall All-Pairs Shortest Path",            category: "DSA", tags: ["dsa","floyd-warshall","graphs","shortest-path"], level: "advanced" },
+  { topic: "DSA", subtopic: "Segment Trees and Range Queries",                   category: "DSA", tags: ["dsa","segment-tree","range-query","advanced"], level: "advanced" },
+  { topic: "DSA", subtopic: "Fenwick Tree / Binary Indexed Tree",                category: "DSA", tags: ["dsa","fenwick-tree","prefix-sum","advanced"], level: "advanced" },
+  { topic: "DSA", subtopic: "Knuth-Morris-Pratt String Matching Algorithm",      category: "DSA", tags: ["dsa","kmp","strings","pattern-matching"], level: "advanced" },
+  { topic: "DSA", subtopic: "LRU Cache Implementation with HashMap and DLL",     category: "DSA", tags: ["dsa","lru","cache","design"], level: "advanced" },
+  { topic: "DSA", subtopic: "Monotonic Stack for Next Greater Element Problems", category: "DSA", tags: ["dsa","monotonic-stack","stack","patterns"], level: "advanced" },
+  { topic: "DSA", subtopic: "Bit Manipulation Tricks for Interview Problems",    category: "DSA", tags: ["dsa","bit-manipulation","algorithms","advanced"], level: "advanced" },
+  { topic: "DSA", subtopic: "Interval Problems: Merge Overlapping Intervals",    category: "DSA", tags: ["dsa","intervals","sorting","algorithms"], level: "advanced" },
+  { topic: "DSA", subtopic: "Matrix BFS/DFS for Island and Grid Problems",       category: "DSA", tags: ["dsa","matrix","grid","bfs"], level: "advanced" },
+  // ── System Design (34) ── Beginner → Intermediate → Advanced ─────────────
+  { topic: "System Design", subtopic: "Client-Server Architecture Explained",           category: "System Design", tags: ["system-design","client-server","architecture","basics"], level: "beginner" },
+  { topic: "System Design", subtopic: "DNS Deep Dive: How Domain Resolution Works",     category: "System Design", tags: ["system-design","dns","networking","basics"], level: "beginner" },
+  { topic: "System Design", subtopic: "HTTP vs HTTPS and REST API Fundamentals",        category: "System Design", tags: ["system-design","http","rest","api"], level: "beginner" },
+  { topic: "System Design", subtopic: "Databases: SQL vs NoSQL Trade-offs",             category: "System Design", tags: ["system-design","sql","nosql","databases"], level: "beginner" },
+  { topic: "System Design", subtopic: "Caching Strategies: Cache-Aside Write-Through", category: "System Design", tags: ["system-design","caching","redis","strategies"], level: "beginner" },
+  { topic: "System Design", subtopic: "Load Balancers: Round Robin vs Least Connections",category: "System Design", tags: ["system-design","load-balancer","scalability","networking"], level: "beginner" },
+  { topic: "System Design", subtopic: "CDN Fundamentals and Edge Caching",              category: "System Design", tags: ["system-design","cdn","caching","performance"], level: "beginner" },
+  { topic: "System Design", subtopic: "CAP Theorem: Consistency Availability Partition", category: "System Design", tags: ["system-design","cap-theorem","distributed","consistency"], level: "beginner" },
+  { topic: "System Design", subtopic: "Vertical vs Horizontal Scaling",                 category: "System Design", tags: ["system-design","scaling","horizontal","vertical"], level: "beginner" },
+  { topic: "System Design", subtopic: "Message Queues: Why and When to Use Them",       category: "System Design", tags: ["system-design","message-queue","async","decoupling"], level: "beginner" },
+  { topic: "System Design", subtopic: "Microservices vs Monolith: Choosing the Right Fit",category: "System Design", tags: ["system-design","microservices","monolith","architecture"], level: "beginner" },
+  { topic: "System Design", subtopic: "API Gateway: Rate Limiting and Auth",            category: "System Design", tags: ["system-design","api-gateway","rate-limiting","auth"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Database Sharding: Horizontal Partitioning",     category: "System Design", tags: ["system-design","sharding","databases","scalability"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Database Indexing: B-Trees vs Inverted Index",   category: "System Design", tags: ["system-design","indexing","databases","performance"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Consistent Hashing for Distributed Systems",     category: "System Design", tags: ["system-design","consistent-hashing","distributed","load-balancing"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Event-Driven Architecture and Pub/Sub Pattern",  category: "System Design", tags: ["system-design","event-driven","pubsub","async"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Designing a URL Shortener System",               category: "System Design", tags: ["system-design","url-shortener","design","case-study"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Designing a Rate Limiter: Token Bucket vs Sliding Window", category: "System Design", tags: ["system-design","rate-limiter","algorithms","design"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Designing a Notification System",                category: "System Design", tags: ["system-design","notifications","push","design"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Designing a Social Media Feed",                  category: "System Design", tags: ["system-design","news-feed","fanout","design"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Designing a Chat App: WebSockets and Rooms",     category: "System Design", tags: ["system-design","chat","websockets","real-time"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Blob Storage and Object Store Design S3-like",   category: "System Design", tags: ["system-design","blob-storage","s3","object-store"], level: "intermediate" },
+  { topic: "System Design", subtopic: "Distributed Caching with Redis Cluster",         category: "System Design", tags: ["system-design","redis","distributed-cache","scalability"], level: "advanced" },
+  { topic: "System Design", subtopic: "Two-Phase Commit vs SAGA Pattern for Transactions", category: "System Design", tags: ["system-design","saga","transactions","distributed"], level: "advanced" },
+  { topic: "System Design", subtopic: "CQRS and Event Sourcing Pattern",                category: "System Design", tags: ["system-design","cqrs","event-sourcing","patterns"], level: "advanced" },
+  { topic: "System Design", subtopic: "Designing Uber-like Real-time Location Service", category: "System Design", tags: ["system-design","geospatial","real-time","case-study"], level: "advanced" },
+  { topic: "System Design", subtopic: "Designing YouTube: Video Upload and Streaming",  category: "System Design", tags: ["system-design","video-streaming","cdn","case-study"], level: "advanced" },
+  { topic: "System Design", subtopic: "Designing Google Search: Crawling and Indexing", category: "System Design", tags: ["system-design","search-engine","indexing","case-study"], level: "advanced" },
+  { topic: "System Design", subtopic: "Leader Election and Consensus: Raft Algorithm",  category: "System Design", tags: ["system-design","raft","consensus","distributed"], level: "advanced" },
+  { topic: "System Design", subtopic: "Service Discovery: Consul and Kubernetes DNS",   category: "System Design", tags: ["system-design","service-discovery","kubernetes","microservices"], level: "advanced" },
+  { topic: "System Design", subtopic: "Observability: Metrics Logs and Traces",         category: "System Design", tags: ["system-design","observability","monitoring","sre"], level: "advanced" },
+  { topic: "System Design", subtopic: "Designing a Distributed Job Scheduler",          category: "System Design", tags: ["system-design","job-scheduler","distributed","cron"], level: "advanced" },
+  { topic: "System Design", subtopic: "Zero Downtime Deployments: Blue-Green and Canary", category: "System Design", tags: ["system-design","deployment","blue-green","canary"], level: "advanced" },
+  { topic: "System Design", subtopic: "Data Replication: Leader-Follower vs Multi-Leader", category: "System Design", tags: ["system-design","replication","databases","consistency"], level: "advanced" }
 ];
 
 function ask(question) {
@@ -215,6 +329,10 @@ function ask(question) {
       resolve(answer.trim());
     });
   });
+}
+
+function randomBetween(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function loadConfig() {
@@ -304,6 +422,105 @@ function splitIntoSentences(text) {
     .filter((s) => s.length > 25);
 }
 
+function buildDetailedContent({ topic, subtopic, core, rules, workflow, architecture, tryThis, quizQ, quizA, takeaway }) {
+  const lang = (topic || "").toLowerCase() === "typescript" ? "ts" : "js";
+  const topicName = subtopic || topic || "this concept";
+  const rule1 = rules[0] || "Validate inputs";
+  const rule2 = rules[1] || "Handle edge cases";
+  const rule3 = rules[2] || "Optimize performance";
+  const styleIndex = Math.floor(Math.random() * 8);
+
+  const codeBlock = tryThis ? `\n\`\`\`${lang}\n${tryThis}\n\`\`\`\n` : "";
+
+  // The 10 Parts Framework
+  const sections = {
+    hook: "",
+    context: "",
+    solution: "",
+    example: codeBlock,
+    takeaway: `👉 **Takeaway:** ${takeaway}`,
+    cta: "🚀 **Call to Action:** Follow for more daily engineering deep dives and system design insights!",
+    impact: `🔹 **Impact:** Implementing this pattern reduced system latency by 25% and improved developer velocity by 40% in our benchmarks.`,
+    bestPractice: `🔹 **Best Practice Tip:** Always aim for statelessness and ensure that your ${topicName} implementation is decoupled from the business logic.`,
+    resource: `🔹 **Resource:** For deeper learning, check out the official documentation or the System Design Primer on GitHub.`,
+    engagement: `🔹 **Engagement Prompt:** How are you handling ${topicName} in your production environments? Let's discuss in the comments!`
+  };
+
+  // Helper for verbose expansion (to hit ~800 words)
+  const expansion = (name) => {
+    return [
+      `When we talk about ${name}, we aren't just discussing a syntax choice or a minor optimization. We are talking about the very fabric of system reliability and code maintainability. In modern high-scale environments, the difference between a mid-level engineer and a principal engineer often comes down to how they handle these fundamental abstractions.`,
+      `The complexity of today's distributed systems means that even minor oversight in ${rule1} can lead to catastrophic cascading failures. We've seen this time and again: a small memory leak here, an unhandled promise there, and suddenly the entire cluster is down. That's why mastering ${name} is critical.`,
+      `By strictly adhering to ${rule2}, you ensure that your services remain resilient even when the underlying infrastructure is flaky. This isn't just theory—it's a battle-tested reality from top-tier engineering teams at Google, Amazon, and Netflix.`,
+      `Furthermore, by focusing on ${rule3}, you're not just writing code; you're engineering a product. You're building something that scales, survives, and thrives under pressure. This approach transforms ${name} from a hurdle into a superpower.`
+    ].join("\n\n");
+  };
+
+  if (styleIndex === 0) {
+    // 1. Authority Explainer
+    sections.hook = `🔥 Why Most Engineers Fail at ${topicName}`;
+    sections.context = `We see it every day: ${topicName} is treated as an afterthought. But if you want to build a system that lasts, you need to understand the underlying principles of ${core}.`;
+    sections.solution = `The "Principal Engineer" approach to ${topicName} is about deep observability and strict typing. Here's how you actually implement it:\n\n${expansion(topicName)}`;
+  } else if (styleIndex === 1) {
+    // 2. SEO Blog Style
+    sections.hook = `📈 Mastering ${topicName}: The Ultimate Production Guide`;
+    sections.context = `Are you struggling with system reliability and clean architecture? You aren't alone. ${topicName} is one of the most misunderstood areas of modern software engineering.`;
+    sections.solution = `**Defining ${topicName}:** ${core}\n\nTo truly master this, we need to break it down into its constituent parts:\n\n${expansion(topicName)}`;
+  } else if (styleIndex === 2) {
+    // 3. Problem → Solution → Framework
+    sections.hook = `🎯 Conquering the Complexity of ${topicName}`;
+    sections.context = `### ❗ The Problem\nWe often overcomplicate our codebase by reinventing the wheel. The result? Unmaintainable spaghetti code and technical debt that kills projects.`;
+    sections.solution = `### 💡 The Solution\n${core}\n\nBy applying a 3-step framework—Observe, Rationalize, and Implement—we can tame the chaos:\n\n${expansion(topicName)}`;
+  } else if (styleIndex === 3) {
+    // 4. Myth Busting
+    sections.hook = `🔥 🔥 STOP Saying ${topicName} is "Too Hard"`;
+    sections.context = `### ❌ The Myth\n"It's just too complex to implement correctly in a fast-moving team environment where speed is everything."`;
+    sections.solution = `### ✅ The Reality\n${core}\n\nWhen you actually look at the patterns, it's elegant and straightforward. The complexity is usually a sign of poor abstraction, not the topic itself. Let's dive deep:\n\n${expansion(topicName)}`;
+  } else if (styleIndex === 4) {
+    // 5. Deep Insight Breakdown
+    sections.hook = `🧠 Deep Dive: Under the Hood of ${topicName}`;
+    sections.context = `Most developers understand the "what" but completely miss the "why". Let's get technical and explore the low-level mechanics of ${core}.`;
+    sections.solution = `Engineering is a game of trade-offs. If you choose ${topicName}, you are trading immediate simplicity for long-term robustness. Here's the deep logic:\n\n${expansion(topicName)}`;
+  } else if (styleIndex === 5) {
+    // 6. Storytelling Format
+    sections.hook = `⚡ How ${topicName} Literally Saved Our System from Collapse`;
+    sections.context = `Six months ago, our production environment was buckling under the pressure. We were losing requests, our latency was spiking, and the team was burnt out.`;
+    sections.solution = `### The Turning Point\nWe realized we weren't solving the root cause. The fix was ${core}. Once we implemented it, everything changed:\n\n${expansion(topicName)}`;
+  } else if (styleIndex === 6) {
+    // 7. Practical How-To
+    sections.hook = `🛠️ Step-by-Step: From Junior to Senior with ${topicName}`;
+    sections.context = `Goal: Implementing ${core} in a production-ready environment without breaking existing workflows or introducing regressions.`;
+    sections.solution = `Let's break this down into actionable, bite-sized steps that you can apply to your project starting today:\n\n${expansion(topicName)}`;
+  } else {
+    // 8. Comparison Post
+    sections.hook = `📊 ${topicName} vs. The World: Which Should You Use?`;
+    sections.context = `In production, every choice counts. Picking the wrong pattern for ${topicName} can lead to months of wasted effort and architectural debt.`;
+    sections.solution = `**Core Architecture:** ${core}\n\nLet's compare the traditional approach with the modern, robust approach we are implementing today:\n\n${expansion(topicName)}`;
+  }
+
+  return [
+    sections.hook,
+    "",
+    sections.context,
+    "",
+    sections.solution,
+    "",
+    sections.example,
+    "",
+    sections.takeaway,
+    "",
+    sections.cta,
+    "",
+    sections.impact,
+    "",
+    sections.bestPractice,
+    "",
+    sections.resource,
+    "",
+    sections.engagement
+  ].join("\n");
+}
+
 function extractCodeBlocks(rawText) {
   const lines = rawText.split(/\r?\n/).map((l) => l.trim());
   const codeLines = lines.filter((line) =>
@@ -318,130 +535,7 @@ function extractCodeBlocks(rawText) {
     }
   }
   return blocks;
-}
 
-function buildDetailedContent({ topic, subtopic, core, rules, workflow, architecture, tryThis, quizQ, quizA, takeaway }) {
-  const lang = (topic || "").toLowerCase() === "typescript" ? "ts" : "js";
-  const topicName = subtopic || topic || "this concept";
-  return [
-    "## How to Use " + topicName + " Quickly?",
-    "",
-    core,
-    "",
-    "Here is a quick example to get started:",
-    "",
-    "```" + lang,
-    tryThis,
-    "```",
-    "",
-    "## What is " + topicName + "?",
-    "",
-    core,
-    "",
-    "Understanding this concept is essential for writing reliable, maintainable code. It forms the foundation for many advanced patterns you will encounter in production applications.",
-    "",
-    "When applied correctly, it improves code readability and reduces bugs during development and maintenance cycles.",
-    "",
-    "## When to Use " + topicName + "?",
-    "",
-    "You should use this approach when:",
-    "",
-    "- Building features that depend on " + (rules[0] || "structured patterns").toLowerCase(),
-    "- Working with teams where " + (rules[1] || "consistent approaches").toLowerCase(),
-    "- Validating that " + (rules[2] || "code behaves as expected").toLowerCase(),
-    "- Refactoring existing code for better structure",
-    "- Writing tests that need predictable behavior",
-    "",
-    "## Step by Step Guide with Examples",
-    "",
-    workflow || "1. Identify the problem scope.\n2. Choose the right tool or pattern.\n3. Implement a minimal solution.\n4. Validate with tests.\n5. Refactor and optimize.\n6. Document the approach for your team.",
-    "",
-    "```" + lang,
-    tryThis,
-    "```",
-    "",
-    "This example demonstrates the core pattern. Each step builds on the previous one to create a complete solution.",
-    "",
-    "## Method Comparison",
-    "",
-    "| Approach | When to Use | Key Benefit | Complexity |",
-    "| --- | --- | --- | --- |",
-    "| " + (rules[0] || "Pattern A") + " | Default scenarios | Simplicity | Low |",
-    "| " + (rules[1] || "Pattern B") + " | Complex workflows | Flexibility | Medium |",
-    "| " + (rules[2] || "Pattern C") + " | Enterprise scale | Robustness | High |",
-    "",
-    "## Best Practices",
-    "",
-    "- " + rules[0],
-    "- " + rules[1],
-    "- " + rules[2],
-    "- Always validate inputs at system boundaries before processing",
-    "- Write tests that cover both happy paths and edge cases",
-    "- Document trade-offs when choosing between approaches",
-    "",
-    "### Common Mistakes to Avoid",
-    "",
-    "- Skipping validation which leads to silent failures in production",
-    "- Over-engineering simple solutions when a straightforward approach works",
-    "- Ignoring error handling at integration boundaries",
-    "- Not writing tests for edge cases and boundary conditions",
-    "",
-    "## Common Issues and Fixes",
-    "",
-    "### Why does unexpected behavior occur?",
-    "",
-    "This usually happens when inputs are not validated or when assumptions about state are incorrect. Always verify the current state before performing operations.",
-    "",
-    "### Why does the output not match expectations?",
-    "",
-    "Check that your configuration and parameters match the expected format. Review the documentation for any required setup steps you may have missed.",
-    "",
-    "## Advanced Scenarios",
-    "",
-    "### " + topicName + " in Complex Workflows",
-    "",
-    architecture || "The input enters the system, passes through parsing and validation layers, gets processed by the core engine, and the result is returned to the caller. Each layer is decoupled for testability.",
-    "",
-    "### Integration with Other Patterns",
-    "",
-    "When combining this with other patterns, ensure each component has clear boundaries and responsibilities. This makes the system easier to test and maintain.",
-    "",
-    "## Real World Use Cases",
-    "",
-    "### Use Case: Production Application",
-    "",
-    "In production applications, this pattern helps maintain consistency across the codebase while enabling teams to work independently on different features.",
-    "",
-    "### Use Case: CI/CD Pipeline",
-    "",
-    "Integrating this approach into your CI/CD pipeline ensures quality gates are met before deployment, reducing the risk of production issues.",
-    "",
-    "## FAQs",
-    "",
-    "### What is " + topicName + "?",
-    "",
-    core,
-    "",
-    "### When should I use " + topicName + "?",
-    "",
-    "Use it when you need " + (rules[0] || "structured, reliable patterns").toLowerCase() + ". It is especially valuable in team environments and production codebases.",
-    "",
-    "### What are the best practices for " + topicName + "?",
-    "",
-    rules[0] + " " + rules[1] + " " + rules[2],
-    "",
-    "### " + quizQ,
-    "",
-    quizA,
-    "",
-    "### What are common mistakes with " + topicName + "?",
-    "",
-    "The most common mistake is not validating inputs at boundaries. Always ensure data is in the expected format before processing.",
-    "",
-    "## Conclusion",
-    "",
-    takeaway + " In this guide, you learned the fundamentals of " + topicName + ", step by step implementation, best practices, and how to avoid common mistakes. As a next step, try applying these patterns in your own projects and combine them with related concepts."
-  ].join("\n");
 }
 
 function generatedTimestamp(baseTime, index) {
@@ -468,7 +562,7 @@ function createTopicPosts(cfg) {
     ];
 
     const title = `${tpl.titleSeed} ${i + 1}`;
-    const excerpt = core.length > 140 ? `${core.slice(0, 137)}...` : core;
+    const excerpt = core;
     const tags = Array.from(new Set([...(cfg.tags || []), ...tpl.tags])).slice(0, 6);
 
     const levels = ["beginner", "intermediate", "advanced"];
@@ -499,10 +593,10 @@ function createTopicPosts(cfg) {
   return posts;
 }
 
-function generatePostsFromText(rawText, cfg) {
-  const sentencePool = splitIntoSentences(rawText);
-  const codePool = extractCodeBlocks(rawText);
-  const target = Number(cfg.targetPostCount || 100);
+async function generatePostsFromText(rawText, cfg, freeAiCfg, useFreeAi) {
+  const sentencePool = splitIntoSentences(rawText).sort(() => Math.random() - 0.5);
+  const codePool = extractCodeBlocks(rawText).sort(() => Math.random() - 0.5);
+  const target = Number(cfg.targetPostCount || 20);
   const tags = Array.isArray(cfg.tags) && cfg.tags.length > 0 ? cfg.tags : ["javascript", "automation"];
   const posts = [];
   const baseTime = Date.now();
@@ -511,49 +605,154 @@ function generatePostsFromText(rawText, cfg) {
     throw new Error("PDF content looks empty after parsing. Use a text-based PDF with selectable text.");
   }
 
-  for (let i = 0; i < target; i += 1) {
-    const core = sentencePool[i % sentencePool.length];
-    const rules = [
-      sentencePool[(i + 1) % sentencePool.length] || "Prefer small reusable functions.",
-      sentencePool[(i + 2) % sentencePool.length] || "Validate inputs and expected outputs.",
-      sentencePool[(i + 3) % sentencePool.length] || "Keep naming explicit and consistent."
-    ];
-    const quizQ = sentencePool[(i + 4) % sentencePool.length] || "What test case would fail first?";
-    const quizA = sentencePool[(i + 5) % sentencePool.length] || "Start with empty, invalid, and boundary inputs.";
-    const takeaway = sentencePool[(i + 6) % sentencePool.length] || "Capture reusable patterns and validate behavior with examples.";
-    const code = codePool.length > 0 ? codePool[i % codePool.length] : "const result = values.filter(Boolean);\nconsole.log(result);";
+  // Determine AI context
+  const providers = freeAiCfg?.multiProvider && Array.isArray(freeAiCfg?.providers) && freeAiCfg.providers.length > 0
+    ? freeAiCfg.providers
+    : [freeAiCfg?.provider || "groq"];
+  const maxRetries = Number(freeAiCfg?.maxRetriesPerProvider || 2);
+  const useMultiProvider = freeAiCfg?.multiProvider;
+  
+  let concurrency = Number(freeAiCfg?.concurrentWorkers || 3);
+  let batchDelayMs = Number(freeAiCfg?.batchDelayMs || 1000);
 
-    const titleWords = normalizeSentence(core)
+  const isCopilotOnly = providers.length === 1 && providers[0] === "copilot";
+  if (isCopilotOnly) {
+    concurrency = 1;
+    batchDelayMs = Math.max(batchDelayMs, Number(freeAiCfg?.copilot?.minIntervalMs || 65000));
+  }
+
+  const hasAnyApiKey = providers.some(p => {
+    if (p === "copilot") return !!process.env[freeAiCfg?.copilot?.apiKeyEnvVar || "GITHUB_TOKEN"];
+    if (p === "groq")   return !!process.env[freeAiCfg?.groq?.apiKeyEnvVar   || "GROQ_API_KEY"];
+    if (p === "gemini") return !!process.env[freeAiCfg?.gemini?.apiKeyEnvVar  || "GEMINI_API_KEY"];
+    return false;
+  });
+
+  // Construct chunks of 3-4 sentences
+  const chunks = [];
+  for (let i = 0; i < target; i++) {
+    const chunkSentences = [
+      sentencePool[i % sentencePool.length],
+      sentencePool[(i + 1) % sentencePool.length],
+      sentencePool[(i + 2) % sentencePool.length]
+    ].filter(Boolean);
+    chunks.push(chunkSentences.join(" "));
+  }
+
+  const createPdfFallbackPost = (chunk, index) => {
+    const rules = [
+      sentencePool[(index + 1) % sentencePool.length] || "Prefer small reusable functions.",
+      sentencePool[(index + 2) % sentencePool.length] || "Validate inputs and expected outputs.",
+      sentencePool[(index + 3) % sentencePool.length] || "Keep naming explicit and consistent."
+    ];
+    const quizQ = sentencePool[(index + 4) % sentencePool.length] || "What test case would fail first?";
+    const quizA = sentencePool[(index + 5) % sentencePool.length] || "Start with empty, invalid, and boundary inputs.";
+    const takeaway = sentencePool[(index + 6) % sentencePool.length] || "Capture reusable patterns and validate behavior with examples.";
+    const code = codePool.length > 0 ? codePool[index % codePool.length] : "const result = values.filter(Boolean);\nconsole.log(result);";
+
+    const titleWords = normalizeSentence(chunk.substring(0, 100))
       .replace(/[^a-zA-Z0-9\s]/g, "")
       .split(/\s+/)
       .filter(Boolean)
       .slice(0, 7)
       .join(" ");
 
-    const title = `Generated Insight ${i + 1}: ${titleWords || "Practical Concept"}`;
-    const excerpt = core.length > 140 ? `${core.slice(0, 137)}...` : core;
-
-    posts.push({
-      id: i + 1,
+    return {
+      id: index + 1,
       category: cfg.defaultCategory || "JavaScript",
-      title,
+      title: `Generated Insight ${index + 1}: ${titleWords || "Practical Concept"}`,
       tags,
-      excerpt,
+      excerpt: sentencePool[index % sentencePool.length],
       sourceUrl: "",
-      createdAt: generatedTimestamp(baseTime, i),
+      createdAt: generatedTimestamp(baseTime, index),
       content: buildDetailedContent({
         topic: cfg.defaultCategory || "JavaScript",
         subtopic: titleWords || "Practical Concept",
-        core,
+        core: chunk,
         rules,
         tryThis: code,
         quizQ,
         quizA,
         takeaway
       })
-    });
+    };
+  };
+
+  if (!useFreeAi || !hasAnyApiKey) {
+    console.log("No AI API keys found — using template generation for " + chunks.length + " PDF chunks (instant).");
+    for (let i = 0; i < chunks.length; i++) {
+        posts.push(createPdfFallbackPost(chunks[i], i));
+    }
+    return posts;
   }
 
+  console.log("PDF Worker AI: " + chunks.length + " posts | " + concurrency + " concurrent");
+
+  for (let i = 0; i < chunks.length; i += concurrency) {
+    const batch = chunks.slice(i, i + concurrency);
+    const settled = await Promise.allSettled(
+      batch.map(async (chunk, batchIdx) => {
+        const index = i + batchIdx;
+        const provider = providers[index % providers.length];
+        
+        const prompt = [
+          `You are an expert technical content writer working for a senior engineer.`,
+          `Rewrite the following contextual snippet into a highly engaging, witty LinkedIn post.`,
+          `Length Requirement: Your output MUST be at least 800 words long. Expand deeply on the concepts.`,
+          `You MUST structure the content using ALL of these 10 mandatory sections, infused with one of the 8 engaging stylings (e.g. Myth Busting, Storytelling):`,
+          `1. Hook: Bold statement/question.`,
+          `2. Context: Problem/scenario.`,
+          `3. Solution/Insight: Architectural approach.`,
+          `4. Example/Code Snippet: Show a quick example.`,
+          `5. Takeaway: Summarize lesson.`,
+          `6. Call to Action: Encourage action.`,
+          `7. Impact: Real world benefit.`,
+          `8. Best Practice Tip: Practical guideline.`,
+          `9. Resource/Reference: Point to a tool or repo.`,
+          `10. Engagement Prompt: Invite discussion.`,
+          `Return STRICT JSON matching this schema exactly (no markdown fences, just JSON):`,
+          `{"category": "Engineering", "title": "Catchy Title", "excerpt": "One punchy sentence", "content": "Full 800-word markdown-formatted post body following the 10 structure parts", "tags": ["tag1", "tag2"]}`,
+          `\nThe snippet to transform:\n"${chunk}"\n`
+        ].join("\n");
+
+        try {
+          const raw = await callFreeAiWithRetry(prompt, freeAiCfg, provider, maxRetries);
+          const parsed = parseFreeAiResponse(raw, { topic: "PDF", subtopic: "Excerpt" }, index, cfg);
+          parsed.id = index + 1;
+          return parsed;
+        } catch (err) {
+          if (useMultiProvider && providers.length > 1) {
+            const fallbackProvider = providers[(index + 1) % providers.length];
+            const raw = await callFreeAiWithRetry(prompt, freeAiCfg, fallbackProvider, maxRetries);
+            const parsed = parseFreeAiResponse(raw, { topic: "PDF", subtopic: "Excerpt" }, index, cfg);
+            parsed.id = index + 1;
+            return parsed;
+          }
+          throw err;
+        }
+      })
+    );
+
+    settled.forEach((result, batchIdx) => {
+      const index = i + batchIdx;
+      if (result.status === "fulfilled") {
+        posts.push(result.value);
+      } else {
+        const reason = result.reason?.message || String(result.reason);
+        console.warn("  PDF AI Worker " + (index + 1) + " failed: " + reason + " — using template fallback for chunk.");
+        posts.push(createPdfFallbackPost(chunks[index], index));
+      }
+    });
+
+    const done = Math.min(i + concurrency, chunks.length);
+    process.stdout.write("  PDF AI Progress: " + done + "/" + chunks.length + "\r");
+
+    if (i + concurrency < chunks.length) {
+      await new Promise((resolve) => setTimeout(resolve, batchDelayMs));
+    }
+  }
+  
+  console.log("\n  PDF workers finished.");
   return posts;
 }
 
@@ -792,7 +991,7 @@ async function createAiPosts(cfg, aiCfg) {
 
 function buildPostPrompt(seed) {
   const level = seed.level || "beginner";
-  const lang = seed.topic === "TypeScript" ? "ts" : "js";
+  const lang = seed.topic === "TypeScript" ? "ts" : seed.topic === "DSA" ? "python" : seed.topic === "System Design" ? "text" : "js";
   const levelGuide = {
     beginner: "Explain like teaching a first-year student. Use simple language, analogies, and everyday examples. No jargon without explaining it.",
     intermediate: "Assume the reader knows basics. Focus on patterns, best practices, and real-world gotchas. Include production-ready examples.",
@@ -962,7 +1161,8 @@ async function callGitHubModels(prompt, apiKey, model) {
       body: JSON.stringify({
         model: model || "gpt-4o-mini",
         temperature: 0.75,
-        max_tokens: 4096,
+        // Keep response size bounded to reduce token/minute throttling.
+        max_tokens: 1600,
         messages: [
           { role: "system", content: "You are a technical content expert. Return valid JSON only — no markdown fences, no explanation." },
           { role: "user", content: prompt }
@@ -981,8 +1181,8 @@ async function callGitHubModels(prompt, apiKey, model) {
   }
 }
 
-async function callFreeAi(prompt, freeAiCfg) {
-  const provider = String(freeAiCfg.provider || "groq").toLowerCase();
+async function callFreeAi(prompt, freeAiCfg, providerOverride) {
+  const provider = String(providerOverride || freeAiCfg.provider || "groq").toLowerCase();
   if (provider === "gemini") {
     const apiKey = process.env[freeAiCfg.gemini?.apiKeyEnvVar || "GEMINI_API_KEY"] || "";
     if (!apiKey) throw new Error("GEMINI_API_KEY environment variable is not set.");
@@ -997,6 +1197,90 @@ async function callFreeAi(prompt, freeAiCfg) {
   const apiKey = process.env[freeAiCfg.groq?.apiKeyEnvVar || "GROQ_API_KEY"] || "";
   if (!apiKey) throw new Error("GROQ_API_KEY environment variable is not set.");
   return callGroq(prompt, apiKey, freeAiCfg.groq?.model);
+}
+
+const providerCooldownUntil = Object.create(null);
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, Math.max(0, ms)));
+}
+
+function isRateLimitError(error) {
+  const msg = String(error?.message || error || "").toLowerCase();
+  return msg.includes("429") || msg.includes("ratelimit") || msg.includes("rate limit") || msg.includes("please wait");
+}
+
+function parseRetryAfterMs(error) {
+  const msg = String(error?.message || error || "");
+  const secMatch = msg.match(/please wait\s+(\d+)\s*seconds?/i);
+  if (secMatch) return Number(secMatch[1]) * 1000;
+  const retryAfterMatch = msg.match(/retry-after[:\s]+(\d+)/i);
+  if (retryAfterMatch) return Number(retryAfterMatch[1]) * 1000;
+  // Safe default for provider minute-window throttling.
+  return 65000;
+}
+
+function setProviderCooldown(provider, ms) {
+  const until = Date.now() + Math.max(1000, ms);
+  providerCooldownUntil[provider] = Math.max(providerCooldownUntil[provider] || 0, until);
+}
+
+async function waitForProviderCooldown(provider) {
+  const now = Date.now();
+  const until = Number(providerCooldownUntil[provider] || 0);
+  if (until > now) {
+    const waitMs = until - now;
+    console.log("  " + provider + " cooldown active. Waiting " + Math.ceil(waitMs / 1000) + "s...");
+    await sleep(waitMs);
+  }
+}
+
+async function callFreeAiWithRetry(prompt, freeAiCfg, provider, maxAttempts) {
+  const attempts = Math.max(1, Number(maxAttempts || 4));
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    await waitForProviderCooldown(provider);
+    try {
+      return await callFreeAi(prompt, freeAiCfg, provider);
+    } catch (error) {
+      if (!isRateLimitError(error) || attempt === attempts) {
+        throw error;
+      }
+      const baseWait = parseRetryAfterMs(error);
+      const jitter = randomBetween(500, 2500);
+      const waitMs = baseWait + jitter;
+      setProviderCooldown(provider, waitMs);
+      console.warn(
+        "  " + provider + " rate-limited (attempt " + attempt + "/" + attempts + "). Retrying in " +
+        Math.ceil(waitMs / 1000) + "s..."
+      );
+      await sleep(waitMs);
+    }
+  }
+  throw new Error("Unexpected retry exit for provider: " + provider);
+}
+
+/**
+ * Returns list of available providers based on configured API keys.
+ */
+function getAvailableProviders(freeAiCfg) {
+  const providers = [];
+  const primary = String(freeAiCfg.provider || "copilot").toLowerCase();
+  // Always put primary provider first
+  const allProviders = [primary, "copilot", "groq", "gemini"];
+  const seen = new Set();
+  for (const p of allProviders) {
+    const name = (p === "github") ? "copilot" : p;
+    if (seen.has(name)) continue;
+    seen.add(name);
+    if (name === "copilot" || name === "github") {
+      if (process.env[freeAiCfg.copilot?.apiKeyEnvVar || "GITHUB_TOKEN"]) providers.push("copilot");
+    } else if (name === "groq") {
+      if (process.env[freeAiCfg.groq?.apiKeyEnvVar || "GROQ_API_KEY"]) providers.push("groq");
+    } else if (name === "gemini") {
+      if (process.env[freeAiCfg.gemini?.apiKeyEnvVar || "GEMINI_API_KEY"]) providers.push("gemini");
+    }
+  }
+  return providers.length > 0 ? providers : [primary];
 }
 
 function repairTruncatedJson(text) {
@@ -1090,24 +1374,78 @@ function createFallbackPost(seed, index, cfg) {
 
 async function createFreeAiPostsWithWorkers(cfg, freeAiCfg) {
   const target = Number(cfg.targetPostCount || 4);
-  const concurrency = Math.min(Number(freeAiCfg.concurrentWorkers || 5), 10);
-  const batchDelayMs = Number(freeAiCfg.batchDelayMs || 2000);
+  const configuredConcurrency = Math.min(Number(freeAiCfg.concurrentWorkers || 5), 50);
+  const configuredBatchDelayMs = Number(freeAiCfg.batchDelayMs || 2000);
+  const maxRetriesPerProvider = Math.max(1, Number(freeAiCfg.maxRetriesPerProvider || 4));
+  const useMultiProvider = Boolean(freeAiCfg.multiProvider);
 
-  // Randomly pick 'target' seeds from the full 100 pool so each run gets fresh topics
-  const shuffled = [...TOPIC_SEEDS].sort(() => Math.random() - 0.5);
+  // Determine available providers for round-robin distribution
+  const providers = useMultiProvider ? getAvailableProviders(freeAiCfg) : [freeAiCfg.provider || "copilot"];
+
+  let concurrency = configuredConcurrency;
+  let batchDelayMs = configuredBatchDelayMs;
+
+  const isCopilotOnly = providers.length === 1 && providers[0] === "copilot";
+  if (isCopilotOnly) {
+    // Copilot has strict minute token windows; serialize requests to avoid 429 storms.
+    concurrency = 1;
+    const safeGap = Number(freeAiCfg.copilot?.minIntervalMs || 65000);
+    batchDelayMs = Math.max(batchDelayMs, safeGap);
+  }
+
+  // Filter seeds to the configured topicPool — only generate for requested topics
+  const topicPool = Array.isArray(cfg.topicPool) && cfg.topicPool.length > 0 ? cfg.topicPool : [];
+  const filteredSeeds = topicPool.length > 0
+    ? TOPIC_SEEDS.filter(s => topicPool.includes(s.topic))
+    : TOPIC_SEEDS;
+  const pool = filteredSeeds.length > 0 ? filteredSeeds : TOPIC_SEEDS;
+
+  // Randomly pick 'target' seeds from the filtered pool so each run gets fresh topics
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
   const seeds = shuffled.slice(0, target);
+
+  // If no provider has a real API key, skip all AI calls and
+  // generate all posts in a single parallel Promise.all (zero network I/O, instant).
+  const hasAnyApiKey = providers.some(p => {
+    if (p === "copilot") return !!process.env[freeAiCfg.copilot?.apiKeyEnvVar || "GITHUB_TOKEN"];
+    if (p === "groq")   return !!process.env[freeAiCfg.groq?.apiKeyEnvVar   || "GROQ_API_KEY"];
+    if (p === "gemini") return !!process.env[freeAiCfg.gemini?.apiKeyEnvVar  || "GEMINI_API_KEY"];
+    return false;
+  });
+
+  if (!hasAnyApiKey) {
+    console.log("No AI API keys found — generating all " + seeds.length + " template posts in parallel (instant).");
+    const fastResults = await Promise.all(
+      seeds.map((seed, index) => Promise.resolve(createFallbackPost(seed, index, cfg)))
+    );
+    console.log("  All " + fastResults.length + " template posts generated instantly.");
+    return fastResults;
+  }
+
   const results = [];
 
-  console.log("Free AI workers: " + seeds.length + " posts | " + concurrency + " concurrent | provider: " + (freeAiCfg.provider || "groq"));
+  console.log("Free AI workers: " + seeds.length + " posts | " + concurrency + " concurrent | providers: " + providers.join(", ") + (useMultiProvider ? " (round-robin)" : ""));
 
   for (let i = 0; i < seeds.length; i += concurrency) {
     const batch = seeds.slice(i, i + concurrency);
     const settled = await Promise.allSettled(
       batch.map(async (seed, batchIdx) => {
         const index = i + batchIdx;
+        const provider = providers[index % providers.length];
         const prompt = buildPostPrompt(seed);
-        const raw = await callFreeAi(prompt, freeAiCfg);
-        return parseFreeAiResponse(raw, seed, index, cfg);
+        try {
+          const raw = await callFreeAiWithRetry(prompt, freeAiCfg, provider, maxRetriesPerProvider);
+          return parseFreeAiResponse(raw, seed, index, cfg);
+        } catch (primaryErr) {
+          // If multi-provider, retry with a different provider before giving up
+          if (useMultiProvider && providers.length > 1) {
+            const fallbackProvider = providers[(index + 1) % providers.length];
+            console.log("  Worker " + (index + 1) + " retrying with " + fallbackProvider + " (was " + provider + ")");
+            const raw = await callFreeAiWithRetry(prompt, freeAiCfg, fallbackProvider, maxRetriesPerProvider);
+            return parseFreeAiResponse(raw, seed, index, cfg);
+          }
+          throw primaryErr;
+        }
       })
     );
 
@@ -1134,6 +1472,67 @@ async function createFreeAiPostsWithWorkers(cfg, freeAiCfg) {
   return results;
 }
 
+async function generatePostBatch(cfg, mode, aiCfg, freeAiCfg, useFreeAi) {
+  let aiPosts = [];
+  let pdfPosts = [];
+  
+  const targetCount = Number(cfg.targetPostCount || 20);
+  const pdfDir = cfg.pdfSourceDir;
+  const usePdf = pdfDir && fs.existsSync(pdfDir);
+  
+  const aiCount = usePdf ? Math.ceil(targetCount / 2) : targetCount;
+  const pdfCount = targetCount - aiCount;
+  
+  const aiConfig = { ...cfg, targetPostCount: aiCount };
+  
+  if (aiCount > 0) {
+    if (useFreeAi) {
+      try {
+        aiPosts = await createFreeAiPostsWithWorkers(aiConfig, freeAiCfg);
+      } catch (err) {
+        console.warn("Free AI generation failed: " + (err.message || err) + ". Falling back to topic templates.");
+        aiPosts = createTopicPosts(aiConfig);
+      }
+    } else if (mode === "ai") {
+      const gPosts = await createAiPosts(aiConfig, aiCfg);
+      aiPosts = gPosts && gPosts.length > 0 ? gPosts : createTopicPosts(aiConfig);
+    } else {
+      aiPosts = createTopicPosts(aiConfig);
+    }
+  }
+
+  if (usePdf && pdfCount > 0) {
+    try {
+      const pdfFiles = fs.readdirSync(pdfDir).filter(f => f.toLowerCase().endsWith(".pdf"));
+      if (pdfFiles.length > 0) {
+        const randomFile = pdfFiles[Math.floor(Math.random() * pdfFiles.length)];
+        const pdfPath = path.join(pdfDir, randomFile);
+        console.log("Reading PDF for posts: " + randomFile);
+        const pdfBuffer = fs.readFileSync(pdfPath);
+        const parsed = await pdf(pdfBuffer);
+        const pdfConfig = { ...cfg, targetPostCount: pdfCount };
+        pdfPosts = await generatePostsFromText(parsed.text || "", pdfConfig, freeAiCfg, useFreeAi);
+        console.log("  Extracted " + pdfPosts.length + " posts from PDF.");
+      } else {
+        console.warn("No PDF files found in " + pdfDir);
+      }
+    } catch (err) {
+      console.warn("PDF generation failed: " + (err.message || err));
+    }
+  }
+
+  const totalGenerated = aiPosts.length + pdfPosts.length;
+  if (totalGenerated < targetCount) {
+    const missing = targetCount - totalGenerated;
+    console.warn("  Total generated is " + totalGenerated + " but expected " + targetCount + ". Filling " + missing + " with templates.");
+    const fallbackConfig = { ...cfg, targetPostCount: missing };
+    const missingPosts = createTopicPosts(fallbackConfig);
+    aiPosts = [...aiPosts, ...missingPosts];
+  }
+
+  return [...aiPosts, ...pdfPosts];
+}
+
 async function generatePostsFromConfig(options = {}) {
   const config = loadConfig();
   const cfg = config.contentGeneration;
@@ -1142,42 +1541,41 @@ async function generatePostsFromConfig(options = {}) {
   const mode = ["pdf", "ai"].includes(cfg.sourceMode) ? cfg.sourceMode : "topics";
   const outputPath = path.resolve(__dirname, cfg.outputFile || "posts-data.js");
 
-  let posts;
   const useFreeAi = freeAiCfg.enabled && cfg.autoGenerateOnEveryRun && mode !== "pdf";
-
-  if (useFreeAi) {
-    try {
-      posts = await createFreeAiPostsWithWorkers(cfg, freeAiCfg);
-    } catch (err) {
-      console.warn("Free AI generation failed: " + (err.message || err) + ". Falling back to topic templates.");
-      posts = createTopicPosts(cfg);
-    }
-  } else if (mode === "pdf") {
-    const pdfPath = await resolvePdfPath(cfg);
-    if (!fs.existsSync(pdfPath)) {
-      throw new Error("PDF not found at: " + pdfPath);
-    }
-
-    const pdfBuffer = fs.readFileSync(pdfPath);
-    const parsed = await pdf(pdfBuffer);
-    posts = generatePostsFromText(parsed.text || "", cfg);
-  } else if (mode === "ai") {
-    const aiPosts = await createAiPosts(cfg, aiCfg);
-    if (aiPosts && aiPosts.length > 0) {
-      posts = aiPosts;
-    } else {
-      posts = createTopicPosts(cfg);
-    }
-  } else {
-    posts = createTopicPosts(cfg);
-  }
+  const posts = await generatePostBatch(cfg, mode, aiCfg, freeAiCfg, useFreeAi);
 
   const effectiveMode = useFreeAi ? "free-ai (" + (freeAiCfg.provider || "groq") + ")" : mode;
 
   // Accumulate: load existing posts, merge with dedup, then write
   const existingPosts = loadExistingPosts(outputPath);
   const dedupThreshold = cfg.dedupThreshold || 0.75;
-  const allPosts = mergeAndDedupPosts(existingPosts, posts, dedupThreshold);
+  const hwm = getHighWaterMark();
+  let allPosts = mergeAndDedupPosts(existingPosts, posts, dedupThreshold);
+
+  if (allPosts.length < hwm && mode !== "pdf") {
+    console.warn("  Detected post inventory below HWM (" + allPosts.length + "/" + hwm + "). Generating recovery posts before write.");
+
+    for (let attempt = 1; attempt <= 4 && allPosts.length < hwm; attempt += 1) {
+      const beforeCount = allPosts.length;
+      const missing = hwm - allPosts.length;
+      const recoveryCfg = {
+        ...cfg,
+        targetPostCount: Math.max(Number(cfg.targetPostCount || 1), missing)
+      };
+
+      console.log("  Recovery batch " + attempt + ": generating " + recoveryCfg.targetPostCount + " additional post(s).");
+      const recoveryPosts = await generatePostBatch(recoveryCfg, mode, aiCfg, freeAiCfg, useFreeAi);
+      allPosts = mergeAndDedupPosts(allPosts, recoveryPosts, dedupThreshold);
+
+      if (allPosts.length === beforeCount) {
+        console.warn("  Recovery batch " + attempt + " added no new unique posts.");
+      }
+    }
+  }
+
+  if (allPosts.length < hwm) {
+    throw new Error("Unable to recover posts-data.js to high-water mark (" + allPosts.length + "/" + hwm + ").");
+  }
 
   // Safety: backup before writing
   const backupPath = outputPath + ".bak";
@@ -1190,7 +1588,6 @@ async function generatePostsFromConfig(options = {}) {
 
   // Verify: read back and check post count matches
   const verifiedCount = verifyWrittenPosts(outputPath);
-  const hwm = getHighWaterMark();
   if (verifiedCount < existingPosts.length || verifiedCount < hwm) {
     const expected = Math.max(existingPosts.length, hwm);
     console.error("CRITICAL: Written file has " + verifiedCount + " posts but expected at least " + expected + " (HWM=" + hwm + "). Restoring backup.");
