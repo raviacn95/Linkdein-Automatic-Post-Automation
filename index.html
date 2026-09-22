@@ -1,13 +1,520 @@
-﻿<!doctype html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="corporate">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=https://raviacn95.github.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS ┬╖ Playwright ┬╖ TypeScript - Learning Hub | Basics to Architect | Free 2026</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Free LearnHub tutorials for JavaScript, Playwright, and TypeScript - learning paths, searchable guides with working code, comparison tables, and patterns you can ship." />
+    <meta name="keywords" content="JavaScript tutorial, Playwright tutorial, TypeScript guide, JavaScript guide with examples, Playwright testing guide, TypeScript best practices, step by step tutorial, beginner to architect, automation testing, end-to-end testing, web development, free learning, comparison tables, FAQs, code examples, 2026" />
+    <meta name="author" content="Ravi" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href="https://raviacn95.github.io/" />
-    <title>LearnHub moved</title>
-    <script>location.replace("https://raviacn95.github.io/" + location.hash + location.search);</script>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="JS ┬╖ Playwright ┬╖ TypeScript - Learning Hub | Free 2026" />
+    <meta property="og:description" content="100+ free detailed tutorial guides from beginner to architect level. Step-by-step examples, comparison tables, best practices, FAQs, and working code." />
+    <meta property="og:url" content="https://raviacn95.github.io/" />
+    <meta property="og:site_name" content="JS Playwright TypeScript Learning Hub" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="JS ┬╖ Playwright ┬╖ TypeScript - Learning Hub" />
+    <meta name="twitter:description" content="100+ free detailed tutorial guides from beginner to architect level with step-by-step examples, comparison tables, best practices, and FAQs." />
+
+    <!-- Structured Data: WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "JS Playwright TypeScript Learning Hub",
+      "url": "https://raviacn95.github.io/",
+      "description": "100+ free detailed tutorial guides covering JavaScript, Playwright, and TypeScript",
+      "publisher": { "@type": "Person", "name": "Ravi" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://raviacn95.github.io/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Structured Data: Blog -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "name": "JS Playwright TypeScript Learning Hub",
+      "url": "https://raviacn95.github.io/",
+      "description": "Comprehensive learning resource with 100+ detailed tutorial guides",
+      "blogPost": [
+        { "@type": "BlogPosting", "headline": "JavaScript Variables: var, let & const", "keywords": "javascript, variables, basics" },
+        { "@type": "BlogPosting", "headline": "What is Playwright & Key Features", "keywords": "playwright, overview, features" }
+      ]
+    }
+    </script>
+
+    <!-- Structured Data: FAQ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is LearnHub free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Tutorials are free forever. Optional products and affiliate links help keep the hub online." } },
+        { "@type": "Question", "name": "Where should I start?", "acceptedAnswer": { "@type": "Answer", "text": "Open a learning path for JavaScript, Playwright, or TypeScript, or search a topic from the navbar." } },
+        { "@type": "Question", "name": "What is Playwright?", "acceptedAnswer": { "@type": "Answer", "text": "Playwright is Microsoft's open-source framework for reliable end-to-end testing across Chromium, Firefox, and WebKit." } },
+        { "@type": "Question", "name": "Can I get 1-on-1 help?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Consulting covers Playwright architecture, SAP Tosca, CI/CD, and TypeScript migration sessions." } }
+      ]
+    }
+    </script>
+
+    <!-- Google AdSense loaded after first paint (see footer) -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preload" href="website-posts-data.js" as="script" />
   </head>
   <body>
-    <p>LearnHub moved to <a href="https://raviacn95.github.io/">https://raviacn95.github.io/</a>.</p>
+    <a class="skip-link" href="#tutorials">Skip to tutorials</a>
+    <div class="reading-progress" id="reading-progress"></div>
+
+    <nav class="navbar" id="navbar">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo" id="nav-home">
+          <span class="logo-mark" aria-hidden="true"></span>
+          <span class="logo-text">LearnHub</span>
+        </a>
+        <div class="nav-links" id="nav-links">
+          <a href="#" class="nav-link active" data-filter="All">All</a>
+          <a href="#" class="nav-link" data-filter="JavaScript">JavaScript</a>
+          <a href="#" class="nav-link" data-filter="Playwright">Playwright</a>
+          <a href="#" class="nav-link" data-filter="TypeScript">TypeScript</a>
+          <a href="#paths" class="nav-link" data-nav="anchor">Paths</a>
+          <a href="#faq" class="nav-link" data-nav="anchor">FAQ</a>
+        </div>
+        <div class="nav-search">
+          <kbd class="search-kbd" aria-hidden="true">/</kbd>
+          <input type="search" id="search" placeholder="Search tutorials..." aria-label="Search tutorials" autocomplete="off" />
+        </div>
+        <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <header class="hero" id="hero">
+      <div class="hero-bg" aria-hidden="true">
+        <pre class="hero-code-plane"><code>await page.getByRole('button', { name: 'Start' }).click();
+const typed: Promise&lt;User&gt; = fetchUser(id);
+export type Locator = ReturnType&lt;Page['locator']&gt;;</code></pre>
+      </div>
+      <div class="hero-inner">
+        <p class="hero-brand">LearnHub</p>
+        <h1>JavaScript, Playwright &amp; TypeScript - taught end to end</h1>
+        <p class="hero-sub">Free tutorials with working code, comparison tables, and patterns you can ship.</p>
+        <div class="hero-cta">
+          <a href="#tutorials" class="hero-btn hero-btn-primary">Browse tutorials</a>
+          <a href="#paths" class="hero-btn hero-btn-ghost">Pick a learning path</a>
+        </div>
+      </div>
+    </header>
+
+    <div id="below-hero">
+      <section class="trust-strip" aria-label="Hub stats">
+        <div class="container">
+          <div class="live-stats" id="live-stats"></div>
+        </div>
+      </section>
+
+      <section class="section-wrap how-section" id="how">
+        <div class="container">
+          <div class="section-header">
+            <h2>How LearnHub works</h2>
+            <p>From first click to production-ready pattern - three steps.</p>
+          </div>
+          <ol class="how-grid">
+            <li class="how-step">
+              <span class="how-num">01</span>
+              <h3>Choose a track</h3>
+              <p>JavaScript, Playwright, or TypeScript - filter by level when you're ready.</p>
+            </li>
+            <li class="how-step">
+              <span class="how-num">02</span>
+              <h3>Read with code</h3>
+              <p>Each tutorial includes examples, tables, and a clear takeaway you can reuse.</p>
+            </li>
+            <li class="how-step">
+              <span class="how-num">03</span>
+              <h3>Resume anytime</h3>
+              <p>Recently opened lessons stay on this device so you can pick up mid-path.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section-wrap paths-section" id="paths">
+        <div class="container">
+          <div class="section-header">
+            <h2>Learning paths</h2>
+            <p>Curated tracks so you don't start from a blank search box.</p>
+          </div>
+          <div class="paths-grid" id="paths-grid"></div>
+        </div>
+      </section>
+
+      <section class="section-wrap recent-section" id="continue">
+        <div class="container">
+          <div class="section-header left">
+            <h2>Continue where you left off</h2>
+            <p>Stored only in your browser - nothing is uploaded.</p>
+          </div>
+          <div class="recent-rail" id="recent-rail"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="ad-slot ad-leaderboard" data-ad-lazy>
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="TOP_SLOT_ID" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+    </div>
+
+    <main class="home-view" id="home-view">
+      <div class="container" id="tutorials">
+        <div class="feed-header">
+          <div class="feed-heading">
+            <h2 id="feed-title">All tutorials</h2>
+            <span class="post-count" id="post-count"></span>
+            <p class="search-meta" id="search-meta"></p>
+          </div>
+          <div class="feed-controls">
+            <div class="feed-levels" role="group" aria-label="Filter by level">
+              <button class="level-btn active" data-level="All">All levels</button>
+              <button class="level-btn lb-beginner" data-level="beginner">Beginner</button>
+              <button class="level-btn lb-intermediate" data-level="intermediate">Intermediate</button>
+              <button class="level-btn lb-advanced" data-level="advanced">Advanced</button>
+            </div>
+            <label class="sort-label">
+              <span class="sr-only">Sort</span>
+              <select id="sort-select" aria-label="Sort tutorials">
+                <option value="level">Sort: level</option>
+                <option value="newest">Sort: newest</option>
+                <option value="title">Sort: title</option>
+                <option value="read">Sort: read time</option>
+              </select>
+            </label>
+            <button type="button" class="clear-filters hidden" id="clear-filters">Clear filters</button>
+          </div>
+        </div>
+        <div class="posts-grid" id="posts-grid"></div>
+        <nav class="pagination hidden" id="pagination" aria-label="Tutorial pages"></nav>
+      </div>
+
+      <!-- AD: Mid-content -->
+      <div class="ad-slot ad-mid" data-ad-lazy>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="MID_SLOT_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+
+      <!-- AFFILIATE -->
+      <section class="section-wrap" id="resources">
+        <div class="container">
+          <div class="section-header">
+            <h2>Recommended tools</h2>
+            <p>Handpicked resources that keep this hub free</p>
+          </div>
+          <div class="affiliate-grid">
+            <a href="https://www.hostinger.com/special/playwright-testing" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+              <h3>Hostinger Hosting</h3><p>Fast hosting. Up to 75% off.</p><span class="aff-cta">Get Hosting -></span>
+            </a>
+            <a href="https://www.udemy.com/topic/playwright/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+              <h3>Playwright Courses</h3><p>E2E testing masterclasses</p><span class="aff-cta">Browse -></span>
+            </a>
+            <a href="https://www.semrush.com/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+              <h3>SEMrush SEO</h3><p>Keyword research & analysis</p><span class="aff-cta">Free Trial -></span>
+            </a>
+            <a href="https://www.udemy.com/topic/javascript/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+              <h3>JavaScript Masterclass</h3><p>ES6+ to advanced patterns</p><span class="aff-cta">Enroll -></span>
+            </a>
+            <a href="https://www.browserstack.com/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+              <h3>BrowserStack</h3><p>3000+ real browsers & devices</p><span class="aff-cta">Try Free -></span>
+            </a>
+            <a href="https://www.udemy.com/topic/typescript/" class="affiliate-card" target="_blank" rel="noopener noreferrer sponsored">
+              <h3>TypeScript Deep Dive</h3><p>Generics & advanced patterns</p><span class="aff-cta">Learn More -></span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- EMAIL LEAD MAGNET -->
+      <section class="lead-magnet" id="newsletter">
+        <div class="lead-magnet-inner">
+          <h2>Get the free automation cheat sheet</h2>
+          <p>Join 1,000+ developers. Get <strong>Top 50 Playwright + JavaScript Automation Hacks</strong> - plus weekly tips.</p>
+          <form class="lm-form" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="9ae0f5b6-8b8b-40ac-a5ba-cdfdfa1e4420" />
+            <input type="hidden" name="subject" value="New Newsletter Subscriber" />
+            <input type="hidden" name="from_name" value="LearnHub" />
+            <input type="hidden" name="redirect" value="https://raviacn95.github.io/" />
+            <input type="email" name="email" placeholder="you@example.com" required class="lm-email" />
+            <button type="submit" class="lm-btn">Send me the cheat sheet</button>
+          </form>
+          <p class="lm-note">No spam. Unsubscribe anytime.</p>
+        </div>
+      </section>
+
+      <!-- DIGITAL PRODUCTS -->
+      <section class="section-wrap" id="products">
+        <div class="container">
+          <div class="section-header">
+            <h2>Digital products</h2>
+            <p>Templates and kits ready for real projects</p>
+          </div>
+          <div class="products-grid">
+            <div class="product-card">
+              <div class="product-badge">Popular</div>
+              <h3>Playwright CI/CD Starter Kit</h3>
+              <p>GitHub Actions + Azure DevOps templates, config files, best practices.</p>
+              <div class="product-price">Γé╣499 <span class="product-price-old">Γé╣999</span></div>
+              <a href="https://ravik95.gumroad.com/l/ushdg" class="product-btn" target="_blank" rel="noopener noreferrer">Get Now -></a>
+            </div>
+            <div class="product-card">
+              <div class="product-badge">New</div>
+              <h3>SAP Tosca Automation Pack</h3>
+              <p>50+ reusable modules, test data templates, execution checklists.</p>
+              <div class="product-price">Γé╣799 <span class="product-price-old">Γé╣1499</span></div>
+              <a href="https://gumroad.com/" class="product-btn" target="_blank" rel="noopener noreferrer">Get It Now -></a>
+            </div>
+            <div class="product-card">
+              <h3>JS Interview Prep eBook</h3>
+              <p>200+ JS questions with explanations, code examples, patterns.</p>
+              <div class="product-price">Γé╣299 <span class="product-price-old">Γé╣599</span></div>
+              <a href="https://gumroad.com/" class="product-btn" target="_blank" rel="noopener noreferrer">Get It Now -></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONSULTING -->
+      <section class="consulting-section" id="consulting">
+        <div class="container">
+          <div class="consulting-grid">
+            <div class="consulting-text">
+              <h2>1-on-1 consulting &amp; training</h2>
+              <p>Need help with <strong>SAP Automation, Playwright setup, or TypeScript migration</strong>? Book a personalised session.</p>
+              <ul class="consulting-features">
+                <li>Playwright test architecture review</li>
+                <li>SAP Tosca automation strategy</li>
+                <li>CI/CD pipeline setup for E2E tests</li>
+                <li>TypeScript migration guidance</li>
+                <li>Team workshops (remote or on-site)</li>
+              </ul>
+              <div class="consulting-actions">
+                <a href="mailto:raviacn95@gmail.com?subject=Consulting%20Request" class="btn-primary-lg">Book a session</a>
+                <a href="https://www.linkedin.com/in/raviacn95/" class="btn-outline-lg" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              </div>
+            </div>
+            <div class="consulting-stats">
+              <div class="stat-card"><div class="stat-num">8+</div><div class="stat-lbl">Years experience</div></div>
+              <div class="stat-card"><div class="stat-num">50+</div><div class="stat-lbl">Projects delivered</div></div>
+              <div class="stat-card"><div class="stat-num">100+</div><div class="stat-lbl">Free tutorials</div></div>
+              <div class="stat-card"><div class="stat-num">SAP</div><div class="stat-lbl">&amp; Playwright</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AD: Pre-footer -->
+      <div class="ad-slot ad-prefooter" data-ad-lazy>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="BOTTOM_SLOT_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+
+      <section class="section-wrap faq-section" id="faq">
+        <div class="container narrow">
+          <div class="section-header">
+            <h2>FAQ</h2>
+            <p>Quick answers before you dig into the library.</p>
+          </div>
+          <div class="faq-list">
+            <details class="faq-item" open>
+              <summary>Is LearnHub free?</summary>
+              <p>Yes. Tutorials are free forever. Optional products and affiliate links help keep the hub online.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Where should I start?</summary>
+              <p>Open a <a href="#paths">learning path</a> for JavaScript, Playwright, or TypeScript - or press <kbd>/</kbd> and search a topic.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Do tutorials work offline?</summary>
+              <p>Once loaded, the current page stays available. Your recently opened list is saved in this browser only.</p>
+            </details>
+            <details class="faq-item">
+              <summary>What is Playwright?</summary>
+              <p>Playwright is Microsoft's open-source framework for reliable end-to-end testing across Chromium, Firefox, and WebKit.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Can I get 1-on-1 help?</summary>
+              <p>Yes - see <a href="#consulting">consulting</a> for Playwright architecture, SAP Tosca, CI/CD, and TypeScript migration sessions.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUPPORT -->
+      <section class="support-section">
+        <div class="container" style="text-align:center">
+          <h2>Support this hub</h2>
+          <p>If LearnHub helped you, consider buying a coffee or sponsoring on GitHub.</p>
+          <div class="support-buttons">
+            <a href="https://buymeacoffee.com/raviacn95" class="btn-coffee" target="_blank" rel="noopener noreferrer">Buy me a coffee</a>
+            <a href="https://github.com/sponsors/raviacn95" class="btn-sponsor" target="_blank" rel="noopener noreferrer">GitHub Sponsors</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============ POST VIEW (Full Page) ============ -->
+    <main class="post-view hidden" id="post-view">
+      <div class="pv-layout">
+        <!-- Sidebar TOC -->
+        <aside class="pv-sidebar" id="pv-sidebar">
+          <button class="pv-back" id="pv-back">ΓåÉ All Tutorials</button>
+          <nav class="pv-toc" id="pv-toc"></nav>
+          <div class="ad-slot ad-sidebar-sticky">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="SIDEBAR_SLOT_ID" data-ad-format="vertical" data-full-width-responsive="false"></ins>
+          </div>
+        </aside>
+
+        <!-- Article -->
+        <article class="pv-article" id="pv-article">
+          <div class="pv-breadcrumb" id="pv-breadcrumb"></div>
+          <div class="pv-meta" id="pv-meta"></div>
+          <h1 class="pv-title" id="pv-title"></h1>
+          <p class="pv-excerpt" id="pv-excerpt"></p>
+          <div class="pv-tags" id="pv-tags"></div>
+
+          <!-- AD: in-article top -->
+          <div class="ad-slot ad-in-article">
+            <ins class="adsbygoogle" style="display:block;text-align:center" data-ad-client="ca-pub-2441085120272132" data-ad-slot="ARTICLE_TOP_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
+          </div>
+
+          <!-- Mobile TOC (shows on small screens) -->
+          <details class="pv-toc-mobile" id="pv-toc-mobile">
+            <summary>Table of contents</summary>
+            <nav id="pv-toc-mobile-list"></nav>
+          </details>
+
+          <div class="pv-body" id="pv-body"></div>
+
+          <div class="pv-next-wrap">
+            <button type="button" class="next-tutorial hidden" id="next-tutorial">Next tutorial</button>
+          </div>
+
+          <!-- AD: in-article bottom -->
+          <div class="ad-slot ad-in-article-bottom">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="ARTICLE_BOTTOM_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
+          </div>
+
+          <!-- Share -->
+          <div class="pv-share" id="pv-share">
+            <span>Share:</span>
+            <a class="share-btn share-twitter" id="share-twitter" target="_blank" rel="noopener noreferrer">Twitter</a>
+            <a class="share-btn share-linkedin" id="share-linkedin" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <button class="share-btn share-copy" id="share-copy">Copy link</button>
+          </div>
+
+          <!-- Author -->
+          <div class="pv-author">
+            <div class="author-info">
+              <strong>Written by Ravi</strong>
+              <p>8+ years in SAP &amp; Playwright automation. Building free tutorials for the community.</p>
+            </div>
+            <a href="https://www.linkedin.com/in/raviacn95/" class="btn-outline-sm" target="_blank" rel="noopener noreferrer">Follow on LinkedIn</a>
+          </div>
+        </article>
+      </div>
+
+      <!-- Related Posts -->
+      <section class="related-section">
+        <div class="container">
+          <h2>Related tutorials</h2>
+          <div class="related-grid" id="related-grid"></div>
+        </div>
+      </section>
+
+      <!-- AD: after related -->
+      <div class="ad-slot ad-after-related">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2441085120272132" data-ad-slot="RELATED_BOTTOM_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+
+      <!-- Newsletter CTA -->
+      <section class="lead-magnet lm-compact">
+        <div class="lead-magnet-inner">
+          <h2>Enjoyed this? Get more free</h2>
+          <form class="lm-form" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="9ae0f5b6-8b8b-40ac-a5ba-cdfdfa1e4420" />
+            <input type="hidden" name="subject" value="Subscriber - Post View" />
+            <input type="hidden" name="from_name" value="LearnHub" />
+            <input type="hidden" name="redirect" value="https://raviacn95.github.io/" />
+            <input type="email" name="email" placeholder="you@example.com" required class="lm-email" />
+            <button type="submit" class="lm-btn">Get free cheat sheet</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <h3>LearnHub</h3>
+            <p>Free structured tutorials for JavaScript, Playwright &amp; TypeScript - from basics to architect level.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Topics</h4>
+            <a href="#" data-footer-filter="JavaScript">JavaScript ES6+</a>
+            <a href="#" data-footer-filter="Playwright">Playwright Testing</a>
+            <a href="#" data-footer-filter="TypeScript">TypeScript</a>
+          </div>
+          <div class="footer-col">
+            <h4>Resources</h4>
+            <a href="#paths">Learning paths</a>
+            <a href="#faq">FAQ</a>
+            <a href="#resources">Recommended Tools</a>
+            <a href="#products">Digital Products</a>
+            <a href="#consulting">Consulting</a>
+            <a href="#newsletter">Newsletter</a>
+          </div>
+          <div class="footer-col">
+            <h4>Connect</h4>
+            <a href="https://www.linkedin.com/in/raviacn95/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://github.com/raviacn95" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="mailto:raviacn95@gmail.com">Email</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 <a href="https://github.com/raviacn95" target="_blank" rel="noopener noreferrer">Ravi</a> ┬╖ Hosted on GitHub Pages ┬╖ Open Source</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button class="back-to-top hidden" id="back-to-top" aria-label="Back to top">Γåæ</button>
+
+    <!-- AdSense deferred for faster first paint -->
+    <script>
+      window.addEventListener("load", function () {
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2441085120272132";
+        s.crossOrigin = "anonymous";
+        document.head.appendChild(s);
+      });
+    </script>
+    <script src="website-posts-data.js"></script>
+    <script src="app.js" defer></script>
   </body>
 </html>

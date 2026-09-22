@@ -1,8 +1,8 @@
 /* ================================================================
-   APP.JS — LearnHub (fast, paginated, path-aware, dynamic)
+   APP.JS - LearnHub (fast, paginated, path-aware, dynamic)
    ================================================================ */
 
-const CONTENT_VERSION = 14;
+const CONTENT_VERSION = 15;
 const PAGE_SIZE = 9;
 const RECENT_KEY = "learnhub-recent-v1";
 const PROGRESS_KEY = "learnhub-progress-v1";
@@ -26,15 +26,9 @@ const LEARNING_PATHS = {
     blurb: "Types, generics, and safer refactors at scale.",
     category: "TypeScript",
   },
-  scraping: {
-    id: "scraping",
-    title: "Scraping → LearnHub",
-    blurb: "APIs, Actors, and Scrapy pipelines that feed lessons — legally.",
-    category: "Scraping",
-  },
 };
 
-/* ── DOM ─────────────────────────────────────────────── */
+/* -- DOM -- */
 const searchInput = document.getElementById("search");
 const postsGrid = document.getElementById("posts-grid");
 const postCount = document.getElementById("post-count");
@@ -79,7 +73,7 @@ let postsCache = null;
 let tocObserver = null;
 let searchTimer = null;
 
-/* ── Data layer (in-memory — no bloated localStorage sync) ── */
+/* ΓöÇΓöÇ Data layer (in-memory - no bloated localStorage sync) ΓöÇΓöÇ */
 function normalizePosts() {
   if (postsCache) return postsCache;
   const source = Array.isArray(typeof ALL_POSTS !== "undefined" ? ALL_POSTS : []) ? ALL_POSTS : [];
@@ -119,7 +113,7 @@ function pushRecent(postId) {
   try {
     localStorage.setItem(RECENT_KEY, JSON.stringify(next));
   } catch {
-    /* quota — ignore */
+    /* quota - ignore */
   }
 }
 
@@ -143,7 +137,7 @@ function markRead(postId) {
   }
 }
 
-/* ── Helpers ─────────────────────────────────────────── */
+/* ΓöÇΓöÇ Helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function escapeHtml(t) {
   return String(t)
     .replace(/&/g, "&amp;")
@@ -178,7 +172,7 @@ function categoryClass(cat) {
     .replace(/\s+/g, "-");
 }
 
-/* ── Filters / sort / page ───────────────────────────── */
+/* ΓöÇΓöÇ Filters / sort / page ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function getFilteredPosts() {
   const q = searchQuery.trim().toLowerCase();
   let list = loadPosts().filter((post) => {
@@ -200,7 +194,7 @@ function getFilteredPosts() {
   return list;
 }
 
-/* ── Markdown ────────────────────────────────────────── */
+/* ΓöÇΓöÇ Markdown ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function markdownToHtml(md) {
   const e = escapeHtml(md || "");
 
@@ -300,7 +294,7 @@ function renderTocHtml(headings) {
     .join("")}</ul>`;
 }
 
-/* ── Live stats / paths / recent ─────────────────────── */
+/* ΓöÇΓöÇ Live stats / paths / recent ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function updateLiveStats() {
   if (!liveStats) return;
   const all = loadPosts();
@@ -330,7 +324,7 @@ function renderPaths() {
         <span class="path-count">${count} lessons</span>
         <h3>${escapeHtml(path.title)}</h3>
         <p>${escapeHtml(path.blurb)}</p>
-        <span class="path-cta">Open track →</span>
+        <span class="path-cta">Open track -></span>
       </button>`;
     })
     .join("");
@@ -390,7 +384,7 @@ function updateNavCounts() {
   });
 }
 
-/* ── Home rendering ──────────────────────────────────── */
+/* ΓöÇΓöÇ Home rendering ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function renderHome() {
   const posts = getFilteredPosts();
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
@@ -400,7 +394,7 @@ function renderHome() {
   const pagePosts = posts.slice(start, start + PAGE_SIZE);
 
   postCount.textContent = `${posts.length} tutorial${posts.length !== 1 ? "s" : ""}${
-    posts.length > PAGE_SIZE ? ` · page ${currentPage}/${totalPages}` : ""
+    posts.length > PAGE_SIZE ? ` ┬╖ page ${currentPage}/${totalPages}` : ""
   }`;
 
   const categoryLabels = {
@@ -408,7 +402,6 @@ function renderHome() {
     JavaScript: "JavaScript tutorials",
     Playwright: "Playwright tutorials",
     TypeScript: "TypeScript tutorials",
-    Scraping: "Scraping tutorials",
     MCP: "MCP tutorials",
     TOSCA: "TOSCA tutorials",
   };
@@ -416,8 +409,8 @@ function renderHome() {
 
   if (searchMeta) {
     searchMeta.textContent = searchQuery
-      ? `Showing results for “${searchQuery.trim()}”`
-      : "Filter by topic, level, or sort — press / to search";
+      ? `Showing results for "${searchQuery.trim()}"`
+      : "Filter by topic, level, or sort - press / to search";
   }
 
   if (clearFiltersBtn) {
@@ -464,7 +457,7 @@ function renderHome() {
         .slice(0, 4)
         .map((t) => `<span class="card-tag">#${escapeHtml(t)}</span>`)
         .join("")}</div>
-      <span class="card-arrow" aria-hidden="true">→</span>
+      <span class="card-arrow" aria-hidden="true">-></span>
     `;
     const open = () => openPost(post);
     card.addEventListener("click", open);
@@ -495,8 +488,8 @@ function renderPagination(total, totalPages) {
   );
   for (let p = 1; p <= totalPages; p++) {
     if (totalPages > 7 && Math.abs(p - currentPage) > 2 && p !== 1 && p !== totalPages) {
-      if (buttons[buttons.length - 1] !== '<span class="page-gap">…</span>') {
-        buttons.push('<span class="page-gap">…</span>');
+      if (buttons[buttons.length - 1] !== '<span class="page-gap">...</span>') {
+        buttons.push('<span class="page-gap">...</span>');
       }
       continue;
     }
@@ -535,7 +528,7 @@ function resetFilters() {
   renderHome();
 }
 
-/* ── Post view ───────────────────────────────────────── */
+/* ΓöÇΓöÇ Post view ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 function openPost(post) {
   currentPostId = post.id;
   pushRecent(post.id);
@@ -543,7 +536,7 @@ function openPost(post) {
 
   const slug = slugify(post.title);
   history.pushState({ postId: post.id }, post.title, `#post/${slug}`);
-  document.title = `${post.title} — LearnHub`;
+  document.title = `${post.title} - LearnHub`;
 
   homeView.classList.add("hidden");
   heroEl.classList.add("hidden");
@@ -551,9 +544,9 @@ function openPost(post) {
   postView.classList.remove("hidden");
   window.scrollTo(0, 0);
 
-  pvBreadcrumb.innerHTML = `<a href="#" class="breadcrumb-home">Home</a> → <a href="#" class="breadcrumb-cat" data-cat="${escapeHtml(
+  pvBreadcrumb.innerHTML = `<a href="#" class="breadcrumb-home">Home</a> -> <a href="#" class="breadcrumb-cat" data-cat="${escapeHtml(
     post.category
-  )}">${escapeHtml(post.category)}</a> → <span>${escapeHtml(post.title)}</span>`;
+  )}">${escapeHtml(post.category)}</a> -> <span>${escapeHtml(post.title)}</span>`;
 
   const levelLabels = { beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" };
   const postDate = post.createdAt
@@ -563,7 +556,7 @@ function openPost(post) {
     <span class="card-category cat-${categoryClass(post.category)}">${escapeHtml(post.category)}</span>
     <span class="card-level lvl-${post.level}">${levelLabels[post.level] || post.level}</span>
     <span class="card-read-time">${post.readMins} min read</span>
-    ${postDate ? `<span class="card-date">By <strong>Ravi</strong> · ${postDate}</span>` : ""}
+    ${postDate ? `<span class="card-date">By <strong>Ravi</strong> ┬╖ ${postDate}</span>` : ""}
   `;
 
   pvTitle.textContent = post.title;
@@ -659,7 +652,7 @@ function goHome(scrollTop = true) {
   homeView.classList.remove("hidden");
   heroEl.classList.remove("hidden");
   document.getElementById("below-hero")?.classList.remove("hidden");
-  document.title = "JS · Playwright · TypeScript — Learning Hub | Basics to Architect | Free 2026";
+  document.title = "JS ┬╖ Playwright ┬╖ TypeScript - Learning Hub | Basics to Architect | Free 2026";
   history.pushState(null, "", window.location.pathname + (searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ""));
   renderHome();
   renderRecent();
@@ -687,7 +680,7 @@ function renderRelated(currentPost) {
     card.className = "related-card";
     card.tabIndex = 0;
     card.innerHTML = `
-      <div class="rc-cat">${escapeHtml(post.category)} · ${post.readMins} min</div>
+      <div class="rc-cat">${escapeHtml(post.category)} ┬╖ ${post.readMins} min</div>
       <h3>${escapeHtml(post.title)}</h3>
       <p>${escapeHtml(post.excerpt)}</p>
     `;
@@ -757,7 +750,7 @@ function updateNavActive() {
   });
 }
 
-/* ── Events ──────────────────────────────────────────── */
+/* ΓöÇΓöÇ Events ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 navLinks.addEventListener("click", (e) => {
   const link = e.target.closest(".nav-link");
   if (!link) return;
@@ -886,11 +879,11 @@ function handleDeepLink() {
 
 document.querySelectorAll(".faq-item summary").forEach((sum) => {
   sum.addEventListener("click", () => {
-    /* native details — no-op hook for analytics later */
+    /* native details - no-op hook for analytics later */
   });
 });
 
-/* ── Boot ────────────────────────────────────────────── */
+/* ΓöÇΓöÇ Boot ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 normalizePosts();
 updateNavCounts();
 updateLiveStats();

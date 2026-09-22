@@ -47,7 +47,11 @@ function main() {
 
   for (const f of FILES) {
     const from = path.join(srcDir, f);
-    if (fs.existsSync(from)) fs.copyFileSync(from, path.join(dest, f));
+    if (!fs.existsSync(from)) continue;
+    let text = fs.readFileSync(from, "utf8");
+    if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+    // Never deploy UTF-8 BOM (can confuse some tools); keep plain UTF-8
+    fs.writeFileSync(path.join(dest, f), text, { encoding: "utf8" });
   }
 
   run("git add -A", dest);

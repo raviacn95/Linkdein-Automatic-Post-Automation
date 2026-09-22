@@ -13,7 +13,7 @@ const ALL_POSTS = [
       "promises",
       "async"
     ],
-    "excerpt": "Original LearnHub lesson on JavaScript Promises — practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
+    "excerpt": "Original LearnHub lesson on JavaScript Promises - practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
     "sourceUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
     "createdAt": "2026-09-22T21:07:11.920Z",
     "level": "intermediate",
@@ -29,7 +29,7 @@ const ALL_POSTS = [
       "nodejs",
       "backend"
     ],
-    "excerpt": "Original LearnHub lesson on Introduction to Node.js — practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
+    "excerpt": "Original LearnHub lesson on Introduction to Node.js - practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
     "sourceUrl": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs",
     "createdAt": "2026-09-22T21:07:11.912Z",
     "level": "beginner",
@@ -46,7 +46,7 @@ const ALL_POSTS = [
       "e2e",
       "automation"
     ],
-    "excerpt": "Original LearnHub lesson on Writing tests in Playwright — practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
+    "excerpt": "Original LearnHub lesson on Writing tests in Playwright - practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
     "sourceUrl": "https://playwright.dev/docs/writing-tests",
     "createdAt": "2026-09-22T21:07:11.898Z",
     "level": "beginner",
@@ -62,7 +62,7 @@ const ALL_POSTS = [
       "arrays",
       "map"
     ],
-    "excerpt": "Original LearnHub lesson on Array.map in JavaScript — practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
+    "excerpt": "Original LearnHub lesson on Array.map in JavaScript - practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
     "sourceUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map",
     "createdAt": "2026-09-22T21:06:33.249Z",
     "level": "beginner",
@@ -78,7 +78,7 @@ const ALL_POSTS = [
       "narrowing",
       "control-flow"
     ],
-    "excerpt": "Original LearnHub lesson on TypeScript narrowing — practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
+    "excerpt": "Original LearnHub lesson on TypeScript narrowing - practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
     "sourceUrl": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
     "createdAt": "2026-09-22T21:06:28.324Z",
     "level": "intermediate",
@@ -95,7 +95,7 @@ const ALL_POSTS = [
       "selectors",
       "testing"
     ],
-    "excerpt": "Original LearnHub lesson on Playwright locators — practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
+    "excerpt": "Original LearnHub lesson on Playwright locators - practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
     "sourceUrl": "https://playwright.dev/docs/locators",
     "createdAt": "2026-09-22T21:04:47.031Z",
     "level": "beginner",
@@ -111,7 +111,7 @@ const ALL_POSTS = [
       "types",
       "javascript"
     ],
-    "excerpt": "Original LearnHub lesson on TypeScript basic types — practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
+    "excerpt": "Original LearnHub lesson on TypeScript basic types - practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
     "sourceUrl": "https://www.typescriptlang.org/docs/handbook/2/basic-types.html",
     "createdAt": "2026-09-22T21:04:28.795Z",
     "level": "beginner",
@@ -127,7 +127,7 @@ const ALL_POSTS = [
       "api",
       "testing"
     ],
-    "excerpt": "Original LearnHub lesson on API testing with Playwright — practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
+    "excerpt": "Original LearnHub lesson on API testing with Playwright - practical rules, a try-this snippet, and a quick quiz. Inspired by official docs (not a republish).",
     "sourceUrl": "https://playwright.dev/docs/api-testing",
     "createdAt": "2026-09-22T21:04:25.566Z",
     "level": "intermediate",

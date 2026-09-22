@@ -1,5 +1,5 @@
-﻿/* ================================================================
-   APP.JS — LearnHub (fast, paginated, path-aware, dynamic)
+/* ================================================================
+   APP.JS - LearnHub (fast, paginated, path-aware, dynamic)
    ================================================================ */
 
 const CONTENT_VERSION = 15;
@@ -73,7 +73,7 @@ let postsCache = null;
 let tocObserver = null;
 let searchTimer = null;
 
-/* ΓöÇΓöÇ Data layer (in-memory ΓÇö no bloated localStorage sync) ΓöÇΓöÇ */
+/* ΓöÇΓöÇ Data layer (in-memory - no bloated localStorage sync) ΓöÇΓöÇ */
 function normalizePosts() {
   if (postsCache) return postsCache;
   const source = Array.isArray(typeof ALL_POSTS !== "undefined" ? ALL_POSTS : []) ? ALL_POSTS : [];
@@ -113,7 +113,7 @@ function pushRecent(postId) {
   try {
     localStorage.setItem(RECENT_KEY, JSON.stringify(next));
   } catch {
-    /* quota ΓÇö ignore */
+    /* quota - ignore */
   }
 }
 
@@ -324,7 +324,7 @@ function renderPaths() {
         <span class="path-count">${count} lessons</span>
         <h3>${escapeHtml(path.title)}</h3>
         <p>${escapeHtml(path.blurb)}</p>
-        <span class="path-cta">Open track ΓåÆ</span>
+        <span class="path-cta">Open track -></span>
       </button>`;
     })
     .join("");
@@ -409,8 +409,8 @@ function renderHome() {
 
   if (searchMeta) {
     searchMeta.textContent = searchQuery
-      ? `Showing results for ΓÇ£${searchQuery.trim()}ΓÇ¥`
-      : "Filter by topic, level, or sort ΓÇö press / to search";
+      ? `Showing results for "${searchQuery.trim()}"`
+      : "Filter by topic, level, or sort - press / to search";
   }
 
   if (clearFiltersBtn) {
@@ -457,7 +457,7 @@ function renderHome() {
         .slice(0, 4)
         .map((t) => `<span class="card-tag">#${escapeHtml(t)}</span>`)
         .join("")}</div>
-      <span class="card-arrow" aria-hidden="true">ΓåÆ</span>
+      <span class="card-arrow" aria-hidden="true">-></span>
     `;
     const open = () => openPost(post);
     card.addEventListener("click", open);
@@ -488,8 +488,8 @@ function renderPagination(total, totalPages) {
   );
   for (let p = 1; p <= totalPages; p++) {
     if (totalPages > 7 && Math.abs(p - currentPage) > 2 && p !== 1 && p !== totalPages) {
-      if (buttons[buttons.length - 1] !== '<span class="page-gap">ΓÇª</span>') {
-        buttons.push('<span class="page-gap">ΓÇª</span>');
+      if (buttons[buttons.length - 1] !== '<span class="page-gap">...</span>') {
+        buttons.push('<span class="page-gap">...</span>');
       }
       continue;
     }
@@ -536,7 +536,7 @@ function openPost(post) {
 
   const slug = slugify(post.title);
   history.pushState({ postId: post.id }, post.title, `#post/${slug}`);
-  document.title = `${post.title} ΓÇö LearnHub`;
+  document.title = `${post.title} - LearnHub`;
 
   homeView.classList.add("hidden");
   heroEl.classList.add("hidden");
@@ -544,9 +544,9 @@ function openPost(post) {
   postView.classList.remove("hidden");
   window.scrollTo(0, 0);
 
-  pvBreadcrumb.innerHTML = `<a href="#" class="breadcrumb-home">Home</a> ΓåÆ <a href="#" class="breadcrumb-cat" data-cat="${escapeHtml(
+  pvBreadcrumb.innerHTML = `<a href="#" class="breadcrumb-home">Home</a> -> <a href="#" class="breadcrumb-cat" data-cat="${escapeHtml(
     post.category
-  )}">${escapeHtml(post.category)}</a> ΓåÆ <span>${escapeHtml(post.title)}</span>`;
+  )}">${escapeHtml(post.category)}</a> -> <span>${escapeHtml(post.title)}</span>`;
 
   const levelLabels = { beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced" };
   const postDate = post.createdAt
@@ -652,7 +652,7 @@ function goHome(scrollTop = true) {
   homeView.classList.remove("hidden");
   heroEl.classList.remove("hidden");
   document.getElementById("below-hero")?.classList.remove("hidden");
-  document.title = "JS ┬╖ Playwright ┬╖ TypeScript ΓÇö Learning Hub | Basics to Architect | Free 2026";
+  document.title = "JS ┬╖ Playwright ┬╖ TypeScript - Learning Hub | Basics to Architect | Free 2026";
   history.pushState(null, "", window.location.pathname + (searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ""));
   renderHome();
   renderRecent();
@@ -879,7 +879,7 @@ function handleDeepLink() {
 
 document.querySelectorAll(".faq-item summary").forEach((sum) => {
   sum.addEventListener("click", () => {
-    /* native details ΓÇö no-op hook for analytics later */
+    /* native details - no-op hook for analytics later */
   });
 });
 

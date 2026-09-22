@@ -1,5 +1,5 @@
 /* ================================================================
-   STYLES.CSS — Modern Learning Hub with Full-Page Post Viewer
+   STYLES.CSS - Modern Learning Hub with Full-Page Post Viewer
    Soothing color palette: Deep teals, warm whites, soft gradients
    ================================================================ */
 
@@ -58,7 +58,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
 #tutorials { scroll-margin-top: 5rem; }
 
-/* ── Reading Progress Bar ────────────────────────────── */
+/* ΓöÇΓöÇ Reading Progress Bar ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .reading-progress {
   position: fixed;
   top: 0;
@@ -70,7 +70,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
   transition: width 0.1s linear;
 }
 
-/* ── Navbar ──────────────────────────────────────────── */
+/* ΓöÇΓöÇ Navbar ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .navbar {
   position: sticky;
   top: 0;
@@ -173,7 +173,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .nav-hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .nav-hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* ── Hero ────────────────────────────────────────────── */
+/* ΓöÇΓöÇ Hero ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .hero {
   background: linear-gradient(160deg, #0a1f1c 0%, #123530 45%, #1a2e2a 100%);
   color: #fff;
@@ -304,7 +304,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .lb-intermediate.active { background: #b8791d; border-color: #b8791d; }
 .lb-advanced.active { background: #2d5a7a; border-color: #2d5a7a; }
 
-/* ── Post Cards Grid ─────────────────────────────────── */
+/* ΓöÇΓöÇ Post Cards Grid ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .feed-header {
   display: flex;
   justify-content: space-between;
@@ -472,7 +472,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
   padding: 0.5rem;
 }
 
-/* ── Ad Slots ────────────────────────────────────────── */
+/* ΓöÇΓöÇ Ad Slots ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .ad-slot {
   max-width: 1200px;
   margin: 1.5rem auto;
@@ -486,7 +486,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 }
 .ad-leaderboard { min-height: 100px; }
 
-/* ── Section Wrapper ─────────────────────────────────── */
+/* ΓöÇΓöÇ Section Wrapper ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .section-wrap {
   padding: 3rem 0;
 }
@@ -497,7 +497,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .section-header h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.4rem; }
 .section-header p { color: var(--ink-soft); }
 
-/* ── Affiliate Grid ──────────────────────────────────── */
+/* ΓöÇΓöÇ Affiliate Grid ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .affiliate-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -524,7 +524,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .affiliate-card p { font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 0.5rem; line-height: 1.5; }
 .aff-cta { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
 
-/* ── Lead Magnet ─────────────────────────────────────── */
+/* ΓöÇΓöÇ Lead Magnet ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .lead-magnet {
   background: linear-gradient(135deg, #0f172a, #164e63);
   padding: 3rem 1.5rem;
@@ -575,7 +575,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .lm-note { font-size: 0.78rem !important; color: #475569 !important; margin-top: 0.6rem !important; }
 .lm-compact { padding: 2rem 1.5rem; margin: 0; }
 
-/* ── Products ────────────────────────────────────────── */
+/* ΓöÇΓöÇ Products ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -621,7 +621,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 }
 .product-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(14,116,144,0.3); }
 
-/* ── Consulting ──────────────────────────────────────── */
+/* ΓöÇΓöÇ Consulting ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .consulting-section {
   padding: 3rem 0;
   background: linear-gradient(135deg, #f0fdfa, #ecfdf5);
@@ -691,7 +691,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .stat-num { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
 .stat-lbl { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.15rem; }
 
-/* ── Support ─────────────────────────────────────────── */
+/* ΓöÇΓöÇ Support ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .support-section {
   padding: 3rem 0;
 }
@@ -1061,7 +1061,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .related-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; line-height: 1.4; }
 .related-card p { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-/* ── Footer ──────────────────────────────────────────── */
+/* ΓöÇΓöÇ Footer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .site-footer {
   background: #0f172a;
   color: #94a3b8;
@@ -1086,7 +1086,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 }
 .footer-bottom a { color: #67e8f9; text-decoration: none; }
 
-/* ── Back to Top ─────────────────────────────────────── */
+/* ΓöÇΓöÇ Back to Top ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .back-to-top {
   position: fixed;
   bottom: 2rem;
@@ -1108,7 +1108,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 }
 .back-to-top:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
 
-/* ── Responsive ──────────────────────────────────────── */
+/* ΓöÇΓöÇ Responsive ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 @media (max-width: 1024px) {
   .pv-layout { grid-template-columns: 1fr; }
   .pv-sidebar { display: none; }
@@ -1154,7 +1154,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
   .support-buttons { flex-direction: column; align-items: center; }
 }
 
-/* ── Animations ──────────────────────────────────────── */
+/* ΓöÇΓöÇ Animations ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
@@ -1184,7 +1184,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
   }
 }
 
-/* ── A11y / utility ──────────────────────────────────── */
+/* ΓöÇΓöÇ A11y / utility ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .skip-link {
   position: absolute;
   left: -999px;
@@ -1209,7 +1209,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .container.narrow { max-width: 760px; }
 .section-header.left { text-align: left; }
 
-/* ── Search kbd ──────────────────────────────────────── */
+/* ΓöÇΓöÇ Search kbd ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .nav-search { position: relative; }
 .nav-search .search-kbd {
   position: absolute;
@@ -1234,7 +1234,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 }
 .nav-link.is-empty { opacity: 0.45; }
 
-/* ── Trust / paths / how / recent ────────────────────── */
+/* ΓöÇΓöÇ Trust / paths / how / recent ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .trust-strip {
   padding: 1.25rem 0;
   border-bottom: 1px solid var(--border);
@@ -1352,7 +1352,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
   line-height: 1.35;
 }
 
-/* ── Feed controls ───────────────────────────────────── */
+/* ΓöÇΓöÇ Feed controls ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .feed-controls {
   display: flex;
   flex-wrap: wrap;
@@ -1427,7 +1427,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
   margin-left: auto;
 }
 
-/* ── Code copy / tables ──────────────────────────────── */
+/* ΓöÇΓöÇ Code copy / tables ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .code-block { position: relative; margin: 1rem 0; }
 .copy-code {
   position: absolute;
@@ -1464,7 +1464,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 }
 .next-tutorial:hover { border-color: var(--accent); transform: translateY(-1px); }
 
-/* ── FAQ ─────────────────────────────────────────────── */
+/* ΓöÇΓöÇ FAQ ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
 .faq-list { display: flex; flex-direction: column; gap: 0.5rem; }
 .faq-item {
   background: var(--surface);
@@ -1485,7 +1485,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
   color: var(--accent);
   font-weight: 800;
 }
-.faq-item[open] summary::after { content: '–'; }
+.faq-item[open] summary::after { content: 'ΓÇô'; }
 .faq-item p {
   color: var(--ink-soft);
   font-size: 0.92rem;
