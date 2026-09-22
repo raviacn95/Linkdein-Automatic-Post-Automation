@@ -1,8 +1,8 @@
 ﻿/* ================================================================
-   APP.JS ΓÇö LearnHub (fast, paginated, path-aware, dynamic)
+   APP.JS — LearnHub (fast, paginated, path-aware, dynamic)
    ================================================================ */
 
-const CONTENT_VERSION = 14;
+const CONTENT_VERSION = 15;
 const PAGE_SIZE = 9;
 const RECENT_KEY = "learnhub-recent-v1";
 const PROGRESS_KEY = "learnhub-progress-v1";
@@ -26,15 +26,9 @@ const LEARNING_PATHS = {
     blurb: "Types, generics, and safer refactors at scale.",
     category: "TypeScript",
   },
-  scraping: {
-    id: "scraping",
-    title: "Scraping ΓåÆ LearnHub",
-    blurb: "APIs, Actors, and Scrapy pipelines that feed lessons ΓÇö legally.",
-    category: "Scraping",
-  },
 };
 
-/* ΓöÇΓöÇ DOM ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* -- DOM -- */
 const searchInput = document.getElementById("search");
 const postsGrid = document.getElementById("posts-grid");
 const postCount = document.getElementById("post-count");
@@ -408,7 +402,6 @@ function renderHome() {
     JavaScript: "JavaScript tutorials",
     Playwright: "Playwright tutorials",
     TypeScript: "TypeScript tutorials",
-    Scraping: "Scraping tutorials",
     MCP: "MCP tutorials",
     TOSCA: "TOSCA tutorials",
   };

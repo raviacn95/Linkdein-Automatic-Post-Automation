@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "headless": true,
+  "maxPagesPerRun": 3,
+  "requestDelayMs": 1500,
+  "userAgent": "LearnHubContentBot/1.0 (+https://raviacn95.github.io/; educational pipeline; respectful crawl)",
+  "dbPath": "content-pipeline/data/pipeline.sqlite",
+  "postsFile": "website-posts-data.js",
+  "mirrorPostsFiles": ["learnhub/website-posts-data.js"],
+  "categories": ["JavaScript", "Playwright", "TypeScript"],
+  "ai": {
+    "enabled": true,
+    "providerOrder": ["groq", "openai", "gemini", "claude"],
+    "maxTokens": 1800
+  },
+  "publish": {
+    "defaultLevel": "intermediate",
+    "requireMinOutlineItems": 1
+  }
+}

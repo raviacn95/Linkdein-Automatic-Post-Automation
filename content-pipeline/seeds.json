@@ -1,0 +1,67 @@
+{
+  "seeds": [
+    {
+      "url": "https://playwright.dev/docs/writing-tests",
+      "category": "Playwright",
+      "topic": "Writing tests in Playwright",
+      "level": "beginner",
+      "tags": ["playwright", "testing", "e2e", "automation"]
+    },
+    {
+      "url": "https://playwright.dev/docs/locators",
+      "category": "Playwright",
+      "topic": "Playwright locators",
+      "level": "beginner",
+      "tags": ["playwright", "locators", "selectors", "testing"]
+    },
+    {
+      "url": "https://playwright.dev/docs/api-testing",
+      "category": "Playwright",
+      "topic": "API testing with Playwright",
+      "level": "intermediate",
+      "tags": ["playwright", "api", "testing"]
+    },
+    {
+      "url": "https://www.typescriptlang.org/docs/handbook/2/basic-types.html",
+      "category": "TypeScript",
+      "topic": "TypeScript basic types",
+      "level": "beginner",
+      "tags": ["typescript", "types", "javascript"]
+    },
+    {
+      "url": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+      "category": "TypeScript",
+      "topic": "TypeScript narrowing",
+      "level": "intermediate",
+      "tags": ["typescript", "narrowing", "control-flow"]
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+      "category": "JavaScript",
+      "topic": "JavaScript Promises",
+      "level": "intermediate",
+      "tags": ["javascript", "promises", "async"]
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map",
+      "category": "JavaScript",
+      "topic": "Array.map in JavaScript",
+      "level": "beginner",
+      "tags": ["javascript", "arrays", "map"]
+    },
+    {
+      "url": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs",
+      "category": "JavaScript",
+      "topic": "Introduction to Node.js",
+      "level": "beginner",
+      "tags": ["javascript", "nodejs", "backend"]
+    },
+    {
+      "url": "https://playwright.dev/docs/writing-tests",
+      "category": "Playwright",
+      "topic": "Writing tests in Playwright",
+      "level": "beginner",
+      "tags": ["playwright", "testing", "e2e", "automation"]
+    }
+  ]
+}

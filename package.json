@@ -6,7 +6,10 @@
   "main": "linkedin-automation.js",
   "scripts": {
     "linkedin:post": "node linkedin-automation.js",
+    "linkedin:save-session": "node save-linkedin-session.js",
+    "interview:cards": "node generate-interview-infographics.js",
     "posts:generate": "node generate-posts-from-pdf.js",
+    "topics:build": "node build-topic-bank.js",
     "linkedin:scheduler": "node scheduler.js",
     "growth:run": "node linkedin-growth/growth-orchestrator.js",
     "growth:force": "node linkedin-growth/growth-orchestrator.js --force",
@@ -18,11 +21,18 @@
     "growth:analytics": "node linkedin-growth/analytics.js",
     "growth:analytics:trend": "node linkedin-growth/analytics.js --trend",
     "growth:repurpose": "node linkedin-growth/repurpose.js",
-    "daily:start": "node daily-auto-post.js"
+    "daily:start": "node daily-auto-post.js",
+    "dashboard:start": "node live-dashboard-server.js",
+    "hub:pipeline": "node content-pipeline/run.js",
+    "hub:pipeline:seed": "node content-pipeline/run.js --seed-only",
+    "hub:pipeline:once": "node content-pipeline/run.js --limit 1",
+    "hub:pipeline:backfill": "node content-pipeline/backfill.js"
   },
   "dependencies": {
+    "axios": "^1.15.0",
     "canvas": "^3.2.3",
     "pdf-parse": "^1.1.1",
-    "playwright": "^1.54.2"
+    "playwright": "^1.59.1",
+    "xlsx": "^0.18.5"
   }
 }
