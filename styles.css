@@ -386,6 +386,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 .cat-javascript { background: #fef3c7; color: #92400e; }
 .cat-playwright { background: #d1fae5; color: #065f46; }
 .cat-typescript { background: #dbeafe; color: #1e40af; }
+.cat-scraping { background: #ffedd5; color: #9a3412; }
 .cat-mcp { background: #ede9fe; color: #5b21b6; }
 .cat-tosca { background: #e0f2fe; color: #075985; }
 .cat-both { background: #fce7f3; color: #9d174d; }
@@ -1282,7 +1283,7 @@ h1, h2, h3, .logo-text, .hero-brand, .pv-title {
 
 .paths-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
 }
 .path-card {

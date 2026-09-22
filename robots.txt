@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://raviacn95.github.io/Linkdein-Automatic-Post-Automation/sitemap.xml
+
+Sitemap: https://raviacn95.github.io/sitemap.xml
