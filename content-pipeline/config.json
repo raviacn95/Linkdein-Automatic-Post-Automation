@@ -16,5 +16,6 @@
   "publish": {
     "defaultLevel": "intermediate",
     "requireMinOutlineItems": 1
-  }
+  },
+  "autoDeploy": true
 }

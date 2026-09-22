@@ -83,6 +83,15 @@ async function main() {
     console.log(" ->", result);
     if (result.published) markLessonPublished(db, lessonId, result.postId);
   }
+
+  if (config.autoDeploy !== false) {
+    console.log("[backfill] auto-deploy → https://raviacn95.github.io/");
+    require("child_process").execFileSync(
+      process.execPath,
+      [path.join(__dirname, "deploy-pages.js")],
+      { cwd: process.cwd(), stdio: "inherit" }
+    );
+  }
 }
 
 main().catch((e) => {

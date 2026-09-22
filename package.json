@@ -27,7 +27,8 @@
     "hub:pipeline:seed": "node content-pipeline/run.js --seed-only",
     "hub:pipeline:once": "node content-pipeline/run.js --limit 1",
     "hub:pipeline:backfill": "node content-pipeline/backfill.js",
-    "hub:deploy": "node content-pipeline/deploy-pages.js"
+    "hub:deploy": "node content-pipeline/deploy-pages.js",
+    "hub:pipeline:local": "node content-pipeline/run.js --no-deploy"
   },
   "dependencies": {
     "axios": "^1.15.0",

@@ -33,12 +33,22 @@ function sleep(ms) {
 }
 
 function parseArgs(argv) {
-  const out = { limit: null, seedOnly: false };
+  const out = { limit: null, seedOnly: false, noDeploy: false };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--limit") out.limit = Number(argv[++i]) || 1;
     if (argv[i] === "--seed-only") out.seedOnly = true;
+    if (argv[i] === "--no-deploy") out.noDeploy = true;
   }
   return out;
+}
+
+function deployLive() {
+  const deployScript = path.join(__dirname, "deploy-pages.js");
+  console.log("[pipeline] auto-deploy → https://raviacn95.github.io/");
+  require("child_process").execFileSync(process.execPath, [deployScript], {
+    cwd: process.cwd(),
+    stdio: "inherit",
+  });
 }
 
 async function main() {
@@ -62,6 +72,7 @@ async function main() {
     return;
   }
 
+  let publishedCount = 0;
   const limit = args.limit || config.maxPagesPerRun || 3;
   const todo = listSourcesNeedingFetch(db, limit);
   console.log(`[pipeline] fetching up to ${todo.length} source(s)…`);
@@ -104,6 +115,7 @@ async function main() {
     const result = publishLesson(config.postsFile, lesson, config.mirrorPostsFiles || []);
     if (result.published) {
       markLessonPublished(db, lessonId, result.postId);
+      publishedCount += 1;
       console.log(`        published post #${result.postId} → ${config.postsFile}`);
     } else {
       console.log(`        not published (${result.reason})`);
@@ -112,7 +124,13 @@ async function main() {
     await sleep(config.requestDelayMs || 1000);
   }
 
-  console.log("[pipeline] done");
+  console.log(`[pipeline] done (${publishedCount} new post(s))`);
+
+  if (!args.noDeploy && config.autoDeploy !== false) {
+    deployLive();
+  } else {
+    console.log("[pipeline] deploy skipped (--no-deploy or autoDeploy=false)");
+  }
 }
 
 main().catch((err) => {

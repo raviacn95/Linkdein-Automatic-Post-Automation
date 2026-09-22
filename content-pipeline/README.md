@@ -9,10 +9,14 @@ This does **not** republish GeeksforGeeks or other copyrighted pages. It stores 
 ## Run
 
 ```bash
-npm run hub:pipeline
+npm run hub:pipeline          # fetch → publish → auto-push live site
 npm run hub:pipeline -- --limit 2
 npm run hub:pipeline -- --seed-only
+npm run hub:pipeline -- --no-deploy   # skip GitHub Pages push
+npm run hub:deploy            # deploy only
 ```
+
+`hub:pipeline` auto-deploys to https://raviacn95.github.io/ when new posts are published (`autoDeploy: true` in `config.json`).
 
 Optional AI (uses first available key):
 
