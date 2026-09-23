@@ -2,10 +2,12 @@
    APP.JS - LearnHub (fast, paginated, path-aware, dynamic)
    ================================================================ */
 
-const CONTENT_VERSION = 21;
+const CONTENT_VERSION = 22;
 const PAGE_SIZE = 9;
 const RECENT_KEY = "learnhub-recent-v1";
 const PROGRESS_KEY = "learnhub-progress-v1";
+const MAX_SEARCH_LEN = 120;
+/* Progress/recent only — never store auth tokens in localStorage */
 
 const LEARNING_PATHS = {
   javascript: {
@@ -865,7 +867,8 @@ document.querySelector(".feed-levels")?.addEventListener("click", (e) => {
 });
 
 const onSearch = debounce(() => {
-  searchQuery = searchInput.value || "";
+  searchQuery = String(searchInput.value || "").slice(0, MAX_SEARCH_LEN);
+  if (searchInput.value.length > MAX_SEARCH_LEN) searchInput.value = searchQuery;
   currentPage = 1;
   renderHome();
 }, 180);
@@ -953,8 +956,9 @@ function handleDeepLink() {
   const params = new URLSearchParams(window.location.search);
   const q = params.get("q");
   if (q && searchInput) {
-    searchInput.value = q;
-    searchQuery = q;
+    const safe = String(q).slice(0, MAX_SEARCH_LEN);
+    searchInput.value = safe;
+    searchQuery = safe;
   }
 }
 
@@ -964,12 +968,133 @@ document.querySelectorAll(".faq-item summary").forEach((sum) => {
   });
 });
 
-/* ΓöÇΓöÇ Boot ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* Prompt Lab (AIPromptIndex + FlowGPT curated bank) */
+let promptSourceFilter = "All";
+let promptQuery = "";
+
+function loadPromptSuggestions() {
+  return Array.isArray(typeof PROMPT_SUGGESTIONS !== "undefined" ? PROMPT_SUGGESTIONS : [])
+    ? PROMPT_SUGGESTIONS
+    : [];
+}
+
+function filteredPrompts() {
+  const q = promptQuery.toLowerCase().trim();
+  return loadPromptSuggestions().filter((p) => {
+    if (promptSourceFilter !== "All" && p.source !== promptSourceFilter) return false;
+    if (!q) return true;
+    const hay = `${p.title} ${p.prompt} ${(p.tags || []).join(" ")} ${(p.tools || []).join(" ")}`.toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function renderPromptLab() {
+  const grid = document.getElementById("prompt-grid");
+  if (!grid) return;
+  const list = filteredPrompts();
+  if (!list.length) {
+    grid.innerHTML = `<p class="prompt-empty">No prompts match. Try another filter or run <code>npm run hub:prompts:sync</code>.</p>`;
+    return;
+  }
+  grid.innerHTML = list
+    .map((p) => {
+      const tags = (p.tags || []).slice(0, 5).map((t) => `<span class="prompt-tag">#${escapeHtml(t)}</span>`).join("");
+      const tools = (p.tools || []).map((t) => escapeHtml(t)).join(" · ");
+      return `<article class="prompt-card" data-id="${escapeHtml(p.id)}">
+        <div class="prompt-card-top">
+          <span class="prompt-source src-${escapeHtml(String(p.source || "").toLowerCase())}">${escapeHtml(p.source || "Curated")}</span>
+          <span class="prompt-tools">${tools}</span>
+        </div>
+        <h3>${escapeHtml(p.title)}</h3>
+        <pre class="prompt-body">${escapeHtml(p.prompt)}</pre>
+        <div class="prompt-card-foot">
+          <div class="prompt-tags">${tags}</div>
+          <div class="prompt-actions">
+            <button type="button" class="prompt-copy" data-copy-id="${escapeHtml(p.id)}">Copy</button>
+            ${p.sourceUrl ? `<a class="prompt-ext" href="${escapeHtml(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">Source</a>` : ""}
+          </div>
+        </div>
+      </article>`;
+    })
+    .join("");
+}
+
+function wirePromptLab() {
+  const grid = document.getElementById("prompt-grid");
+  const search = document.getElementById("prompt-search");
+  const filters = document.getElementById("prompt-source-filters");
+  if (!grid) return;
+
+  search?.addEventListener(
+    "input",
+    debounce(() => {
+      promptQuery = String(search.value || "").slice(0, 80);
+      renderPromptLab();
+    }, 160)
+  );
+
+  filters?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".prompt-src-btn");
+    if (!btn) return;
+    filters.querySelectorAll(".prompt-src-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    promptSourceFilter = btn.dataset.source || "All";
+    renderPromptLab();
+  });
+
+  grid.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".prompt-copy");
+    if (!btn) return;
+    const id = btn.dataset.copyId;
+    const item = loadPromptSuggestions().find((p) => p.id === id);
+    if (!item) return;
+    try {
+      await navigator.clipboard.writeText(item.prompt);
+      btn.textContent = "Copied";
+      setTimeout(() => {
+        btn.textContent = "Copy";
+      }, 1400);
+    } catch {
+      btn.textContent = "Failed";
+    }
+  });
+
+  renderPromptLab();
+}
+
+function isValidEmail(value) {
+  const v = String(value || "").trim();
+  if (v.length < 5 || v.length > 254) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+}
+
+function wireSecureForms() {
+  document.querySelectorAll("form[data-validate=email]").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      const honeypot = form.querySelector('input[name="website"]');
+      if (honeypot && String(honeypot.value || "").trim()) {
+        e.preventDefault();
+        return;
+      }
+      const email = form.querySelector('input[type="email"]');
+      if (!email || !isValidEmail(email.value)) {
+        e.preventDefault();
+        email?.setCustomValidity("Enter a valid email address");
+        email?.reportValidity();
+        return;
+      }
+      email.setCustomValidity("");
+    });
+  });
+}
+
 normalizePosts();
 updateNavCounts();
 updateLiveStats();
 renderPaths();
 renderRecent();
+wirePromptLab();
+wireSecureForms();
 handleDeepLink();
 if (postView.classList.contains("hidden")) renderHome();
 deferAds();

@@ -5,6 +5,32 @@
 
 const ALL_POSTS = [
   {
+    "id": 168,
+    "category": "GenAI",
+    "title": "Security Q&A: 18 web & API hardening practices for LearnHub builders",
+    "tags": [
+      "Security",
+      "RLS",
+      "CORS",
+      "SQL Injection",
+      "XSS",
+      "Rate Limiting",
+      "bcrypt",
+      "argon2",
+      "CSP",
+      "Secrets Management",
+      "Webhooks",
+      "OWASP"
+    ],
+    "excerpt": "Checklist-style Q&A covering RLS, CORS, parameterized SQL, token storage, .env hygiene, XSS, rate limits, and more (~4-min).",
+    "sourceUrl": "https://learnhub.local/genai/qa-security-18-practices",
+    "createdAt": "2026-09-23T19:12:02.937Z",
+    "level": "Intermediate",
+    "content": "## Scope\nPractical hardening checklist for apps that power LearnHub-style products, dashboards, and AI APIs. Apply controls **server-side**; static pages still need XSS, CSP, and secret hygiene.\n\n\n## Visual overview\nAuto-generated from this lesson’s **title, tags, and headings** — refresh anytime with `npm run hub:diagrams`.\n\n### Process flowchart\n```mermaid\nflowchart TD\n  Start[GenAI] --> N0[Enable RLS Row Level Securit]\n  N0 --> N1[Tighten CORS settings how]\n  N1 --> N2[Parameterized SQL queries ho]\n  N2 --> N3[Verify email addresses why]\n  N3 --> N4[Keep tokens out of localStor]\n```\n\n### Topic mindmap\n```mermaid\nmindmap\n  root((Security Q A 18 web API hardening practi))\n    Security\n    RLS\n    CORS\n    SQL Injection\n    XSS\n    Rate Limiting\n    Practice\n      Checklist\n      Failure modes\n```\n\n\n### Q1. Enable RLS (Row Level Security) — why?\n\n**Answer (documentation-aligned)**\n\nOn Postgres/Supabase/etc., RLS policies ensure each query only returns rows the authenticated user is allowed to see. Never rely on client filters alone — the database enforces tenancy.\n\n### Q2. Tighten CORS settings — how?\n\n**Answer (documentation-aligned)**\n\nAllow only trusted origins (your GitHub Pages / app domains). Avoid `Access-Control-Allow-Origin: *` on authenticated APIs. Prefer same-site cookies + explicit allowlists.\n\n### Q3. Parameterized SQL queries — how?\n\n**Answer (documentation-aligned)**\n\nUse bound parameters / prepared statements (or an ORM query builder). Never concatenate user input into SQL strings — that is classic injection.\n\n### Q4. Verify email addresses — why?\n\n**Answer (documentation-aligned)**\n\nConfirm ownership before granting privileges. Reduces fake accounts, password-reset abuse, and spam signups.\n\n### Q5. Keep tokens out of localStorage — why?\n\n**Answer (documentation-aligned)**\n\nXSS can steal `localStorage` tokens. Prefer httpOnly Secure SameSite cookies for session tokens, or short-lived memory-only tokens with silent refresh.\n\n### Q6. Hide .env files from Git — how?\n\n**Answer (documentation-aligned)**\n\nAdd `.env`, `.env.*`, and secret globs to `.gitignore`. Use CI secrets / Vault. Rotate anything that was ever committed.\n\n### Q7. Validate form inputs — how?\n\n**Answer (documentation-aligned)**\n\nValidate type, length, format (email/URL), and allowlists on the **server**. Client checks improve UX only — attackers bypass them.\n\n### Q8. Protect admin routes — how?\n\n**Answer (documentation-aligned)**\n\nSeparate admin authz (role claims), IP allowlists if needed, step-up MFA, and audit logs. Never hide admin UI as the only control.\n\n### Q9. Disable production debugging — why?\n\n**Answer (documentation-aligned)**\n\nStack traces and verbose errors leak paths, queries, and versions. Use generic client errors; keep detail in secured logs.\n\n### Q10. Server-side API secrets — rule?\n\n**Answer (documentation-aligned)**\n\nAPI keys for OpenAI/Groq/etc. live only on the server or CI. Client bundles and GitHub Pages cannot keep secrets.\n\n### Q11. Rate limit requests — why?\n\n**Answer (documentation-aligned)**\n\nThrottle by IP/user/API key to blunt credential stuffing, scraping, and DoS. Return 429 with Retry-After.\n\n### Q12. Validate file uploads — how?\n\n**Answer (documentation-aligned)**\n\nCheck size, MIME/sniff, extension allowlist, and store outside the web root. Re-encode images; never execute uploads.\n\n### Q13. Keep sensitive data out of logs — how?\n\n**Answer (documentation-aligned)**\n\nRedact tokens, passwords, prompts with PII, and Authorization headers. Structured logs with allowlisted fields.\n\n### Q14. Hash passwords securely — how?\n\n**Answer (documentation-aligned)**\n\nUse bcrypt or argon2id with a proper work factor. Never store plaintext or reversible encryption for passwords.\n\n### Q15. Verify webhook signatures — why?\n\n**Answer (documentation-aligned)**\n\nHMAC/signature headers prove the caller is Stripe/GitHub/etc. Reject unsigned or stale timestamps.\n\n### Q16. Server-side permissions — rule?\n\n**Answer (documentation-aligned)**\n\nEvery mutating endpoint re-checks ownership/role. UI gating is not authorization.\n\n### Q17. Block XSS — how?\n\n**Answer (documentation-aligned)**\n\nEscape untrusted HTML, use CSP, sanitize Markdown carefully, and avoid `innerHTML` with raw user content.\n\n### Q18. Update dependencies — why?\n\n**Answer (documentation-aligned)**\n\nRun `npm audit` / Dependabot, pin versions, and patch critical CVEs quickly. Old parsers and auth libs are frequent breach paths.\n\n## LearnHub application notes\n- Static tutorials: XSS escaping + CSP + no secrets in the client.\n- Local dashboard (`live-dashboard-server.js`): bind localhost, tight CORS, rate limits, redact logs.\n- Newsletter forms: validate email client+server (provider), honeypot bots, never put private API keys in HTML.\n\n## Official references\n- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)\n- [MDN CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)\n- [MDN CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)\n",
+    "pipeline": true,
+    "diagrams": true
+  },
+  {
     "id": 167,
     "category": "GenAI",
     "title": "AI Engineer keyword bank: QuickHyre 500+ technical competencies map",

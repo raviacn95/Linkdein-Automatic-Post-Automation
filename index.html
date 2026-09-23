@@ -10,6 +10,10 @@
     <meta name="keywords" content="JavaScript tutorial, Playwright tutorial, TypeScript guide, JavaScript guide with examples, Playwright testing guide, TypeScript best practices, step by step tutorial, beginner to architect, automation testing, end-to-end testing, web development, free learning, comparison tables, FAQs, code examples, 2026" />
     <meta name="author" content="Ravi" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <!-- CSP: allow LearnHub assets + fonts + Mermaid CDN + AdSense; block inline eval -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://pagead2.googlesyndication.com https://www.googletagservices.com https://partner.googleadservices.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://cdn.jsdelivr.net https://pagead2.googlesyndication.com https://api.web3forms.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; base-uri 'self'; form-action 'self' https://api.web3forms.com; object-src 'none'" />
     <link rel="canonical" href="https://raviacn95.github.io/" />
 
     <!-- Open Graph -->
@@ -76,8 +80,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=ghmuecama7" />
-    <link rel="preload" href="website-posts-data.js?v=ghmuedplnu" as="script" />
+    <link rel="stylesheet" href="styles.css?v=ghmuecama8" />
+    <link rel="preload" href="website-posts-data.js?v=ghmuehcsx9" as="script" />
+    <link rel="preload" href="prompt-suggestions-data.js?v=ghmueprompt1" as="script" />
   </head>
   <body>
     <a class="skip-link" href="#tutorials">Skip to tutorials</a>
@@ -98,11 +103,12 @@
           <a href="#" class="nav-link" data-filter="TOSCA">TOSCA</a>
           <a href="#" class="nav-link" data-filter="Teradata">Teradata</a>
           <a href="#paths" class="nav-link" data-nav="anchor">Paths</a>
+          <a href="#prompt-lab" class="nav-link" data-nav="anchor">Prompts</a>
           <a href="#faq" class="nav-link" data-nav="anchor">FAQ</a>
         </div>
         <div class="nav-search">
           <kbd class="search-kbd" aria-hidden="true">/</kbd>
-          <input type="search" id="search" placeholder="Search tutorials..." aria-label="Search tutorials" autocomplete="off" />
+          <input type="search" id="search" placeholder="Search tutorials..." aria-label="Search tutorials" autocomplete="off" maxlength="120" spellcheck="false" />
         </div>
         <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -251,20 +257,47 @@ export type Locator = ReturnType&lt;Page['locator']&gt;;</code></pre>
         </div>
       </section>
 
+      <!-- PROMPT LAB (FlowGPT + AIPromptIndex) -->
+      <section class="section-wrap prompt-lab" id="prompt-lab">
+        <div class="container">
+          <div class="section-header">
+            <h2>Prompt Lab</h2>
+            <p>
+              Better prompts for Cursor &amp; ChatGPT — curated like
+              <a href="https://aipromptindex.io/best/coding-prompts/" target="_blank" rel="noopener noreferrer">AIPromptIndex</a>
+              with broad discovery from
+              <a href="https://flowgpt.com/" target="_blank" rel="noopener noreferrer">FlowGPT</a>.
+              Copy into Cursor; sync more via <code>npm run hub:prompts:sync</code>.
+            </p>
+          </div>
+          <div class="prompt-lab-toolbar">
+            <input type="search" id="prompt-search" placeholder="Filter prompts (RAG, Playwright, security…)" aria-label="Filter prompts" maxlength="80" autocomplete="off" />
+            <div class="prompt-source-filters" id="prompt-source-filters" role="group" aria-label="Prompt source">
+              <button type="button" class="prompt-src-btn active" data-source="All">All</button>
+              <button type="button" class="prompt-src-btn" data-source="AIPromptIndex">AIPromptIndex</button>
+              <button type="button" class="prompt-src-btn" data-source="FlowGPT">FlowGPT</button>
+            </div>
+          </div>
+          <div class="prompt-grid" id="prompt-grid"></div>
+        </div>
+      </section>
+
       <!-- EMAIL LEAD MAGNET -->
       <section class="lead-magnet" id="newsletter">
         <div class="lead-magnet-inner">
           <h2>Get the free automation cheat sheet</h2>
           <p>Join 1,000+ developers. Get <strong>Top 50 Playwright + JavaScript Automation Hacks</strong> - plus weekly tips.</p>
-          <form class="lm-form" action="https://api.web3forms.com/submit" method="POST">
+          <form class="lm-form" action="https://api.web3forms.com/submit" method="POST" data-validate="email" novalidate>
             <input type="hidden" name="access_key" value="9ae0f5b6-8b8b-40ac-a5ba-cdfdfa1e4420" />
             <input type="hidden" name="subject" value="New Newsletter Subscriber" />
             <input type="hidden" name="from_name" value="LearnHub" />
             <input type="hidden" name="redirect" value="https://raviacn95.github.io/" />
-            <input type="email" name="email" placeholder="you@example.com" required class="lm-email" />
+            <!-- Honeypot: bots fill this; humans leave empty -->
+            <input type="text" name="website" value="" tabindex="-1" autocomplete="off" class="hp-field" aria-hidden="true" />
+            <input type="email" name="email" placeholder="you@example.com" required class="lm-email" maxlength="254" inputmode="email" autocomplete="email" />
             <button type="submit" class="lm-btn">Send me the cheat sheet</button>
           </form>
-          <p class="lm-note">No spam. Unsubscribe anytime.</p>
+          <p class="lm-note">No spam. Unsubscribe anytime. Email is validated before submit.</p>
         </div>
       </section>
 
@@ -456,12 +489,13 @@ export type Locator = ReturnType&lt;Page['locator']&gt;;</code></pre>
       <section class="lead-magnet lm-compact">
         <div class="lead-magnet-inner">
           <h2>Enjoyed this? Get more free</h2>
-          <form class="lm-form" action="https://api.web3forms.com/submit" method="POST">
+          <form class="lm-form" action="https://api.web3forms.com/submit" method="POST" data-validate="email" novalidate>
             <input type="hidden" name="access_key" value="9ae0f5b6-8b8b-40ac-a5ba-cdfdfa1e4420" />
             <input type="hidden" name="subject" value="Subscriber - Post View" />
             <input type="hidden" name="from_name" value="LearnHub" />
             <input type="hidden" name="redirect" value="https://raviacn95.github.io/" />
-            <input type="email" name="email" placeholder="you@example.com" required class="lm-email" />
+            <input type="text" name="website" value="" tabindex="-1" autocomplete="off" class="hp-field" aria-hidden="true" />
+            <input type="email" name="email" placeholder="you@example.com" required class="lm-email" maxlength="254" inputmode="email" autocomplete="email" />
             <button type="submit" class="lm-btn">Get free cheat sheet</button>
           </form>
         </div>
@@ -517,7 +551,8 @@ export type Locator = ReturnType&lt;Page['locator']&gt;;</code></pre>
         document.head.appendChild(s);
       });
     </script>
-    <script src="website-posts-data.js?v=ghmuedplnu"></script>
-    <script src="app.js?v=ghmuecama7" defer></script>
+    <script src="website-posts-data.js?v=ghmuehcsx9"></script>
+    <script src="prompt-suggestions-data.js?v=ghmueprompt1"></script>
+    <script src="app.js?v=ghmuecama8" defer></script>
   </body>
 </html>
