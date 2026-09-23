@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-23T19:48:07.758Z",
+  "generatedBy": "Hermes Agent · LearnHub Pulse",
+  "tip": {
+    "eyebrow": "Agent Pulse",
+    "title": "keyof and typeof Operators Guide with Examples",
+    "body": "In this comprehensive guide, you will learn about the TypeScript keyof and typeof operators.",
+    "category": "TypeScript",
+    "relatedPostId": 24,
+    "relatedTitle": "keyof and typeof Operators Guide with Examples",
+    "tags": [
+      "typescript",
+      "programming",
+      "tutorial",
+      "keyof"
+    ]
+  },
+  "challenge": {
+    "question": "What is the best next step when learning “keyof and typeof Operators Guide with Examples”?",
+    "choices": [
+      "Read the LearnHub tutorial, try one snippet, then explain it out loud",
+      "Skip practice and only bookmark the page",
+      "Copy a large unrelated codebase and hope it compiles",
+      "Disable all tests to move faster"
+    ],
+    "answerIndex": 0,
+    "explain": "Tiny practice + verbal explanation beats passive bookmarking."
+  },
+  "hermesNote": "Auto-picked from live tutorials. Refresh with `npm run hub:hermes-pulse` or Hermes cron + deploy."
+}

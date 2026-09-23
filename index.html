@@ -80,9 +80,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=ghmuecama8" />
-    <link rel="preload" href="website-posts-data.js?v=ghmuehcsx9" as="script" />
+    <link rel="stylesheet" href="styles.css?v=ghmuepulse1" />
+    <link rel="preload" href="website-posts-data.js?v=ghmueimidv" as="script" />
     <link rel="preload" href="prompt-suggestions-data.js?v=ghmueprompt1" as="script" />
+    <link rel="preload" href="hermes-pulse.json?v=ghmuepulse1" as="fetch" crossorigin />
   </head>
   <body>
     <a class="skip-link" href="#tutorials">Skip to tutorials</a>
@@ -102,6 +103,7 @@
           <a href="#" class="nav-link" data-filter="GenAI">GenAI</a>
           <a href="#" class="nav-link" data-filter="TOSCA">TOSCA</a>
           <a href="#" class="nav-link" data-filter="Teradata">Teradata</a>
+          <a href="#agent-pulse" class="nav-link" data-nav="anchor">Pulse</a>
           <a href="#paths" class="nav-link" data-nav="anchor">Paths</a>
           <a href="#prompt-lab" class="nav-link" data-nav="anchor">Prompts</a>
           <a href="#faq" class="nav-link" data-nav="anchor">FAQ</a>
@@ -137,6 +139,14 @@ export type Locator = ReturnType&lt;Page['locator']&gt;;</code></pre>
       <section class="trust-strip" aria-label="Hub stats">
         <div class="container">
           <div class="live-stats" id="live-stats"></div>
+        </div>
+      </section>
+
+      <section class="section-wrap hermes-pulse-section" id="agent-pulse" aria-label="Hermes Agent Pulse">
+        <div class="container">
+          <div class="hermes-pulse" id="hermes-pulse">
+            <div class="hermes-pulse-loading">Loading Agent Pulse…</div>
+          </div>
         </div>
       </section>
 
@@ -551,8 +561,8 @@ export type Locator = ReturnType&lt;Page['locator']&gt;;</code></pre>
         document.head.appendChild(s);
       });
     </script>
-    <script src="website-posts-data.js?v=ghmuehcsx9"></script>
+    <script src="website-posts-data.js?v=ghmueimidv"></script>
     <script src="prompt-suggestions-data.js?v=ghmueprompt1"></script>
-    <script src="app.js?v=ghmuecama8" defer></script>
+    <script src="app.js?v=ghmuepulse1" defer></script>
   </body>
 </html>

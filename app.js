@@ -2,7 +2,7 @@
    APP.JS - LearnHub (fast, paginated, path-aware, dynamic)
    ================================================================ */
 
-const CONTENT_VERSION = 22;
+const CONTENT_VERSION = 23;
 const PAGE_SIZE = 9;
 const RECENT_KEY = "learnhub-recent-v1";
 const PROGRESS_KEY = "learnhub-progress-v1";
@@ -1088,6 +1088,100 @@ function wireSecureForms() {
   });
 }
 
+/* Hermes Agent Pulse — tip + interactive MCQ on homepage */
+function formatPulseDate(iso) {
+  try {
+    return new Date(iso).toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+  } catch {
+    return "";
+  }
+}
+
+function openPulseRelated(postId) {
+  const posts = loadPosts();
+  const post = posts.find((p) => Number(p.sourceId) === Number(postId) || String(p.id) === `hub-${postId}`);
+  if (post) openPost(post);
+  else document.getElementById("tutorials")?.scrollIntoView({ behavior: "smooth" });
+}
+
+function renderHermesPulse(data) {
+  const root = document.getElementById("hermes-pulse");
+  if (!root || !data || !data.tip) return;
+  const tip = data.tip;
+  const ch = data.challenge || {};
+  const choices = Array.isArray(ch.choices) ? ch.choices : [];
+  root.innerHTML = `
+    <div class="hermes-pulse-top">
+      <span class="hermes-badge">Hermes Agent</span>
+      <span class="hermes-pulse-meta">${escapeHtml(data.generatedBy || "Agent Pulse")} · ${escapeHtml(formatPulseDate(data.generatedAt))}</span>
+    </div>
+    <div class="hermes-pulse-grid">
+      <article class="hermes-tip">
+        <div class="hermes-kicker">${escapeHtml(tip.eyebrow || "Today's tip")}</div>
+        <h3>${escapeHtml(tip.title || "Learn something sharp")}</h3>
+        <p>${escapeHtml(tip.body || "")}</p>
+        <div class="hermes-tip-actions">
+          <button type="button" class="hermes-open" data-pulse-open="${escapeHtml(String(tip.relatedPostId || ""))}">Open tutorial</button>
+          <span class="hermes-cat">${escapeHtml(tip.category || "")}</span>
+        </div>
+      </article>
+      <article class="hermes-challenge">
+        <div class="hermes-kicker">60-second challenge</div>
+        <h3>Quick check</h3>
+        <p class="hermes-q">${escapeHtml(ch.question || "Pick the best practice.")}</p>
+        <ul class="hermes-choices" id="hermes-choices">
+          ${choices
+            .map(
+              (c, i) =>
+                `<li><button type="button" class="hermes-choice" data-choice="${i}">${escapeHtml(c)}</button></li>`
+            )
+            .join("")}
+        </ul>
+        <div class="hermes-explain hidden" id="hermes-explain"></div>
+      </article>
+    </div>
+    <p class="hermes-pulse-foot">${escapeHtml(data.hermesNote || "Refreshed by Hermes from live LearnHub tutorials.")}</p>
+  `;
+
+  root.querySelector("[data-pulse-open]")?.addEventListener("click", (e) => {
+    openPulseRelated(e.currentTarget.getAttribute("data-pulse-open"));
+  });
+
+  const answerIndex = Number(ch.answerIndex);
+  const explainEl = root.querySelector("#hermes-explain");
+  root.querySelectorAll(".hermes-choice").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.choice);
+      root.querySelectorAll(".hermes-choice").forEach((b) => {
+        b.disabled = true;
+        const i = Number(b.dataset.choice);
+        if (i === answerIndex) b.classList.add("is-correct");
+        else if (i === idx) b.classList.add("is-wrong");
+      });
+      if (explainEl) {
+        explainEl.classList.remove("hidden");
+        explainEl.textContent =
+          (idx === answerIndex ? "Correct. " : "Not quite. ") + (ch.explain || "");
+      }
+    });
+  });
+}
+
+async function loadHermesPulse() {
+  const root = document.getElementById("hermes-pulse");
+  if (!root) return;
+  try {
+    const res = await fetch(`hermes-pulse.json?v=${CONTENT_VERSION}`, { cache: "no-cache" });
+    if (!res.ok) throw new Error(String(res.status));
+    renderHermesPulse(await res.json());
+  } catch {
+    root.innerHTML = `<p class="hermes-pulse-loading">Agent Pulse will appear after the next Hermes refresh (<code>npm run hub:hermes-pulse</code>).</p>`;
+  }
+}
+
 normalizePosts();
 updateNavCounts();
 updateLiveStats();
@@ -1095,6 +1189,7 @@ renderPaths();
 renderRecent();
 wirePromptLab();
 wireSecureForms();
+loadHermesPulse();
 handleDeepLink();
 if (postView.classList.contains("hidden")) renderHome();
 deferAds();
