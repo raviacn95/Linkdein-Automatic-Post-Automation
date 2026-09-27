@@ -46,6 +46,12 @@ const LEARNING_PATHS = {
     blurb: "Vantage architecture, TASM, DBQL, performance, cloud migration, and leadership for Lead/Principal roles.",
     category: "Teradata",
   },
+  interview: {
+    id: "interview",
+    title: "Company interview question bank",
+    blurb: "Questions by skill set — Java, SQL, DSA, Selenium, Playwright, Tosca, SAP, DevOps, GenAI, HR — tagged by company.",
+    category: "Interview",
+  },
 };
 
 /* -- DOM -- */
@@ -486,6 +492,7 @@ function renderHome() {
     MCP: "MCP tutorials",
     TOSCA: "TOSCA tutorials",
     Teradata: "Teradata DBA / Platform Architect",
+    Interview: "Company interview question bank",
   };
   feedTitle.textContent = categoryLabels[currentCategory] || "All tutorials";
 
