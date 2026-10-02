@@ -231,9 +231,14 @@ function markdownToHtml(md) {
 
   const e = escapeHtml(raw);
 
+  // Code is stashed so bold/italic/list rules never rewrite globs like **/api/** or YAML "- " lines.
+  const codeBlocks = [];
   let html = e.replace(/```(\w*)\n?([\s\S]*?)```/g, (_m, lang, code) => {
     const cls = lang ? ` class="lang-${lang}"` : "";
-    return `<div class="code-block"><button type="button" class="copy-code" aria-label="Copy code">Copy</button><pre><code${cls}>${code.trim()}</code></pre></div>`;
+    codeBlocks.push(
+      `<div class="code-block"><button type="button" class="copy-code" aria-label="Copy code">Copy</button><pre><code${cls}>${code.trim()}</code></pre></div>`
+    );
+    return `\n\n@@CODEBLOCK_${codeBlocks.length - 1}@@\n\n`;
   });
 
   html = html
@@ -241,10 +246,15 @@ function markdownToHtml(md) {
     .replace(/^##\s+(.*)$/gm, (_m, t) => `<h2 id="${slugify(t)}">${t}</h2>`)
     .replace(/^#\s+(.*)$/gm, "<h1>$1</h1>");
 
+  const inlineCode = [];
+  html = html.replace(/`([^`\n]+)`/g, (_m, code) => {
+    inlineCode.push(`<code>${code}</code>`);
+    return `@@INLINECODE_${inlineCode.length - 1}@@`;
+  });
+
   html = html
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
   html = html.replace(
@@ -301,10 +311,14 @@ function markdownToHtml(md) {
       const t = block.trim();
       if (!t) return "";
       if (/^<(h[1-3]|ul|ol|pre|table|blockquote|div)/.test(t)) return t;
-      if (/^@@MERMAID_\d+@@$/.test(t)) return t;
+      if (/^@@(MERMAID|CODEBLOCK)_\d+@@$/.test(t)) return t;
       return `<p>${t.replace(/\n/g, "<br>")}</p>`;
     })
     .join("\n");
+
+  html = html
+    .replace(/@@INLINECODE_(\d+)@@/g, (_m, i) => inlineCode[Number(i)])
+    .replace(/@@CODEBLOCK_(\d+)@@/g, (_m, i) => codeBlocks[Number(i)]);
 
   placeholders.forEach((code, i) => {
     const safe = escapeHtml(code);
@@ -319,11 +333,15 @@ function markdownToHtml(md) {
 
 function extractToc(md) {
   const headings = [];
+  const plain = (t) => t.replace(/`/g, "").replace(/\*\*/g, "").trim();
+  let inFence = false;
   for (const line of String(md || "").split("\n")) {
+    if (/^```/.test(line)) inFence = !inFence;
+    if (inFence) continue;
     const h2 = line.match(/^##\s+(.+)$/);
     const h3 = line.match(/^###\s+(.+)$/);
-    if (h3) headings.push({ level: 3, text: h3[1].trim(), id: slugify(h3[1]) });
-    else if (h2) headings.push({ level: 2, text: h2[1].trim(), id: slugify(h2[1]) });
+    if (h3) headings.push({ level: 3, text: plain(h3[1]), id: slugify(h3[1]) });
+    else if (h2) headings.push({ level: 2, text: plain(h2[1]), id: slugify(h2[1]) });
   }
   return headings;
 }
